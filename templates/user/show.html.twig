@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User{% endblock %}
+{% set title = user.username %}
+{% block header %}
+    <a href="{{ path('user_index') }}" class="btn btn-info">Retour</a>
+{% endblock %}
+{% block body %}
+    <div class="row">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th>Id</th>
+                    <td>{{ user.id }}</td>
+                </tr>
+                <tr>
+                    <th>Nom :</th>
+                    <td>{{ user.username }}</td>
+                </tr>
+                <tr>
+                    <th>Email :</th>
+                    <td>{{ user.email }}</td>
+                </tr>
+                <tr>
+                    <th>Role(s) :</th>
+                    <td>{{ user.roles ? user.roles|join(', ') : 'L\'utilisateur n\'a pas de rôle'}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row mt-4">
+        <a href="{{ path('user_edit', {'id': user.id}) }}" class="btn btn-info">Modifier</a>
+        {{ include('user/_delete_form.html.twig') }}
+    </div>
+
+{% endblock %}

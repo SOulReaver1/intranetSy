@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}CustomerFilesStatut index{% endblock %}
+{% set title = "Les statuts" %}
+{% block header %}
+    <a href="{{ path('customer_files_statut_new') }}" class="btn btn-info">Créer un statut</a>
+{% endblock %}
+{% block body %}
+
+    <table id="statutTable" class="table w-100 dt-table responsive display nowrap">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Créer</th>
+                <th width=10%>actions</th>
+            </tr>
+        </thead>
+        <tbody class="list">
+        {% for customer_files_statut in customer_files_statuts %}
+            <tr>
+                <td>{{ customer_files_statut.id }}</td>
+                <td>{{ customer_files_statut.name }}</td>
+                <td>{{ customer_files_statut.createdAt ? customer_files_statut.createdAt|date('d-m-Y H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('customer_files_statut_show', {'id': customer_files_statut.id}) }}" class="btn btn-info">Voir</a>
+                    <a href="{{ path('customer_files_statut_edit', {'id': customer_files_statut.id}) }}" class="btn btn-info">Modifier</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+{% block javascripts %}
+    <script>
+        var tables = {};
+        $('.dt-table').each(function(){
+            tables[$(this).attr('id')] = $(this).DataTable({
+                responsive: true,
+                bInfo: false,
+                bLengthChange: false,
+            })
+        })
+    </script>
+{% endblock %}

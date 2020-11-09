@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New CustomerFilesStatut{% endblock %}
+{% set title = "Créer un statut" %}
+{% set require = true %}
+{% block header %}
+    <a href="{{ path('customer_files_statut_index') }}" class="btn btn-info">Retour</a>
+{% endblock %}
+{% block body %}
+
+    {{ include('customer_files_statut/_form.html.twig') }}
+
+{% endblock %}

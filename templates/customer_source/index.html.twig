@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}CustomerSource index{% endblock %}
+{% set title = "Gérer les sources" %}
+{% block header %}
+    <a href="{{ path('customer_source_new') }}" class="btn btn-info">Ajouter une source</a>
+{% endblock %}
+{% block body %}
+    <table id="usersTable" class="table w-100 dt-table responsive display nowrap">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nom</th>
+                <th>Créer le</th>
+                <th width=10%>actions</th>
+            </tr>
+        </thead>
+        <tbody class="list">
+        {% for customer_source in customer_sources %}
+            <tr>
+                <td>{{ customer_source.id }}</td>
+                <td>{{ customer_source.name }}</td>
+                <td>{{ customer_source.createdAt ? customer_source.createdAt|date('d-m-Y H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('customer_source_show', {'id': customer_source.id}) }}" class="btn btn-info">Voir</a>
+                    <a href="{{ path('customer_source_edit', {'id': customer_source.id}) }}" class="btn btn-info">Modifier</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
+{% block javascripts %}
+    <script>
+        var tables = {};
+        $('.dt-table').each(function(){
+            tables[$(this).attr('id')] = $(this).DataTable({
+                responsive: true,
+                bInfo: false,
+                bLengthChange: false,
+            })
+        })
+    </script>
+{% endblock %}

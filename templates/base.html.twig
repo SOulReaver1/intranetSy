@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        {{ encore_entry_link_tags('app') }}
+        <link rel="stylesheet" type="text/css" href="{{asset('assets/css/datatables.min.css')}}"/>
+
+        <link href="{{ asset('argon') }}/img/brand/logo-copie.jpg" rel="icon" type="image/png">
+        <!-- Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+        <!-- Icons -->
+        <link href="{{ asset('argon/vendor/nucleo/css/nucleo.css') }}" rel="stylesheet">
+        <link href="{{ asset('argon/vendor/@fortawesome/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
+        <!-- Argon CSS -->
+        <link type="text/css" href="{{ asset('argon/css/argon.css?v=1.0.0') }}" rel="stylesheet">
+        <link href="{{asset('font-awesome/css/all.min.css')}}" rel="stylesheet">
+        {% block stylesheets %}{% endblock %}
+    </head>
+    <body class="{{bodyClass ?? ''}}">
+        {% if app.user %}
+            {% include 'sidebar.html.twig' %}
+            <div class="main-content">
+                <div class="main-panel d-flex flex-column" style="min-height:100vh;">
+                    {% include 'navbar.html.twig' %}                    
+                    {% include "header.html.twig" %}
+                    <div class="container-fluid mt--7">
+                        <div class="row">
+                            <div class="col order-xl-1">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                {% for message in app.flashes('success') %}
+                                                    <div class="alert alert-success">
+                                                        {{ message }}
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h1> {{title ?? '' }}</h1>
+                                                {% if require is defined %}
+                                                        <span class="text-danger">* </span>
+                                                        champs obligatoires
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-6 text-right">
+                                                {% block header %}{% endblock %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        {% block body %}{% endblock %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% include 'footer.html.twig' %}
+                </div>
+            </div>
+        {% else %}
+            {% block content %}{% endblock %}
+        {% endif %}
+        
+        {{ encore_entry_script_tags('app') }}
+        <script src="{{ asset('argon') }}/vendor/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="{{asset('assets/js/plugins/datatables.js')}}"></script>
+
+        <!-- Argon JS -->
+        <script src="{{ asset('argon') }}/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>

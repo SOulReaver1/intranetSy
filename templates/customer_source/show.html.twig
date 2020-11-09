@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}CustomerSource{% endblock %}
+{% set title = customer_source.name  %}
+{% block header %}
+    <a href="{{ path('customer_source_index') }}" class="btn btn-info">Retour</a>
+{% endblock %}
+{% block body %}
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th># :</th>
+                <td>{{ customer_source.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom :</th>
+                <td>{{ customer_source.name }}</td>
+            </tr>
+            <tr>
+                <th>Créer le :</th>
+                <td>{{ customer_source.createdAt ? customer_source.createdAt|date('d-m-Y H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Modifier le :</th>
+                <td>{{ customer_source.updatedAt ? customer_source.updatedAt|date('d-m-Y H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="row mt-3">
+        <a href="{{ path('customer_source_edit', {'id': customer_source.id}) }}" class="btn btn-info">Modifier</a>
+
+        {{ include('customer_source/_delete_form.html.twig') }}
+    </div>
+
+{% endblock %}

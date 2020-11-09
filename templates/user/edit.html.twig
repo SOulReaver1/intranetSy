@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit User{% endblock %}
+{% set title = "Modifier l'utilisateur" %}
+{% block header %}
+    <a href="{{ path('user_index') }}" class="btn btn-info">Retour</a>
+{% endblock %}
+{% block body %}
+
+
+    {{ include('user/_form.html.twig', {'button_label': 'Modifier'}) }}
+
+{% endblock %}

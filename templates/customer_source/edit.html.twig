@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit CustomerSource{% endblock %}
+{% set title = "Modifier la source" %}
+{% block header %}
+    <div class="row justify-content-end">
+        <a href="{{ path('customer_source_index') }}" class="btn btn-info mx-2">Retour</a>
+        {{ include('customer_source/_delete_form.html.twig') }}
+    </div>
+{% endblock %}
+{% block body %}
+
+    {{ include('customer_source/_form.html.twig', {'button_label': 'Modifier'}) }}
+
+{% endblock %}

@@ -1,0 +1,15 @@
+<div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center position-relative" style="background-image: url(http://intranet.lergonhome.fr/argon/img/theme/prospect-readAll-cover.jpg); background-size: cover; background-position: center top; min-height: 350px">
+    <!-- Mask -->
+    <span class="mask bg-gradient-default opacity-8"></span>
+    <!-- Header container -->
+    <div class="container-fluid d-flex align-items-center">
+        <div class="navbar-wrapper">
+            <div class="col-md-12 col-lg-12">
+                <h2 class="display-2 text-white">Hello {{app.user.username}}</h2>
+                {% if description is defined %}
+                    <p class="text-white mt-0">{{description}}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div> 
