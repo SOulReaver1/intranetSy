@@ -56,11 +56,18 @@ class User implements UserInterface
      */
     private $customerFiles;
 
+    private $test;
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
         $this->notifications = new ArrayCollection();
         $this->customerFiles = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->username.' - '.$this->email;
     }
 
     public function getId(): ?int

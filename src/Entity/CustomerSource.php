@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\CustomerSourceRepository;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -33,6 +35,21 @@ class CustomerSource
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updated_at;
+
+    /**
+     * @ORM\OneToMany(targetEntity=CustomerFiles::class, mappedBy="customer_source")
+     */
+    private $customerFiles;
+
+    public function __construct()
+    {
+        $this->customerFiles = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->name;
+    }
 
      /**
      * @ORM\PrePersist
@@ -87,6 +104,37 @@ class CustomerSource
     public function setUpdatedAt(?\DateTimeInterface $updated_at): self
     {
         $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CustomerFiles[]
+     */
+    public function getCustomerFiles(): Collection
+    {
+        return $this->customerFiles;
+    }
+
+    public function addCustomerFile(CustomerFiles $customerFile): self
+    {
+        if (!$this->customerFiles->contains($customerFile)) {
+            $this->customerFiles[] = $customerFile;
+            $customerFile->setCustomerSource($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCustomerFile(CustomerFiles $customerFile): self
+    {
+        if ($this->customerFiles->contains($customerFile)) {
+            $this->customerFiles->removeElement($customerFile);
+            // set the owning side to null (unless already changed)
+            if ($customerFile->getCustomerSource() === $this) {
+                $customerFile->setCustomerSource(null);
+            }
+        }
 
         return $this;
     }

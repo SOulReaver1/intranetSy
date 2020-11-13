@@ -46,6 +46,11 @@ class CustomerFilesStatut
         $this->customerFiles = new ArrayCollection();
     }
 
+    public function __toString()
+    {
+        return $this->name;
+    }
+
      /**
      * @ORM\PrePersist
      * @ORM\PreUpdate

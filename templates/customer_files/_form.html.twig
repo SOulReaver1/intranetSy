@@ -1,4 +1,56 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+    <div class="row">
+        {{form_row(form.users_id)}}
+    </div>
+    <hr>
+    <div class="row">
+        {{form_row(form.customer_source)}}
+    </div>
+    <hr>
+    <div class="row">
+        {{form_row(form.Sexe)}}
+    </div>
+    <div class="row">
+        {{form_row(form.Name)}}
+        {{form_row(form.Adresse)}}
+    </div>
+    <div class="row">
+        {{form_row(form.zip_code)}}
+        {{form_row(form.city)}}
+    </div>
+     <div class="row">
+        {{form_row(form.home_phone)}}
+        {{form_row(form.cellphone)}}
+    </div>
+    <hr>
+    <div class="row">
+        {{form_row(form.client_statut_id)}}
+        {{form_row(form.customer_statut)}}
+    </div>
+    <div class="row">
+        {{form_row(form.mail_al)}}
+        {{form_row(form.password_al)}}
+    </div>
+    <div class="row">
+        {{form_row(form.stairs)}}
+    </div>
+    <hr>
+    <h1>Référent :</h1>
+    <div class="row">
+        {{form_row(form.referent_name)}}
+        {{form_row(form.referent_phone)}}
+    </div>
+    <div class="row">
+        {{form_row(form.referent_statut)}}
+    </div>
+    <hr>
+    <h1>Devis annexe :</h1>
+    <div class="row">
+        {{form_row(form.annex_quote)}}
+    </div>
+    <div class="row">
+        {{form_row(form.annex_quote_description)}}
+        {{form_row(form.annex_quote_commentary)}}
+    </div>
+    <button class="btn btn-success">{{ button_label|default('Enregistrer') }}</button>
 {{ form_end(form) }}

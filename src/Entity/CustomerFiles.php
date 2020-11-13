@@ -6,6 +6,7 @@ use App\Repository\CustomerFilesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * @ORM\Entity(repositoryClass=CustomerFilesRepository::class)
@@ -118,6 +119,11 @@ class CustomerFiles
      * @ORM\OneToMany(targetEntity=Files::class, mappedBy="customerFiles")
      */
     private $files_id;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=CustomerSource::class, inversedBy="customerFiles")
+     */
+    private $customer_source;
 
     public function __construct()
     {
@@ -399,6 +405,18 @@ class CustomerFiles
                 $filesId->setCustomerFiles(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCustomerSource(): ?CustomerSource
+    {
+        return $this->customer_source;
+    }
+
+    public function setCustomerSource(?CustomerSource $customer_source): self
+    {
+        $this->customer_source = $customer_source;
 
         return $this;
     }

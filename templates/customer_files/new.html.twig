@@ -1,11 +1,19 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}New CustomerFiles{% endblock %}
-
+{% set title = "Créer une nouvelle fiche client" %}
+{% block header %}
+    <a href="{{ path('customer_files_index') }}" class="btn btn-info">Retour</a>
+{% endblock %}
 {% block body %}
-    <h1>Create new CustomerFiles</h1>
-
     {{ include('customer_files/_form.html.twig') }}
-
-    <a href="{{ path('customer_files_index') }}">back to list</a>
+{% endblock %}
+{% block stylesheets %}
+        <link href="{{asset('assets/js/plugins/semantic/semantic.min.css')}}" rel="stylesheet">
+{% endblock %}
+{% block javascripts %}
+    <script src="{{asset('assets/js/plugins/semantic/semantic.js')}}"></script>
+    <script>
+        $('#customer_files_users_id').dropdown();
+    </script>
 {% endblock %}
