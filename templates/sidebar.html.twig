@@ -75,16 +75,30 @@
                         </a>
                     </li>
                 {% endif %}
+                {% if is_granted('ROLE_USER') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url("client_statut_index")}}">
+                            <i class="fas fa-folder-open"></i>
+                            Gérer les statuts client
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url("client_statut_document_index")}}">
+                            <i class="fas fa-folder-open"></i>
+                            Gérer les documents
+                        </a>
+                    </li>
+                {% endif %}
                 {% if is_granted('ROLE_ALLOW_CREATE') %}
                     <li class="nav-item">
-                        <a class="nav-link" href="javascript:void(0)">
+                        <a class="nav-link" href="{{url('customer_files_new')}}">
                             <i class="ni ni-fat-add text-danger"></i>
                             Créer une fiche client
                         </a>
                     </li>
                 {% endif %}
                 <li class="nav-item active">
-                    <a class="nav-link" href="javascript:void(0)">
+                    <a class="nav-link" href="{{url('customer_files_index')}}">
                         <i class="ni ni-archive-2 text-info"></i>
                         Voir les fiches clients
                     </a>

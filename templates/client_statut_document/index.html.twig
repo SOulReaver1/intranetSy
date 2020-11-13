@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ClientStatutDocument index{% endblock %}
+{% set title = "Gérer les documents" %}
+{% set datatable = true %}
+{% block header %}
+    <a href="{{ path('client_statut_document_new') }}" class="btn btn-info">Ajouter un document</a>
+{% endblock %}
+{% block body %}
+    <table id="clientDocument" class="table w-100 dt-table responsive display nowrap">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nom</th>
+                <th>Statut(s) client</th>
+                <th>Créer le</th>
+                <th width=5%>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for client_statut_document in client_statut_documents %}
+            <tr>
+                <td>{{ client_statut_document.id }}</td>
+                <td>{{ client_statut_document.name }}</td>
+                <td>{{ client_statut_document.clientStatut ? client_statut_document.clientStatut|join(', ') : 'Le document n\'a pas de statut client'}}</td>
+                <td>{{ client_statut_document.createdAt ? client_statut_document.createdAt|date('d-m-Y H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('client_statut_document_show', {'id': client_statut_document.id}) }}" class="btn btn-info">Regarder</a>
+                    <a href="{{ path('client_statut_document_edit', {'id': client_statut_document.id}) }}" class="btn btn-info">Modifier</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

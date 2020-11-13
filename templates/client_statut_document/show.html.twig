@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ClientStatutDocument{% endblock %}
+{% set title = client_statut_document.name %}
+{% block header %}
+    <a href="{{ path('client_statut_document_index') }}" class="btn btn-info">Retour</a>
+{% endblock %}
+{% block body %}
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>#</th>
+                <td>{{ client_statut_document.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom :</th>
+                <td>{{ client_statut_document.name }}</td>
+            </tr>
+            <tr>
+                <th>Statut(s) client :</th>
+                <td>{{ client_statut_document.clientStatut ? client_statut_document.clientStatut|join(', ') : 'Le document n\'a pas de statut client'}}</td>
+            </tr>
+            <tr>
+                <th>Créer le :</th>
+                <td>{{ client_statut_document.createdAt ? client_statut_document.createdAt|date('d-m-Y H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Modifier le :</th>
+                <td>{{ client_statut_document.updatedAt ? client_statut_document.updatedAt|date('d-m-Y H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="row mt-3">
+        <a href="{{ path('client_statut_document_edit', {'id': client_statut_document.id}) }}" class="btn btn-info">Modifier</a>
+        {{ include('client_statut_document/_delete_form.html.twig') }}
+    </div>
+
+{% endblock %}

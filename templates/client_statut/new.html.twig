@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New ClientStatut{% endblock %}
+{% set title = "Créer un statut client" %}
+{% block header %}
+    <a href="{{ path('client_statut_index') }}" class="btn btn-info">Retour</a>
+{% endblock %}
+{% block body %}
+    {{ include('client_statut/_form.html.twig') }}
+{% endblock %}

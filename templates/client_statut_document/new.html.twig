@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New ClientStatutDocument{% endblock %}
+{% set title = "Créer un nouveau document" %}
+{% block header %}
+    <a href="{{ path('client_statut_document_index') }}" class="btn btn-info">Retour</a>
+{% endblock %}
+{% block body %}
+    {{ include('client_statut_document/_form.html.twig') }}
+{% endblock %}
+{% block stylesheets %}
+        <link href="{{asset('assets/js/plugins/semantic/semantic.min.css')}}" rel="stylesheet">
+{% endblock %}
+{% block javascripts %}
+    <script src="{{asset('assets/js/plugins/semantic/semantic.js')}}"></script>
+    <script>
+        $('#client_statut_document_client_statut').dropdown();
+    </script>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit ClientStatutDocument{% endblock %}
+{% set title = "Modifier un document" %}
+{% block header %}
+    <div class="row justify-content-end">
+        <a href="{{ path('client_statut_document_index') }}" class="btn btn-info">Retour</a>
+        {{ include('client_statut_document/_delete_form.html.twig') }}
+    </div>
+{% endblock %}
+{% block body %}
+
+    {{ include('client_statut_document/_form.html.twig', {'button_label': 'Modifier'}) }}
+
+{% endblock %}
+{% block stylesheets %}
+        <link href="{{asset('assets/js/plugins/semantic/semantic.min.css')}}" rel="stylesheet">
+{% endblock %}
+{% block javascripts %}
+    <script src="{{asset('assets/js/plugins/semantic/semantic.js')}}"></script>
+    <script>
+        $('#client_statut_document_client_statut').dropdown();
+    </script>
+{% endblock %}
+

@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}CustomerFiles index{% endblock %}
+{% set title = "Les fiches clients" %}
+{% block header %}
+    {% if is_granted('ROLE_ALLOW_CREATE') %}
+            <a class="btn btn-info" href="{{url('customer_files_new')}}">Ajouter une fiche client</a>
+    {% endif %}
+{% endblock %}
+{% block body %}
+    <table id="customerTable" class="table w-100 dt-table responsive display nowrap">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Sexe</th>
+                <th>Name</th>
+                <th>Adresse</th>
+                <th>City</th>
+                <th>Zip_code</th>
+                <th>Home_phone</th>
+                <th>Cellphone</th>
+                <th>Referent_name</th>
+                <th>Referent_phone</th>
+                <th>Referent_statut</th>
+                <th>Stairs</th>
+                <th>Mail_al</th>
+                <th>Password_al</th>
+                <th>Annex_quote</th>
+                <th>Annex_quote_description</th>
+                <th>Annex_quote_commentary</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody class="list">
+        {% for customer_file in customer_files %}
+            <tr>
+                <td>{{ customer_file.id }}</td>
+                <td>{{ customer_file.Sexe }}</td>
+                <td>{{ customer_file.Name }}</td>
+                <td>{{ customer_file.Adresse }}</td>
+                <td>{{ customer_file.city }}</td>
+                <td>{{ customer_file.zipCode }}</td>
+                <td>{{ customer_file.homePhone }}</td>
+                <td>{{ customer_file.cellphone }}</td>
+                <td>{{ customer_file.referentName }}</td>
+                <td>{{ customer_file.referentPhone }}</td>
+                <td>{{ customer_file.referentStatut }}</td>
+                <td>{{ customer_file.stairs ? 'Yes' : 'No' }}</td>
+                <td>{{ customer_file.mailAl }}</td>
+                <td>{{ customer_file.passwordAl }}</td>
+                <td>{{ customer_file.annexQuote ? 'Yes' : 'No' }}</td>
+                <td>{{ customer_file.annexQuoteDescription }}</td>
+                <td>{{ customer_file.annexQuoteCommentary }}</td>
+                <td>
+                    <a href="{{ path('customer_files_show', {'id': customer_file.id}) }}">show</a>
+                    <a href="{{ path('customer_files_edit', {'id': customer_file.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+{% block javascripts %}
+    <script>
+        var tables = {};
+        $('.dt-table').each(function(){
+            tables[$(this).attr('id')] = $(this).DataTable({
+                responsive: true,
+                bInfo: false,
+                bLengthChange: false,
+            })
+        })
+    </script>
+{% endblock %}

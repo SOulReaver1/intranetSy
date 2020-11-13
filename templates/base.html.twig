@@ -73,6 +73,18 @@
 
         <!-- Argon JS -->
         <script src="{{ asset('argon') }}/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        {% if datatable is defined %}
+                <script>
+                    var tables = {};
+                    $('.dt-table').each(function(){
+                        tables[$(this).attr('id')] = $(this).DataTable({
+                            responsive: true,
+                            bInfo: false,
+                            bLengthChange: false,
+                        })
+                    })
+                </script>
+        {% endif %}
         {% block javascripts %}{% endblock %}
     </body>
 </html>

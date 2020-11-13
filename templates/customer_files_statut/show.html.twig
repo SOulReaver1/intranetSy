@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}CustomerFilesStatut{% endblock %}
+{% block title %}customer_files_statut.name{% endblock %}
 {% set title = customer_files_statut.name %}
 {% block header %}
     <a href="{{ path('customer_files_statut_index') }}" class="btn btn-info">Retour</a>
@@ -19,7 +19,11 @@
             </tr>
             <tr>
                 <th>Date de création</th>
-                <td>{{ customer_files_statut.createdAt ? customer_files_statut.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ customer_files_statut.createdAt ? customer_files_statut.createdAt|date('d-m-Y H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Date de modification</th>
+                <td>{{ customer_files_statut.updatedAt ? customer_files_statut.updatedAt|date('d-m-Y H:i:s') : '' }}</td>
             </tr>
         </tbody>
     </table>

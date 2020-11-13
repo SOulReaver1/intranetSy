@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit ClientStatut{% endblock %}
+{% set title = "Modifier le statut client" %}
+{% block header %}
+    <div class="row justify-content-end">
+        <a href="{{ path('client_statut_index') }}" class="btn btn-info">Retour</a>
+
+        {{ include('client_statut/_delete_form.html.twig') }}
+    </div>
+{% endblock %}
+{% block body %}
+    {{ include('client_statut/_form.html.twig', {'button_label': 'Modifier'}) }}
+
+{% endblock %}
