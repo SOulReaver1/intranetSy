@@ -6,7 +6,6 @@ use App\Repository\CustomerFilesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * @ORM\Entity(repositoryClass=CustomerFilesRepository::class)

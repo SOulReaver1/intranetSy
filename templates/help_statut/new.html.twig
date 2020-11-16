@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New HelpStatut{% endblock %}
+{% set title = "Ajouter un nouveau statut" %}
+{% set require = true %}
+{% block header %}
+    <a href="{{ path('help_statut_index') }}" class="btn btn-info">Retour</a>
+{% endblock %}
+{% block body %}
+    {{ include('help_statut/_form.html.twig') }}
+{% endblock %}

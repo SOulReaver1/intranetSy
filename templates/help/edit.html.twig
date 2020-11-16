@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Help{% endblock %}
+{% set title = "Modifier le bug" %}
+{% set require = true %}
+{% block header %}
+    <div class="row justify-content-end">
+        <a href="{{ path('help_index') }}" class="btn btn-info">Retour</a>
+        {{ include('help/_delete_form.html.twig') }}
+    </div>
+{% endblock %}
+{% block body %}
+    {{ include('help/_form.html.twig', {'button_label': 'Modifier'}) }}
+{% endblock %}

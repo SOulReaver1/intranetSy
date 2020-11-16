@@ -6,6 +6,7 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\CustomerFiles;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -56,13 +57,18 @@ class User implements UserInterface
      */
     private $customerFiles;
 
-    private $test;
+    /**
+     * @ORM\OneToMany(targetEntity=Help::class, mappedBy="user_id")
+     */
+    private $helps;
+
 
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
         $this->notifications = new ArrayCollection();
         $this->customerFiles = new ArrayCollection();
+        $this->helps = new ArrayCollection();
     }
 
     public function __toString()
@@ -235,6 +241,37 @@ class User implements UserInterface
         if ($this->customerFiles->contains($customerFile)) {
             $this->customerFiles->removeElement($customerFile);
             $customerFile->removeUsersId($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Help[]
+     */
+    public function getHelps(): Collection
+    {
+        return $this->helps;
+    }
+
+    public function addHelp(Help $help): self
+    {
+        if (!$this->helps->contains($help)) {
+            $this->helps[] = $help;
+            $help->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHelp(Help $help): self
+    {
+        if ($this->helps->contains($help)) {
+            $this->helps->removeElement($help);
+            // set the owning side to null (unless already changed)
+            if ($help->getUserId() === $this) {
+                $help->setUserId(null);
+            }
         }
 
         return $this;

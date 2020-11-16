@@ -55,6 +55,30 @@
             </div>
             <!-- Navigation -->
             <ul class="navbar-nav">
+            {{dump(app.session.get('ilan'))}}
+                {% if is_granted('ROLE_DEVELOPER') %}
+                <li class="nav-item">
+                    <a class="nav-link" href="#navbar-developer" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-fais">
+                        <i class="fas fa-wifi text-blue"></i>
+                        <span class="nav-link-text">Developer</span>
+                    </a>
+
+                    <div class="collapse" id="navbar-developer">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{url("help_statut_index")}}">
+                                    Gérer les statut d'aide
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{url("help_index")}}">
+                                    Voir les bugs
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                {% endif %}
                 {% if is_granted('ROLE_SUPERADMIN') %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{url("user_index")}}">
@@ -99,9 +123,15 @@
                     </li>
                 {% endif %}
                 <li class="nav-item active">
-                    <a class="nav-link" href="{{url('customer_files_index')}}">
+                    <a class="nav-link" href="{{url('default')}}">
                         <i class="ni ni-archive-2 text-info"></i>
                         Voir les fiches clients
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{url('help_new')}}">
+                        <i class="ni ni-archive-2 text-info"></i>
+                        Signalé un bug
                     </a>
                 </li>
             </ul>

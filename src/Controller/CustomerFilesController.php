@@ -16,10 +16,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class CustomerFilesController extends AbstractController
 {
     /**
-     * @Route("/", name="customer_files_index", methods={"GET"})
+     * @Route("/", name="default", methods={"GET"})
      */
     public function index(CustomerFilesRepository $customerFilesRepository): Response
-    {
+    {        
+        
         return $this->render('customer_files/index.html.twig', [
             'customer_files' => $customerFilesRepository->findAll(),
         ]);
@@ -49,7 +50,7 @@ class CustomerFilesController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="customer_files_show", methods={"GET"})
+     * @Route("/{id}", name="customer_files_show", methods={"GET"}, requirements={"id":"\d+"})
      */
     public function show(CustomerFiles $customerFile): Response
     {
