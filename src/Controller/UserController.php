@@ -26,28 +26,28 @@ class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="user_new", methods={"GET","POST"})
-     */
-    public function new(Request $request): Response
-    {
-        $user = new User();
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
+    // /**
+    //  * @Route("/new", name="user_new", methods={"GET","POST"})
+    //  */
+    // public function new(Request $request): Response
+    // {
+    //     $user = new User();
+    //     $form = $this->createForm(UserType::class, $user);
+    //     $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($user);
-            $entityManager->flush();
-            $this->addFlash('success', 'Votre utilisateur à bien été créer !');
-            return $this->redirectToRoute('user_index');
-        }
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         $entityManager = $this->getDoctrine()->getManager();
+    //         $entityManager->persist($user);
+    //         $entityManager->flush();
+    //         $this->addFlash('success', 'Votre utilisateur à bien été créer !');
+    //         return $this->redirectToRoute('user_index');
+    //     }
 
-        return $this->render('user/new.html.twig', [
-            'user' => $user,
-            'form' => $form->createView(),
-        ]);
-    }
+    //     return $this->render('user/new.html.twig', [
+    //         'user' => $user,
+    //         'form' => $form->createView(),
+    //     ]);
+    // }
 
     /**
      * @Route("/{id}", name="user_show", methods={"GET"})

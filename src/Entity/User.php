@@ -7,10 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\CustomerFiles;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
  */
 class User implements UserInterface
 {
@@ -62,6 +64,16 @@ class User implements UserInterface
      */
     private $helps;
 
+    /**
+     * @ORM\OneToMany(targetEntity=TicketMessage::class, mappedBy="from_user")
+     */
+    private $ticketMessages;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isVerified = false;
+
 
     public function __construct()
     {
@@ -69,6 +81,7 @@ class User implements UserInterface
         $this->notifications = new ArrayCollection();
         $this->customerFiles = new ArrayCollection();
         $this->helps = new ArrayCollection();
+        $this->ticketMessages = new ArrayCollection();
     }
 
     public function __toString()
@@ -273,6 +286,49 @@ class User implements UserInterface
                 $help->setUserId(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TicketMessage[]
+     */
+    public function getTicketMessages(): Collection
+    {
+        return $this->ticketMessages;
+    }
+
+    public function addTicketMessage(TicketMessage $ticketMessage): self
+    {
+        if (!$this->ticketMessages->contains($ticketMessage)) {
+            $this->ticketMessages[] = $ticketMessage;
+            $ticketMessage->setFromUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTicketMessage(TicketMessage $ticketMessage): self
+    {
+        if ($this->ticketMessages->contains($ticketMessage)) {
+            $this->ticketMessages->removeElement($ticketMessage);
+            // set the owning side to null (unless already changed)
+            if ($ticketMessage->getFromUser() === $this) {
+                $ticketMessage->setFromUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): self
+    {
+        $this->isVerified = $isVerified;
 
         return $this;
     }

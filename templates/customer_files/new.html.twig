@@ -3,7 +3,7 @@
 {% block title %}New CustomerFiles{% endblock %}
 {% set title = "Créer une nouvelle fiche client" %}
 {% block header %}
-    <a href="{{ path('customer_files_index') }}" class="btn btn-info">Retour</a>
+    <a href="{{ path('default') }}" class="btn btn-info">Retour</a>
 {% endblock %}
 {% block body %}
     {{ include('customer_files/_form.html.twig') }}

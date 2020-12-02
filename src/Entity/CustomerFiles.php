@@ -124,10 +124,21 @@ class CustomerFiles
      */
     private $customer_source;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Ticket::class, mappedBy="customer_file")
+     */
+    private $tickets;
+
     public function __construct()
     {
         $this->users_id = new ArrayCollection();
         $this->files_id = new ArrayCollection();
+        $this->tickets = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->Name;
     }
 
     public function getId(): ?int
@@ -416,6 +427,37 @@ class CustomerFiles
     public function setCustomerSource(?CustomerSource $customer_source): self
     {
         $this->customer_source = $customer_source;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Ticket[]
+     */
+    public function getTickets(): Collection
+    {
+        return $this->tickets;
+    }
+
+    public function addTicket(Ticket $ticket): self
+    {
+        if (!$this->tickets->contains($ticket)) {
+            $this->tickets[] = $ticket;
+            $ticket->setCustomerFile($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTicket(Ticket $ticket): self
+    {
+        if ($this->tickets->contains($ticket)) {
+            $this->tickets->removeElement($ticket);
+            // set the owning side to null (unless already changed)
+            if ($ticket->getCustomerFile() === $this) {
+                $ticket->setCustomerFile(null);
+            }
+        }
 
         return $this;
     }

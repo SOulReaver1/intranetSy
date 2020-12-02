@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ticket index{% endblock %}
+{% set title = "Voir les tickets" %}
+{% set datatable = true %}
+{% block header %}
+    <a href="{{ path('ticket_new') }}" class="btn btn-primary">Créer un ticket</a>
+{% endblock %}
+{% block body %}
+    <table id="ticketTable" class="table w-100 dt-table responsive display nowrap">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>Créer le</th>
+                <th width=5%>actions</th>
+            </tr>
+        </thead>
+        <tbody class="list">
+        {% for ticket in tickets %}
+            <tr>
+                <td>{{ ticket.id }}</td>
+                <td>{{ ticket.title }}</td>
+                <td>{{ ticket.description }}</td>
+                <td>{{ ticket.createdAt ? ticket.createdAt|date('d-m-Y H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('ticket_show', {'id': ticket.id}) }}" class="btn btn-primary">Regarder</a>
+                    <a href="{{ path('ticket_edit', {'id': ticket.id}) }}" class="btn btn-primary">Modifier</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -44,5 +44,5 @@ security:
         - { path: ^/admin, roles: ROLE_SUPERADMIN }
         - { path: ^/dev, roles: ROLE_DEVELOPER }
         - { path: ^/login, roles: PUBLIC_ACCESS }
-        - { path: ^/, roles: ROLE_USER }
+        - { path: ^/, roles: [ROLE_USER, ROLE_INSTALLATEUR] }
 

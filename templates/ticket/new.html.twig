@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Ticket{% endblock %}
+{% set title = "Créer un ticket" %}
+{% set require = true %}
+{% block header %}
+    <a href="{{ path('ticket_index') }}" class="btn btn-primary">Retour</a>
+{% endblock %}
+{% block body %}
+    {{ include('ticket/_form.html.twig') }}
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}TicketStatut index{% endblock %}
+{% set title = "Gérer les statuts de ticket" %}
+{% set datatable = true %}
+{% block header %}
+    <a href="{{ path('ticket_statut_new') }}" class="btn btn-primary">Créer un statut</a>
+{% endblock %}
+{% block body %}
+    <table id="ticketStatutTable" class="table w-100 dt-table responsive display nowrap">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nom</th>
+                <th width=5%>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for ticket_statut in ticket_statuts %}
+            <tr>
+                <td>{{ ticket_statut.id }}</td>
+                <td>{{ ticket_statut.name }}</td>
+                <td>
+                    <a href="{{ path('ticket_statut_show', {'id': ticket_statut.id}) }}" class="btn btn-info">Regarder</a>
+                    <a href="{{ path('ticket_statut_edit', {'id': ticket_statut.id}) }}" class="btn btn-info">Modifier</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

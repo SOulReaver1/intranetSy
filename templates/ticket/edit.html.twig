@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Ticket{% endblock %}
+{% set title = "Modifier le ticket" %}
+{% block header %}
+    <div class="row justify-content-end">
+        <a href="{{ path('ticket_index') }}" class="btn btn-primary">Retour</a>
+
+        {{ include('ticket/_delete_form.html.twig') }}
+    </div>
+{% endblock %}
+{% block body %}
+    {{ include('ticket/_form.html.twig', {'button_label': 'Modifier'}) }}
+{% endblock %}

@@ -3,12 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\TicketRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=TicketRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class Ticket
 {
@@ -47,13 +49,42 @@ class Ticket
     private $created_at;
 
     /**
-     * @ORM\ManyToMany(targetEntity=User::class)
+     * @ORM\ManyToOne(targetEntity=CustomerFiles::class, inversedBy="tickets")
+     * 
      */
-    private $users_id;
+    private $customer_file;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updated_at;
+
+    /**
+     * @ORM\OneToMany(targetEntity=TicketMessage::class, mappedBy="ticket")
+     */
+    private $ticketMessages;
+
 
     public function __construct()
     {
         $this->users_id = new ArrayCollection();
+        $this->ticketMessages = new ArrayCollection();
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+
+    public function updatedTimestamps(): void
+    {
+        $dateTimeNow = new DateTime('now');
+
+        $this->setUpdatedAt($dateTimeNow);
+
+        if ($this->getCreatedAt() === null) {
+            $this->setCreatedAt($dateTimeNow);
+        }
     }
 
     public function getId(): ?int
@@ -121,27 +152,56 @@ class Ticket
         return $this;
     }
 
-    /**
-     * @return Collection|User[]
-     */
-    public function getUsersId(): Collection
+    public function getCustomerFile(): ?CustomerFiles
     {
-        return $this->users_id;
+        return $this->customer_file;
     }
 
-    public function addUsersId(User $usersId): self
+    public function setCustomerFile(?CustomerFiles $customer_file): self
     {
-        if (!$this->users_id->contains($usersId)) {
-            $this->users_id[] = $usersId;
+        $this->customer_file = $customer_file;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updated_at): self
+    {
+        $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TicketMessage[]
+     */
+    public function getTicketMessages(): Collection
+    {
+        return $this->ticketMessages;
+    }
+
+    public function addTicketMessage(TicketMessage $ticketMessage): self
+    {
+        if (!$this->ticketMessages->contains($ticketMessage)) {
+            $this->ticketMessages[] = $ticketMessage;
+            $ticketMessage->setTicket($this);
         }
 
         return $this;
     }
 
-    public function removeUsersId(User $usersId): self
+    public function removeTicketMessage(TicketMessage $ticketMessage): self
     {
-        if ($this->users_id->contains($usersId)) {
-            $this->users_id->removeElement($usersId);
+        if ($this->ticketMessages->contains($ticketMessage)) {
+            $this->ticketMessages->removeElement($ticketMessage);
+            // set the owning side to null (unless already changed)
+            if ($ticketMessage->getTicket() === $this) {
+                $ticketMessage->setTicket(null);
+            }
         }
 
         return $this;

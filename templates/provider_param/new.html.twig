@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New ProviderParam{% endblock %}
+{% set title = "Créer un paramètre" %}
+{% set require = true %}
+{% block header %}
+    <a href="{{ path('provider_param_index') }}" class="btn btn-primary">Retour</a>
+{% endblock %}
+{% block body %}
+
+    {{ include('provider_param/_form.html.twig') }}
+
+{% endblock %}

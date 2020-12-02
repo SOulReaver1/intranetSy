@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Provider index{% endblock %}
+{% set title = "Les fournisseurs" %}
+{% set datatable = true %}
+{% block header %}
+    <a href="{{ path('provider_new') }}" class="btn btn-primary">Créer un fournisseur</a>
+{% endblock %}
+{% block body %}
+    <table id="providerTable" class="table w-100 dt-table responsive display nowrap">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nom</th>
+                <th>Créer le</th>
+                <th width=5%>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for provider in providers %}
+            <tr>
+                <td>{{ provider.id }}</td>
+                <td>{{ provider.name }}</td>
+                <td>{{ provider.createdAt ? provider.createdAt|date('d-m-Y H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('provider_show', {'id': provider.id}) }}" class="btn btn-primary">Regarder</a>
+                    <a href="{{ path('provider_edit', {'id': provider.id}) }}" class="btn btn-primary">Modifier</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

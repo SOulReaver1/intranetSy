@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Provider{% endblock %}
+{% set title = "Modifier le fournisseur" %}
+{% block header %}
+    <div class="row justify-content-end">
+        <a href="{{ path('provider_index') }}" class="btn btn-primary">Retour</a>
+
+        {{ include('provider/_delete_form.html.twig') }}
+    </div>
+{% endblock %}
+{% block body %}
+
+    {{ include('provider/_form.html.twig', {'button_label': 'Modifier'}) }}
+
+{% endblock %}

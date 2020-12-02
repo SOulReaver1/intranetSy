@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New User{% endblock %}
+{% set title = "Ajouter un utilisateur" %}
+{% set require = true %}
+{% block header %}
+{% for flashError in app.flashes('verify_email_error') %}
+        <div class="alert alert-danger" role="alert">{{ flashError }}</div>
+{% endfor %}
+    <a href="{{ path('user_index') }}" class="btn btn-info">Retour</a>
+{% endblock %}
+{% block body %}
+
+    {{ include('user/registration/_form.html.twig') }}
+
+{% endblock %}

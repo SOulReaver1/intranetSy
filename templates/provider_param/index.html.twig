@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ProviderParam index{% endblock %}
+{% set title = "Gérer les paramètres" %}
+{% set datatable = true %}
+{% block header %}
+    <a href="{{ path('provider_param_new') }}" class="btn btn-primary">Créer un paramètre</a>
+{% endblock %}
+{% block body %}
+    <table id="providerParamTable" class="table w-100 dt-table responsive display nowrap">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nom</th>
+                <th>Créer le</th>
+                <th width=5%>actions</th>
+            </tr>
+        </thead>
+        <tbody class="list">
+        {% for provider_param in provider_params %}
+            <tr>
+                <td>{{ provider_param.id }}</td>
+                <td>{{ provider_param.name }}</td>
+                <td>{{ provider_param.createdAt ? provider_param.createdAt|date('d-m-Y H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('provider_param_show', {'id': provider_param.id}) }}" class="btn btn-primary">Regarder</a>
+                    <a href="{{ path('provider_param_edit', {'id': provider_param.id}) }}" class="btn btn-primary">Modifier</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

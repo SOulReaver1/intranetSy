@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Provider{% endblock %}
+{% set title = "Créer un fournisseur" %}
+{% set require = true %}
+{% block header %}
+    <a href="{{ path('provider_index') }}" class="btn btn-primary">Retour</a>
+{% endblock %}
+{% block body %}
+
+    {{ include('provider/_form.html.twig') }}
+
+{% endblock %}

@@ -40,7 +40,7 @@ class CustomerFilesController extends AbstractController
             $entityManager->persist($customerFile);
             $entityManager->flush();
 
-            return $this->redirectToRoute('customer_files_index');
+            return $this->redirectToRoute('default');
         }
 
         return $this->render('customer_files/new.html.twig', [
@@ -70,7 +70,7 @@ class CustomerFilesController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('customer_files_index');
+            return $this->redirectToRoute('default');
         }
 
         return $this->render('customer_files/edit.html.twig', [
@@ -90,6 +90,6 @@ class CustomerFilesController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('customer_files_index');
+        return $this->redirectToRoute('default');
     }
 }

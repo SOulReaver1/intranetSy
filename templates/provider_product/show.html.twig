@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ProviderProduct{% endblock %}
+{% set title = provider_product.name  %}
+{% block header %}
+    <a href="{{ path('provider_product_index') }}" class="btn btn-primary">Retour</a>
+{% endblock %}
+{% block body %}
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>#</th>
+                <td>{{ provider_product.id }}</td>
+            </tr>
+            <tr>
+                <th>Fournisseur :</th>
+                <td>{{ provider_product.provider }}</td>
+            </tr>
+            <tr>
+                <th>Nom :</th>
+                <td>{{ provider_product.name }}</td>
+            </tr>
+            <tr>
+                <th>Paramètre(s) :</th>
+                <td>{{ provider_product.params ? provider_product.params|join(', ') : 'Le produit n\'a pas de paramètre(s)' }}</td>
+            </tr>
+            <tr>
+                <th>Créer le :</th>
+                <td>{{ provider_product.createdAt ? provider_product.createdAt|date('d-m-Y H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Modifier le :</th>
+                <td>{{ provider_product.updatedAt ? provider_product.updatedAt|date('d-m-Y H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="col mt-4">
+        <div class="row">
+            <a href="{{ path('provider_product_edit', {'id': provider_product.id}) }}" class="btn btn-primary">Modifier</a>
+
+            {{ include('provider_product/_delete_form.html.twig') }}
+        </div>
+    </div>
+    
+{% endblock %}

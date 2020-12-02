@@ -2,6 +2,7 @@
 
 {% block title %}New Help{% endblock %}
 {% set title = "Demande d'aide" %}
+{% set require = true %}
 {% block body %}
     {{ include('help/_form.html.twig') }}
 {% endblock %}
