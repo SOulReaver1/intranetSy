@@ -3,7 +3,7 @@
 {% block title %}User{% endblock %}
 {% set title = user.username %}
 {% block header %}
-    <a href="{{ path('user_index') }}" class="btn btn-info">Retour</a>
+    <a href="{{ path('user_index') }}" class="btn btn-primary">Retour</a>
 {% endblock %}
 {% block body %}
     <div class="row">
@@ -29,9 +29,11 @@
         </table>
     </div>
 
-    <div class="row mt-4">
-        <a href="{{ path('user_edit', {'id': user.id}) }}" class="btn btn-info">Modifier</a>
-        {{ include('user/_delete_form.html.twig') }}
+    <div class="col mt-4">
+        <div class="row">
+            <a href="{{ path('user_edit', {'id': user.id}) }}" class="btn btn-primary">Modifier</a>
+            {{ include('user/_delete_form.html.twig') }}
+        </div>
     </div>
 
 {% endblock %}

@@ -3,7 +3,7 @@
 {% block title %}customer_files_statut.name{% endblock %}
 {% set title = customer_files_statut.name %}
 {% block header %}
-    <a href="{{ path('customer_files_statut_index') }}" class="btn btn-info">Retour</a>
+    <a href="{{ path('customer_files_statut_index') }}" class="btn btn-primary">Retour</a>
 {% endblock %}
 {% block body %}
 <div class="row">
@@ -29,9 +29,11 @@
     </table>
     </div>
 
-    <div class="row mt-3">
-        <a href="{{ path('customer_files_statut_edit', {'id': customer_files_statut.id}) }}" class="btn btn-info">Modifier</a>
-        {{ include('customer_files_statut/_delete_form.html.twig') }}
+    <div class="col mt-4">
+        <div class="row">
+            <a href="{{ path('customer_files_statut_edit', {'id': customer_files_statut.id}) }}" class="btn btn-primary">Modifier</a>
+            {{ include('customer_files_statut/_delete_form.html.twig') }}
+        </div>
     </div>
     
 {% endblock %}

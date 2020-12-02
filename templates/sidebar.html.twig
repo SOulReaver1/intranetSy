@@ -27,8 +27,7 @@
                         <span>My profile</span>
                     </a> #}
                     <div class="dropdown-divider"></div>
-                    <a href="{{ url('app_logout') }}" class="dropdown-item" onclick="event.preventDefault();
-                    document.getElementById('logout-form').submit();">
+                    <a href="{{ url('app_logout') }}" class="dropdown-item">
                         <i class="ni ni-user-run"></i>
                         <span>Logout</span>
                     </a>
@@ -58,7 +57,7 @@
                 {% if is_granted('ROLE_DEVELOPER') %}
                     <li class="nav-item">
                         <a class="nav-link" href="#navbar-developer" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-fais">
-                            <i class="fas fa-wifi text-blue"></i>
+                            <i class="fas fa-code text-danger"></i>
                             <span class="nav-link-text">Espace developpeur</span>
                         </a>
 
@@ -66,12 +65,12 @@
                             <ul class="nav nav-sm flex-column">
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{url("help_statut_index")}}">
-                                        Gérer les statut d'aide
+                                        Gérer les statuts d'aide
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{url("help_index")}}">
-                                        Voir les bugs
+                                        Voir les bugs signalés
                                     </a>
                                 </li>
                             </ul>
@@ -87,8 +86,8 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#navbar-provider" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-fais">
-                            <i class="fas fa-wifi text-blue"></i>
-                            <span class="nav-link-text">Les produits</span>
+                            <i class="fas fa-shower text-info"></i>
+                            <span class="nav-link-text">Gérer les produits</span>
                         </a>
 
                         <div class="collapse" id="navbar-provider">
@@ -100,12 +99,12 @@
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{url("provider_param_index")}}">
-                                        Grérer les paramètres
+                                        Gérer les paramètres
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{url("provider_product_index")}}">
-                                        Grérer les produits
+                                        Gérer les produits
                                     </a>
                                 </li>
                             </ul>
@@ -120,28 +119,27 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{url("customer_files_statut_index")}}">
                             <i class="fas fa-folder-open"></i>
-                            Gérer les statuts
+                            Gérer les statuts dossier
                         </a>
                     </li>
                 {% endif %}
                 {% if is_granted('ROLE_USER') %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{url("client_statut_index")}}">
-                                                        <i class="fas fa-folder-open"></i>
-
+                            <i class="fas fa-house-user text-success"></i>
                             Gérer les statuts client
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{url("client_statut_document_index")}}">
-                            <i class="fas fa-folder-open"></i>
+                            <i class="far fa-file-image text-warning"></i>
                             Gérer les documents
                         </a>
                     </li>
                 {% endif %}
                 <li class="nav-item">
                     <a class="nav-link" href="#navbar-ticket" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-fais">
-                        <i class="fas fa-wifi text-blue"></i>
+                        <i class="fas fa-ticket-alt text-secondary"></i>
                         <span class="nav-link-text">Les tickets</span>
                     </a>
 
@@ -154,13 +152,13 @@
                             </li>
                             {% if is_granted('ROLE_USER') %}
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{url("ticket_statut_index")}}">
-                                        Gérer les statuts
+                                    <a class="nav-link" href="{{url("ticket_new")}}">
+                                        Créer un ticket
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{url("ticket_new")}}">
-                                        Créer un ticket
+                                    <a class="nav-link" href="{{url("ticket_statut_index")}}">
+                                        Gérer les statuts
                                     </a>
                                 </li>
                             {% endif %}
@@ -170,7 +168,7 @@
                 {% if is_granted('ROLE_ALLOW_CREATE') %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{url('customer_files_new')}}">
-                            <i class="ni ni-fat-add text-danger"></i>
+                            <i class="fas fa-plus text-primary"></i>
                             Créer une fiche client
                         </a>
                     </li>
@@ -183,8 +181,8 @@
                 </li>
                 <li class="nav-item active">
                     <a class="nav-link" href="{{url('help_new')}}">
-                        <i class="ni ni-archive-2 text-info"></i>
-                        Signalé un bug
+                        <i class="fas fa-exclamation-triangle text-danger"></i>
+                        Signaler un bug
                     </a>
                 </li>
             </ul>

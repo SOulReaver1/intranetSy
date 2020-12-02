@@ -2,9 +2,10 @@
 
 {% block title %}CustomerFiles index{% endblock %}
 {% set title = "Les fiches clients" %}
+{% set datatable = true %}
 {% block header %}
     {% if is_granted('ROLE_ALLOW_CREATE') %}
-            <a class="btn btn-info" href="{{url('customer_files_new')}}">Ajouter une fiche client</a>
+            <a class="btn btn-primary" href="{{url('customer_files_new')}}">Ajouter une fiche client</a>
     {% endif %}
 {% endblock %}
 {% block body %}
@@ -59,16 +60,4 @@
         {% endfor %}
         </tbody>
     </table>
-{% endblock %}
-{% block javascripts %}
-    <script>
-        var tables = {};
-        $('.dt-table').each(function(){
-            tables[$(this).attr('id')] = $(this).DataTable({
-                responsive: true,
-                bInfo: false,
-                bLengthChange: false,
-            })
-        })
-    </script>
 {% endblock %}

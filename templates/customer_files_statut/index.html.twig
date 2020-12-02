@@ -3,7 +3,7 @@
 {% block title %}Gérer les statuts{% endblock %}
 {% set title = "Les statuts" %}
 {% block header %}
-    <a href="{{ path('customer_files_statut_new') }}" class="btn btn-info">Créer un statut</a>
+    <a href="{{ path('customer_files_statut_new') }}" class="btn btn-primary">Créer un statut</a>
 {% endblock %}
 {% block body %}
 
@@ -23,8 +23,8 @@
                 <td>{{ customer_files_statut.name }}</td>
                 <td>{{ customer_files_statut.createdAt ? customer_files_statut.createdAt|date('d-m-Y H:i:s') : '' }}</td>
                 <td>
-                    <a href="{{ path('customer_files_statut_show', {'id': customer_files_statut.id}) }}" class="btn btn-info">Voir</a>
-                    <a href="{{ path('customer_files_statut_edit', {'id': customer_files_statut.id}) }}" class="btn btn-info">Modifier</a>
+                    <a href="{{ path('customer_files_statut_show', {'id': customer_files_statut.id}) }}" class="btn btn-primary">Voir</a>
+                    <a href="{{ path('customer_files_statut_edit', {'id': customer_files_statut.id}) }}" class="btn btn-primary">Modifier</a>
                 </td>
             </tr>
         {% endfor %}

@@ -4,7 +4,7 @@
 {% set datatable = true %}
 {% set title = "Les statuts demande d'aide" %}
 {% block header %}
-    <a href="{{ path('help_statut_new') }}" class="btn btn-info">Ajouter un statut</a>
+    <a href="{{ path('help_statut_new') }}" class="btn btn-primary">Ajouter un statut</a>
 {% endblock %}
 {% block body %}
     <table id="statutTable" class="table w-100 dt-table responsive display nowrap">
@@ -21,8 +21,8 @@
                 <td>{{ help_statut.id }}</td>
                 <td>{{ help_statut.name }}</td>
                 <td>
-                    <a href="{{ path('help_statut_show', {'id': help_statut.id}) }}" class="btn btn-info">Regarder</a>
-                    <a href="{{ path('help_statut_edit', {'id': help_statut.id}) }}" class="btn btn-info">Modifier</a>
+                    <a href="{{ path('help_statut_show', {'id': help_statut.id}) }}" class="btn btn-primary">Regarder</a>
+                    <a href="{{ path('help_statut_edit', {'id': help_statut.id}) }}" class="btn btn-primary">Modifier</a>
                 </td>
             </tr>
         {% endfor %}

@@ -3,7 +3,7 @@
 {% block title %}CustomerSource index{% endblock %}
 {% set title = "Gérer les sources" %}
 {% block header %}
-    <a href="{{ path('customer_source_new') }}" class="btn btn-info">Ajouter une source</a>
+    <a href="{{ path('customer_source_new') }}" class="btn btn-primary">Ajouter une source</a>
 {% endblock %}
 {% block body %}
     <table id="usersTable" class="table w-100 dt-table responsive display nowrap">
@@ -22,8 +22,8 @@
                 <td>{{ customer_source.name }}</td>
                 <td>{{ customer_source.createdAt ? customer_source.createdAt|date('d-m-Y H:i:s') : '' }}</td>
                 <td>
-                    <a href="{{ path('customer_source_show', {'id': customer_source.id}) }}" class="btn btn-info">Voir</a>
-                    <a href="{{ path('customer_source_edit', {'id': customer_source.id}) }}" class="btn btn-info">Modifier</a>
+                    <a href="{{ path('customer_source_show', {'id': customer_source.id}) }}" class="btn btn-primary">Voir</a>
+                    <a href="{{ path('customer_source_edit', {'id': customer_source.id}) }}" class="btn btn-primary">Modifier</a>
                 </td>
             </tr>
         {% endfor %}

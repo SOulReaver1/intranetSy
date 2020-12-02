@@ -5,10 +5,15 @@ namespace App\Controller;
 use App\Entity\Help;
 use App\Form\HelpType;
 use App\Repository\HelpRepository;
+use App\Repository\UserRepository;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HelpController extends AbstractController
@@ -26,7 +31,7 @@ class HelpController extends AbstractController
     /**
      * @Route("/help/new", name="help_new", methods={"GET","POST"})
      */
-    public function new(Request $request): Response
+    public function new(Request $request, UserRepository $user, MailerInterface $mailer): Response
     {
         $help = new Help();
         $form = $this->createForm(HelpType::class, $help);
@@ -37,7 +42,16 @@ class HelpController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($help);
             $entityManager->flush();
-            $this->addFlash('success', 'Merci ! Le bug à bien été signaler au developer');  
+            $emails = ['pro.ilanjourno@gmail.com', 'ilan.journo555@gmail.com'];
+            $email = (new TemplatedEmail())
+            ->from(new Address('contact@lergonhome.fr', 'Intranet Lergon\'Home'))
+            ->to(...$emails)
+            ->priority(Email::PRIORITY_HIGH)
+            ->subject('Nouvelle demande d\'aide Intranet Lergon\'Home')
+            ->context(['help' => $help])
+            ->htmlTemplate('help/_email.html.twig');
+            $mailer->send($email);
+            $this->addFlash('success', 'Merci ! Votre bug à bien été signalé !');  
             return $this->redirectToRoute('default');
         }
 
