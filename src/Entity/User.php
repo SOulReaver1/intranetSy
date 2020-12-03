@@ -45,7 +45,7 @@ class User implements UserInterface
     private $username;
 
     /**
-     * @ORM\OneToMany(targetEntity=Ticket::class, mappedBy="creator_id")
+     * @ORM\OneToMany(targetEntity=Ticket::class, mappedBy="creator")
      */
     private $tickets;
 
@@ -53,11 +53,6 @@ class User implements UserInterface
      * @ORM\ManyToMany(targetEntity=Notification::class, mappedBy="users")
      */
     private $notifications;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=CustomerFiles::class, mappedBy="users_id")
-     */
-    private $customerFiles;
 
     /**
      * @ORM\OneToMany(targetEntity=Help::class, mappedBy="user_id")
@@ -73,6 +68,11 @@ class User implements UserInterface
      * @ORM\Column(type="boolean")
      */
     private $isVerified = false;
+
+    /**
+     * @ORM\OneToMany(targetEntity=CustomerFiles::class, mappedBy="installer")
+     */
+    private $customerFiles;
 
 
     public function __construct()
@@ -184,7 +184,7 @@ class User implements UserInterface
     {
         if (!$this->tickets->contains($ticket)) {
             $this->tickets[] = $ticket;
-            $ticket->setCreatorId($this);
+            $ticket->setCreator($this);
         }
 
         return $this;
@@ -195,8 +195,8 @@ class User implements UserInterface
         if ($this->tickets->contains($ticket)) {
             $this->tickets->removeElement($ticket);
             // set the owning side to null (unless already changed)
-            if ($ticket->getCreatorId() === $this) {
-                $ticket->setCreatorId(null);
+            if ($ticket->getCreator() === $this) {
+                $ticket->setCreator(null);
             }
         }
 
@@ -226,34 +226,6 @@ class User implements UserInterface
         if ($this->notifications->contains($notification)) {
             $this->notifications->removeElement($notification);
             $notification->removeUser($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|CustomerFiles[]
-     */
-    public function getCustomerFiles(): Collection
-    {
-        return $this->customerFiles;
-    }
-
-    public function addCustomerFile(CustomerFiles $customerFile): self
-    {
-        if (!$this->customerFiles->contains($customerFile)) {
-            $this->customerFiles[] = $customerFile;
-            $customerFile->addUsersId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCustomerFile(CustomerFiles $customerFile): self
-    {
-        if ($this->customerFiles->contains($customerFile)) {
-            $this->customerFiles->removeElement($customerFile);
-            $customerFile->removeUsersId($this);
         }
 
         return $this;
@@ -329,6 +301,37 @@ class User implements UserInterface
     public function setIsVerified(bool $isVerified): self
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CustomerFiles[]
+     */
+    public function getCustomerFiles(): Collection
+    {
+        return $this->customerFiles;
+    }
+
+    public function addCustomerFile(CustomerFiles $customerFile): self
+    {
+        if (!$this->customerFiles->contains($customerFile)) {
+            $this->customerFiles[] = $customerFile;
+            $customerFile->setInstaller($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCustomerFile(CustomerFiles $customerFile): self
+    {
+        if ($this->customerFiles->contains($customerFile)) {
+            $this->customerFiles->removeElement($customerFile);
+            // set the owning side to null (unless already changed)
+            if ($customerFile->getInstaller() === $this) {
+                $customerFile->setInstaller(null);
+            }
+        }
 
         return $this;
     }

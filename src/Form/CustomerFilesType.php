@@ -3,11 +3,15 @@
 namespace App\Form;
 
 use App\Entity\CustomerFiles;
+use App\Entity\User;
+use App\Repository\UserRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
@@ -21,38 +25,84 @@ class CustomerFilesType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('Sexe', ChoiceType::class, 
+            ->add('sexe', ChoiceType::class, 
             [
                 'choices' => 
                 [   'Monsieur' => 'Monsieur', 
                     'Madame' => 'Madame'
                 ], 
-                'row_attr' => ['class' => 'col-md-6'],
-                'expanded' => true, 
-                'label' => 'Sexe : <span class="text-danger">*</span>', 
-                'label_html' => true,
-                'required' => true
+                'row_attr' => ['class' => 'col'],
+                'required' => true,
+                'label' => 'Sexe : <span class="text-danger">*</span>',
+                'label_html' => true
             ])
-            ->add('Name', TextType::class, 
+            ->add('name', TextType::class, 
             [
                 'label' => 'Nom complet : <span class="text-danger">*</span>', 'label_html' => true, 
                 'required' => true,
+                'row_attr' => ['class' => 'col'],
+
+            ])
+            ->add('address', TextType::class, 
+            [
+                'attr' => [
+                    'onFocus' => 'geolocate()',
+                ],
+                'label' => 'Adresse :',
+                'row_attr' => ['class' => 'col'],
+                'attr' => [
+                    'disabled' => true
+                ]
+
+            ])
+            ->add('lat', HiddenType::class)
+            ->add('lng', HiddenType::class)
+            ->add('address_complement', TextType::class, 
+            [
+                'label' => 'Complement d\'adresse :',
                 'row_attr' => ['class' => 'col-md-6'],
 
             ])
-            ->add('Adresse', TextType::class, 
+            ->add('route_number', IntegerType::class, 
             [
-                'label' => 'Adresse :',
+                'label' => 'N° :',
+                'row_attr' => ['class' => 'col-md-2'],
+                'attr' => [
+                    'disabled' => true
+                ]
+
+            ])
+            ->add('state', TextType::class, 
+            [
+                'label' => 'Etat :',
                 'row_attr' => ['class' => 'col-md-6'],
+                'attr' => [
+                    'disabled' => true
+                ]
+
+            ])
+            ->add('country', TextType::class, 
+            [
+                'label' => 'Pays :',
+                'row_attr' => ['class' => 'col-md-6'],
+                'attr' => [
+                    'disabled' => true
+                ]
 
             ])
             ->add('city', TextType::class, [
                 'label' => 'Ville :',
                 'row_attr' => ['class' => 'col-md-6'],
+                'attr' => [
+                    'disabled' => true
+                ]
             ])
             ->add('zip_code', IntegerType::class, [
                 'label' => 'Code postal :',
                 'row_attr' => ['class' => 'col-md-6'],
+                'attr' => [
+                    'disabled' => true
+                ]
             ])
             ->add('home_phone', TelType::class, [
                 'label' => 'Téléphone fixe :',
@@ -91,11 +141,11 @@ class CustomerFilesType extends AbstractType
                 'label' => 'Devis annexe',
                 'row_attr' => ['class' => 'col-md-6'],
             ])
-            ->add('annex_quote_description', TextareaType::class, [
+            ->add('description', TextareaType::class, [
                 'label' => 'Description :',
                 'row_attr' => ['class' => 'col-md-6'],
             ])
-            ->add('annex_quote_commentary', TextareaType::class, [
+            ->add('commentary', TextareaType::class, [
                 'label' => 'Commentaire :',
                 'row_attr' => ['class' => 'col-md-6'],
             ])
@@ -105,17 +155,23 @@ class CustomerFilesType extends AbstractType
             ])
             ->add('customer_statut', null, [
                 'label' => 'Statut du dossier : ',
-                'row_attr' => ['class' => 'col-md-6'],
-            ])
-            ->add('users_id', null, [
-                'label' => 'Installateurs et assistantes sociales : ',
                 'row_attr' => ['class' => 'col'],
-                'attr' => ['class' => 'ui fluid dropdown']
             ])
             ->add('customer_source', null, [
                 'label' => 'La source : ',
                 'row_attr' => ['class' => 'col'],
                 'attr' => ['class' => 'ui fluid dropdown']
+            ])
+            ->add('installer', EntityType::class, [
+                'class' => User::class,
+                'query_builder' => function (UserRepository $user) {
+                    return $user->createQueryBuilder('u')
+                    ->orderBy('u.roles', 'ASC')
+                    ->where('u.roles LIKE :roles')
+                    ->setParameter('roles', '%"ROLE_INSTALLATEUR"%');
+                },
+                'label' => 'Installateur :',
+                'row_attr' => ['class' => 'col-md-6']
             ])
         ;
     }

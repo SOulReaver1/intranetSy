@@ -42,7 +42,9 @@ class HelpController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($help);
             $entityManager->flush();
-            $emails = ['pro.ilanjourno@gmail.com', 'ilan.journo555@gmail.com'];
+            $emails = [];
+            $devs = $user->findByRole('ROLE_DEVELOPER');
+            foreach($devs as $dev) $emails[] = new Address($dev->getEmail());
             $email = (new TemplatedEmail())
             ->from(new Address('contact@lergonhome.fr', 'Intranet Lergon\'Home'))
             ->to(...$emails)

@@ -25,7 +25,7 @@ class TicketStatut
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity=Ticket::class, mappedBy="statut_id")
+     * @ORM\OneToMany(targetEntity=Ticket::class, mappedBy="statut")
      */
     private $tickets;
 
@@ -68,7 +68,7 @@ class TicketStatut
     {
         if (!$this->tickets->contains($ticket)) {
             $this->tickets[] = $ticket;
-            $ticket->setStatutId($this);
+            $ticket->setStatut($this);
         }
 
         return $this;
@@ -79,8 +79,8 @@ class TicketStatut
         if ($this->tickets->contains($ticket)) {
             $this->tickets->removeElement($ticket);
             // set the owning side to null (unless already changed)
-            if ($ticket->getStatutId() === $this) {
-                $ticket->setStatutId(null);
+            if ($ticket->getStatut() === $this) {
+                $ticket->setStatut(null);
             }
         }
 

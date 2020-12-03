@@ -12,7 +12,8 @@
             <tr>
                 <th>Id</th>
                 <th>Nom</th>
-                <th>Créer</th>
+                <th>Couleur</th>
+                <th>Créer le</th>
                 <th width=10%>actions</th>
             </tr>
         </thead>
@@ -21,6 +22,7 @@
             <tr>
                 <td>{{ customer_files_statut.id }}</td>
                 <td>{{ customer_files_statut.name }}</td>
+                <td>{{ customer_files_statut.color }}</td>
                 <td>{{ customer_files_statut.createdAt ? customer_files_statut.createdAt|date('d-m-Y H:i:s') : '' }}</td>
                 <td>
                     <a href="{{ path('customer_files_statut_show', {'id': customer_files_statut.id}) }}" class="btn btn-primary">Voir</a>

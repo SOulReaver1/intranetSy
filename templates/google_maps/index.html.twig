@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello GoogleMapsController!{% endblock %}
+{% set title = "La carte" %}
+{% block stylesheets %}
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key={{google_maps_api_key}}&callback=initMap&libraries=&v=weekly"
+      defer
+    ></script>
+{% endblock %}
+{% block body %}
+    <div class="container-fluid">
+        <div id="map" style="height: 100vh"></div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    <script>
+        var map;
+        var geocoder;
+
+        function initMap() {
+            var latlng = new google.maps.LatLng(46.232192999999995, 2.209666999999996);
+            var mapOptions = {
+                zoom: 5,
+                center: latlng,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            }
+            map = new google.maps.Map(document.getElementById("map"), mapOptions);
+            fetch('/maps/addresses', {
+                method: 'POST'
+            }).then(response => response.json())
+            .then(addresses => {
+                geocoder = new google.maps.Geocoder();
+                for(var i = 0; i < addresses.length; i++){
+                    var address = addresses[i];
+                    geocoder.geocode({
+                        'address': address
+                    }, (result, status) => {
+                        if(status == google.maps.GeocoderStatus.OK){
+                            var marker = new google.maps.Marker({
+                                map: map,
+                                position: result[0].geometry.location
+                            })
+                            marker.addListener("click", toggleBounce(marker));
+                        }else{
+                            console.log(address)
+                        }
+                    })
+                }
+            })
+        }
+        
+        function toggleBounce(marker) {
+            if (marker.getAnimation() !== null) {
+                marker.setAnimation(null);
+            } else {
+                marker.setAnimation(google.maps.Animation.BOUNCE);
+            }
+        }
+    </script>
+{% endblock %}
+

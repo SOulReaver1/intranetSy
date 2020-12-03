@@ -17,17 +17,17 @@
             </tr>
         </thead>
         <tbody class="list">
-        {% for client_statut in client_statuts %}
-            <tr>
-                <td>{{ client_statut.id }}</td>
-                <td>{{ client_statut.name }}</td>
-                <td>{{ client_statut.createdAt ? client_statut.createdAt|date('d-m-Y H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('client_statut_show', {'id': client_statut.id}) }}" class="btn btn-primary">Regarder</a>
-                    <a href="{{ path('client_statut_edit', {'id': client_statut.id}) }}" class="btn btn-primary">Modifier</a>
-                </td>
-            </tr>
-        {% endfor %}
+            {% for client_statut in client_statuts %}
+                <tr>
+                    <td>{{ client_statut.id }}</td>
+                    <td>{{ client_statut.name }}</td>
+                    <td>{{ client_statut.createdAt ? client_statut.createdAt|date('d-m-Y H:i:s') : '' }}</td>
+                    <td>
+                        <a href="{{ path('client_statut_show', {'id': client_statut.id}) }}" class="btn btn-primary">Regarder</a>
+                        <a href="{{ path('client_statut_edit', {'id': client_statut.id}) }}" class="btn btn-primary">Modifier</a>
+                    </td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 {% endblock %}

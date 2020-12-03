@@ -17,7 +17,7 @@ class TicketType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('statut_id', EntityType::class, [
+            ->add('statut', EntityType::class, [
                 'class' => TicketStatut::class,
                 'label' => 'Choisir un statut : <span class="text-danger">*</span>',
                 'label_html' => true,

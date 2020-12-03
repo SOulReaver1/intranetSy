@@ -1,30 +1,56 @@
 {{ form_start(form) }}
     <div class="row">
-        {{form_row(form.users_id)}}
-    </div>
-    <hr>
-    <div class="row">
         {{form_row(form.customer_source)}}
+        {{form_row(form.installer)}}
     </div>
-    <hr>
+    <hr class="mt-2">
+    <h1 class="mb-4"><span class="text-underline">Information du client</span> :</h1>
     <div class="row">
-        {{form_row(form.Sexe)}}
-    </div>
-    <div class="row">
-        {{form_row(form.Name)}}
-        {{form_row(form.Adresse)}}
+        {{form_row(form.sexe)}}
     </div>
     <div class="row">
-        {{form_row(form.zip_code)}}
-        {{form_row(form.city)}}
+        {{form_row(form.name)}}
     </div>
-     <div class="row">
-        {{form_row(form.home_phone)}}
+    <div class="row">
         {{form_row(form.cellphone)}}
+        {{form_row(form.home_phone)}}
     </div>
-    <hr>
+    <div class="row">
+        <div class="col form-group">
+            <label class="form_control_label" for="autocomplete">Entrer une adresse :</label>
+            <input type="text" class="form-control" id="autocomplete">
+        </div>
+        {{form_row(form.address_complement)}}
+        {{form_row(form.lat, {id: 'lat'})}}
+        {{form_row(form.lng, {id: 'lng'})}}
+    </div>
+    <div class="row">
+        {{form_row(form.route_number, {id : 'street_number'})}}
+        {{form_row(form.address, {id : 'route'})}}
+    </div>
+    <div class="row">
+        {{form_row(form.city, {id: 'locality'})}}
+        {{form_row(form.zip_code, {id: 'postal_code'})}}
+    </div>
+    <div class="row">
+        {{form_row(form.state, {id: 'administrative_area_level_1'})}}
+        {{form_row(form.country, {id: 'country'})}}
+    </div>
     <div class="row">
         {{form_row(form.client_statut_id)}}
+    </div>
+    <hr class="mt-2">
+    <h1 class="mb-4"><span class="text-underline">Informations du référent</span> :</h1>
+    <div class="row">
+        {{form_row(form.referent_name)}}
+        {{form_row(form.referent_phone)}}
+    </div>
+    <div class="row">
+        {{form_row(form.referent_statut)}}
+    </div>
+    <hr class="mt-2">
+    <h1 class="mb-4"><span class="text-underline">Informations du dossier</span> : </h1>
+    <div class="row">
         {{form_row(form.customer_statut)}}
     </div>
     <div class="row">
@@ -33,24 +59,13 @@
     </div>
     <div class="row">
         {{form_row(form.stairs)}}
-    </div>
-    <hr>
-    <h1>Référent :</h1>
-    <div class="row">
-        {{form_row(form.referent_name)}}
-        {{form_row(form.referent_phone)}}
-    </div>
-    <div class="row">
-        {{form_row(form.referent_statut)}}
-    </div>
-    <hr>
-    <h1>Devis annexe :</h1>
-    <div class="row">
         {{form_row(form.annex_quote)}}
     </div>
+    <hr class="mt-2">
+    <h1 class="mb-4"><span class="text-underline">Informations complémentaire</span>:</h1>
     <div class="row">
-        {{form_row(form.annex_quote_description)}}
-        {{form_row(form.annex_quote_commentary)}}
+        {{form_row(form.description)}}
+        {{form_row(form.commentary)}}
     </div>
     <button class="btn btn-success">{{ button_label|default('Enregistrer') }}</button>
 {{ form_end(form) }}

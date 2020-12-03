@@ -22,30 +22,30 @@ class CustomerFiles
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $Sexe;
+    private $sexe;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $Name;
+    private $name;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $Adresse;
+    private $address;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $city;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $zip_code;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $home_phone;
 
@@ -55,7 +55,7 @@ class CustomerFiles
     private $cellphone;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $referent_name;
 
@@ -75,17 +75,12 @@ class CustomerFiles
     private $customer_statut;
 
     /**
-     * @ORM\ManyToMany(targetEntity=User::class, inversedBy="customerFiles")
-     */
-    private $users_id;
-
-    /**
      * @ORM\ManyToOne(targetEntity=ClientStatut::class, inversedBy="customerFiles")
      */
     private $client_statut_id;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     private $stairs;
 
@@ -100,19 +95,19 @@ class CustomerFiles
     private $password_al;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     private $annex_quote;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $annex_quote_description;
+    private $description;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $annex_quote_commentary;
+    private $commentary;
 
     /**
      * @ORM\OneToMany(targetEntity=Files::class, mappedBy="customerFiles")
@@ -129,9 +124,53 @@ class CustomerFiles
      */
     private $tickets;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $route_number;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $state;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $country;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $address_complement;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $lng;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $lat;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $created_at;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updated_at;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="customerFiles")
+     */
+    private $installer;
+
     public function __construct()
     {
-        $this->users_id = new ArrayCollection();
         $this->files_id = new ArrayCollection();
         $this->tickets = new ArrayCollection();
     }
@@ -148,36 +187,36 @@ class CustomerFiles
 
     public function getSexe(): ?string
     {
-        return $this->Sexe;
+        return $this->sexe;
     }
 
-    public function setSexe(string $Sexe): self
+    public function setSexe(string $sexe): self
     {
-        $this->Sexe = $Sexe;
+        $this->sexe = $sexe;
 
         return $this;
     }
 
     public function getName(): ?string
     {
-        return $this->Name;
+        return $this->name;
     }
 
-    public function setName(string $Name): self
+    public function setName(string $name): self
     {
-        $this->Name = $Name;
+        $this->name = $name;
 
         return $this;
     }
 
-    public function getAdresse(): ?string
+    public function getAddress(): ?string
     {
-        return $this->Adresse;
+        return $this->address;
     }
 
-    public function setAdresse(string $Adresse): self
+    public function setAddress(string $address): self
     {
-        $this->Adresse = $Adresse;
+        $this->address = $address;
 
         return $this;
     }
@@ -278,32 +317,6 @@ class CustomerFiles
         return $this;
     }
 
-    /**
-     * @return Collection|User[]
-     */
-    public function getUsersId(): Collection
-    {
-        return $this->users_id;
-    }
-
-    public function addUsersId(User $usersId): self
-    {
-        if (!$this->users_id->contains($usersId)) {
-            $this->users_id[] = $usersId;
-        }
-
-        return $this;
-    }
-
-    public function removeUsersId(User $usersId): self
-    {
-        if ($this->users_id->contains($usersId)) {
-            $this->users_id->removeElement($usersId);
-        }
-
-        return $this;
-    }
-
     public function getClientStatutId(): ?ClientStatut
     {
         return $this->client_statut_id;
@@ -364,26 +377,26 @@ class CustomerFiles
         return $this;
     }
 
-    public function getAnnexQuoteDescription(): ?string
+    public function getDescription(): ?string
     {
-        return $this->annex_quote_description;
+        return $this->description;
     }
 
-    public function setAnnexQuoteDescription(?string $annex_quote_description): self
+    public function setAnnexQuoteDescription(?string $description): self
     {
-        $this->annex_quote_description = $annex_quote_description;
+        $this->description = $description;
 
         return $this;
     }
 
-    public function getAnnexQuoteCommentary(): ?string
+    public function getCommentary(): ?string
     {
-        return $this->annex_quote_commentary;
+        return $this->commentary;
     }
 
-    public function setAnnexQuoteCommentary(?string $annex_quote_commentary): self
+    public function setCommentary(?string $commentary): self
     {
-        $this->annex_quote_commentary = $annex_quote_commentary;
+        $this->commentary = $commentary;
 
         return $this;
     }
@@ -458,6 +471,114 @@ class CustomerFiles
                 $ticket->setCustomerFile(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getRouteNumber(): ?int
+    {
+        return $this->route_number;
+    }
+
+    public function setRouteNumber(int $route_number): self
+    {
+        $this->route_number = $route_number;
+
+        return $this;
+    }
+
+    public function getState(): ?string
+    {
+        return $this->state;
+    }
+
+    public function setState(string $state): self
+    {
+        $this->state = $state;
+
+        return $this;
+    }
+
+    public function getCountry(): ?string
+    {
+        return $this->country;
+    }
+
+    public function setCountry(string $country): self
+    {
+        $this->country = $country;
+
+        return $this;
+    }
+
+    public function getAddressComplement(): ?string
+    {
+        return $this->address_complement;
+    }
+
+    public function setAddressComplement(?string $address_complement): self
+    {
+        $this->address_complement = $address_complement;
+
+        return $this;
+    }
+
+    public function getLng(): ?float
+    {
+        return $this->lng;
+    }
+
+    public function setLng(?float $lng): self
+    {
+        $this->lng = $lng;
+
+        return $this;
+    }
+
+    public function getLat(): ?float
+    {
+        return $this->lat;
+    }
+
+    public function setLat(float $lat): self
+    {
+        $this->lat = $lat;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $created_at): self
+    {
+        $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updated_at): self
+    {
+        $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    public function getInstaller(): ?User
+    {
+        return $this->installer;
+    }
+
+    public function setInstaller(?User $installer): self
+    {
+        $this->installer = $installer;
 
         return $this;
     }

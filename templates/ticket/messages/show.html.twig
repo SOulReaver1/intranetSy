@@ -32,3 +32,13 @@
         </div>  
     </div>
 {% endblock %}
+<!-- {% block javascripts %}
+    <script>
+        const url = new URL('https://localhost::2019/.well-known/mercure');
+        url.searchParams.append('topic', 'https://localhost::2019/hub');
+
+        const eventSource = new EventSource(url);
+
+        eventSource.onmessage = e => console.log(e);
+    </script>
+{% endblock javascripts %} -->

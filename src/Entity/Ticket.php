@@ -25,7 +25,7 @@ class Ticket
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="tickets")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $creator_id;
+    private $creator;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -41,7 +41,7 @@ class Ticket
      * @ORM\ManyToOne(targetEntity=TicketStatut::class, inversedBy="tickets")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $statut_id;
+    private $statut;
 
     /**
      * @ORM\Column(type="datetime")
@@ -92,14 +92,14 @@ class Ticket
         return $this->id;
     }
 
-    public function getCreatorId(): ?User
+    public function getCreator(): ?User
     {
-        return $this->creator_id;
+        return $this->creator;
     }
 
-    public function setCreatorId(?User $creator_id): self
+    public function setCreator(?User $creator): self
     {
-        $this->creator_id = $creator_id;
+        $this->creator = $creator;
 
         return $this;
     }
@@ -128,14 +128,14 @@ class Ticket
         return $this;
     }
 
-    public function getStatutId(): ?TicketStatut
+    public function getStatut(): ?TicketStatut
     {
-        return $this->statut_id;
+        return $this->statut;
     }
 
-    public function setStatutId(?TicketStatut $statut_id): self
+    public function setStatut(?TicketStatut $statut): self
     {
-        $this->statut_id = $statut_id;
+        $this->statut = $statut;
 
         return $this;
     }
