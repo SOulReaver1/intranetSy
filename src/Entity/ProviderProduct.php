@@ -46,9 +46,15 @@ class ProviderProduct
      */
     private $params;
 
+    /**
+     * @ORM\OneToMany(targetEntity=CustomerFiles::class, mappedBy="product")
+     */
+    private $customerFiles;
+
     public function __construct()
     {
         $this->params = new ArrayCollection();
+        $this->customerFiles = new ArrayCollection();
     }
 
     public function __toString()
@@ -146,6 +152,37 @@ class ProviderProduct
     {
         if ($this->params->contains($param)) {
             $this->params->removeElement($param);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CustomerFiles[]
+     */
+    public function getCustomerFiles(): Collection
+    {
+        return $this->customerFiles;
+    }
+
+    public function addCustomerFile(CustomerFiles $customerFile): self
+    {
+        if (!$this->customerFiles->contains($customerFile)) {
+            $this->customerFiles[] = $customerFile;
+            $customerFile->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCustomerFile(CustomerFiles $customerFile): self
+    {
+        if ($this->customerFiles->contains($customerFile)) {
+            $this->customerFiles->removeElement($customerFile);
+            // set the owning side to null (unless already changed)
+            if ($customerFile->getProduct() === $this) {
+                $customerFile->setProduct(null);
+            }
         }
 
         return $this;

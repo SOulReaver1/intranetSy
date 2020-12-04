@@ -2,6 +2,7 @@
 
 {% block title %}Gérer les statuts{% endblock %}
 {% set title = "Les statuts" %}
+{% set datatable = true %}
 {% block header %}
     <a href="{{ path('customer_files_statut_new') }}" class="btn btn-primary">Créer un statut</a>
 {% endblock %}
@@ -22,7 +23,7 @@
             <tr>
                 <td>{{ customer_files_statut.id }}</td>
                 <td>{{ customer_files_statut.name }}</td>
-                <td>{{ customer_files_statut.color }}</td>
+                <td><span class="badge" style="background-color: {{ customer_files_statut.color }}">{{ customer_files_statut.color }}</span></td>
                 <td>{{ customer_files_statut.createdAt ? customer_files_statut.createdAt|date('d-m-Y H:i:s') : '' }}</td>
                 <td>
                     <a href="{{ path('customer_files_statut_show', {'id': customer_files_statut.id}) }}" class="btn btn-primary">Voir</a>
@@ -32,16 +33,4 @@
         {% endfor %}
         </tbody>
     </table>
-{% endblock %}
-{% block javascripts %}
-    <script>
-        var tables = {};
-        $('.dt-table').each(function(){
-            tables[$(this).attr('id')] = $(this).DataTable({
-                responsive: true,
-                bInfo: false,
-                bLengthChange: false,
-            })
-        })
-    </script>
 {% endblock %}

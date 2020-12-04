@@ -169,6 +169,11 @@ class CustomerFiles
      */
     private $installer;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=ProviderProduct::class, inversedBy="customerFiles")
+     */
+    private $product;
+
     public function __construct()
     {
         $this->files_id = new ArrayCollection();
@@ -579,6 +584,18 @@ class CustomerFiles
     public function setInstaller(?User $installer): self
     {
         $this->installer = $installer;
+
+        return $this;
+    }
+
+    public function getProduct(): ?ProviderProduct
+    {
+        return $this->product;
+    }
+
+    public function setProduct(?ProviderProduct $product): self
+    {
+        $this->product = $product;
 
         return $this;
     }

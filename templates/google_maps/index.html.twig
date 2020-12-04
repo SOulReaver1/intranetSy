@@ -2,6 +2,7 @@
 
 {% block title %}Hello GoogleMapsController!{% endblock %}
 {% set title = "La carte" %}
+{% set datatable = true %}
 {% block stylesheets %}
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <script
@@ -12,6 +13,30 @@
 {% block body %}
     <div class="container-fluid">
         <div id="map" style="height: 100vh"></div>
+        <hr class="mt-5">
+        <h1>Légende :</h1>
+        <table id="legendTable" class="table w-100 dt-table responsive display nowrap">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Couleur</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for statut in statuts %}
+                <tr>
+                    <td>
+                        {{statut.name}}
+                    </td>
+                    <td>
+                        <span class="badge" style="background-color: {{statut.color}}">
+                        {{statut.color}}
+                        </span>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endblock %}
 {% block javascripts %}

@@ -49,6 +49,27 @@
         {{form_row(form.referent_statut)}}
     </div>
     <hr class="mt-2">
+    <h1 class="mb-4"><span class="text-underline">Informations du produit</span> : </h1>
+    <div class="row">
+        <div class="col form-group">
+            <label class="form-control-label" for="providers">Choisir un fournisseur :</label>
+            <select class="form-control" id="providers">
+                <option value="">Aucun fournisseur</option>
+                {% for provider in providers %}
+                    <option value="{{provider.id}}">{{provider.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 form-group" id="providerParamsParent" style="display: none">
+            <label class="form-control-label" for="providerParams">Les paramètres</label>
+            <select class="form-control ui fluid dropdown" id="providerParams" multiple="true">
+            </select>
+        </div>
+        {{form_row(form.product, {id: 'providerProducts'})}}
+    </div>
+    <hr class="mt-2">
     <h1 class="mb-4"><span class="text-underline">Informations du dossier</span> : </h1>
     <div class="row">
         {{form_row(form.customer_statut)}}

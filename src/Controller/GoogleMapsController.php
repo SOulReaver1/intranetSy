@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\CustomerFilesStatutRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\BrowserKit\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -12,10 +13,10 @@ class GoogleMapsController extends AbstractController
     /**
      * @Route("/maps", name="google_maps")
      */
-    public function index()
+    public function index(CustomerFilesStatutRepository $statut)
     {
         return $this->render('google_maps/index.html.twig', [
-            'addresses' => ['3 rue René Boulanger', '18 rue de la tuilerie']
+            'statuts' => $statut->findAll()
         ]);
     }
 

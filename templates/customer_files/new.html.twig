@@ -10,8 +10,57 @@
     {{ include('customer_files/_form.html.twig') }}
 {% endblock %}
 {% block stylesheets %}
-        <!-- <link href="{{asset('assets/js/plugins/semantic/semantic.min.css')}}" rel="stylesheet"> -->
-        <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <link href="{{asset('assets/js/plugins/semantic/semantic.min.css')}}" rel="stylesheet">
+{% endblock %}
+{% block javascripts %}
+    <script src="{{asset('assets/js/plugins/semantic/semantic.js')}}"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script>
+        const provider = document.getElementById('providers');
+        provider.addEventListener('change', evt => {
+            fetch(`/getProviderParams/${evt.target.value}`, {
+                method: 'POST'
+            }).then(response => response.json())
+            .then(data => {
+                if(data){
+                    document.getElementById('providerParamsParent').style.display = "block";
+                    const providerParams = document.getElementById('providerParams');
+                    for(const [key, value] of Object.entries(data)){
+                        const option = document.createElement('option');
+                        option.value = key;
+                        option.append(value);
+                        providerParams.append(option);
+                    }
+                }
+            })
+        });
+        $('#providerParams').dropdown({
+            onChange: (array, id, val) => {
+              console.log(array)
+                if(array){
+                  fetch(`/getProviderProducts/${provider.value}`, {
+                    method: 'POST',
+                    "Content-Type": "application/json",
+                    body: JSON.stringify({data: array})
+                  }).then(response => response.json())
+                  .then(data => {
+                    if(data){
+                      console.log(data)
+                      document.getElementById('providerProductsParent').style.display = "block";
+                      const providerProducts = document.getElementById('providerProducts')
+                      providerProducts.innerHTML = '';
+                      for(const [key, value] of Object.entries(data)){
+                        const option = document.createElement('option');
+                        option.value = key;
+                        option.append(value);
+                        providerProducts.append(option);
+                      }
+                    }
+                  })
+                }
+            }
+        });
+    </script>
     <script
       src="https://maps.googleapis.com/maps/api/js?key={{google_maps_api_key}}&callback=initAutocomplete&libraries=places&v=weekly"
       defer

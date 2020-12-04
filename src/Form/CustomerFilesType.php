@@ -2,7 +2,11 @@
 
 namespace App\Form;
 
+use App\Entity\ClientStatut;
 use App\Entity\CustomerFiles;
+use App\Entity\CustomerFilesStatut;
+use App\Entity\CustomerSource;
+use App\Entity\ProviderProduct;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -149,21 +153,25 @@ class CustomerFilesType extends AbstractType
                 'label' => 'Commentaire :',
                 'row_attr' => ['class' => 'col-md-6'],
             ])
-            ->add('client_statut_id', null, [
+            ->add('client_statut_id', EntityType::class, [
+                'class' => ClientStatut::class,
                 'label' => 'Statut du client : ',
                 'row_attr' => ['class' => 'col-md-6'],
             ])
-            ->add('customer_statut', null, [
+            ->add('customer_statut', EntityType::class, [
+                'class' => CustomerFilesStatut::class,
                 'label' => 'Statut du dossier : ',
                 'row_attr' => ['class' => 'col'],
             ])
-            ->add('customer_source', null, [
+            ->add('customer_source', EntityType::class, [
+                'class' => CustomerSource::class,
                 'label' => 'La source : ',
                 'row_attr' => ['class' => 'col'],
                 'attr' => ['class' => 'ui fluid dropdown']
             ])
             ->add('installer', EntityType::class, [
                 'class' => User::class,
+                'placeholder' => 'Aucun installateur',
                 'query_builder' => function (UserRepository $user) {
                     return $user->createQueryBuilder('u')
                     ->orderBy('u.roles', 'ASC')
@@ -172,6 +180,11 @@ class CustomerFilesType extends AbstractType
                 },
                 'label' => 'Installateur :',
                 'row_attr' => ['class' => 'col-md-6']
+            ])
+            ->add('product', EntityType::class, [
+                'label' => 'Le produit :',
+                'class' => ProviderProduct::class,
+                'row_attr' => ['id' => 'providerProductsParent', 'class' => 'col-md-6', 'style' => 'display: none']
             ])
         ;
     }

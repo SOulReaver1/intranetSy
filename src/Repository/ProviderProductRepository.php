@@ -19,22 +19,20 @@ class ProviderProductRepository extends ServiceEntityRepository
         parent::__construct($registry, ProviderProduct::class);
     }
 
-    // /**
-    //  * @return ProviderProduct[] Returns an array of ProviderProduct objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
+    /**
+      * @return ProviderProduct[] Returns an array of ProviderProduct objects
     */
+    public function findByProductParam($params, $provider)
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "SELECT provider_product.id, provider_product.name from provider_product inner join provider_product_provider_param pa on pa.provider_product_id = provider_product.id where provider_product.provider_id = :providerId AND pa.provider_param_id in (:val)";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([
+            'val' => implode(', ', $params),
+            "providerId" => $provider
+        ]);
+        return $stmt->fetchAll();
+    }
 
     /*
     public function findOneBySomeField($value): ?ProviderProduct

@@ -3,6 +3,7 @@ security:
         ROLE_USER: ROLE_ALLOW_CREATE
         ROLE_ADMIN: [ROLE_USER, ROLE_ALLOW_CREATE]
         ROLE_SUPERADMIN: ROLE_ADMIN
+        ROLE_DEVELOPER: ROLE_SUPERADMIN
     encoders:
         App\Entity\User:
             algorithm: auto
@@ -44,5 +45,5 @@ security:
         - { path: ^/admin, roles: ROLE_SUPERADMIN }
         - { path: ^/dev, roles: ROLE_DEVELOPER }
         - { path: ^/login, roles: PUBLIC_ACCESS }
-        - { path: ^/, roles: [ROLE_USER, ROLE_INSTALLATEUR] }
+        - { path: ^/, roles: IS_AUTHENTICATED_FULLY}
 
