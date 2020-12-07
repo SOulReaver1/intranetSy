@@ -1,88 +1,150 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}CustomerFiles{% endblock %}
-{% set title = customer_file.Name %}
+{% set title = customer_file.name %}
 {% block header %}
     <a href="{{ path('default') }}" class="btn btn-primary">Retour</a>
 {% endblock %}
 {% block body %}
-
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ customer_file.id }}</td>
-            </tr>
-            <tr>
-                <th>Sexe</th>
-                <td>{{ customer_file.Sexe }}</td>
-            </tr>
-            <tr>
-                <th>Name</th>
-                <td>{{ customer_file.Name }}</td>
-            </tr>
-            <tr>
-                <th>Adresse</th>
-                <td>{{ customer_file.Adresse }}</td>
-            </tr>
-            <tr>
-                <th>City</th>
-                <td>{{ customer_file.city }}</td>
-            </tr>
-            <tr>
-                <th>Zip_code</th>
-                <td>{{ customer_file.zipCode }}</td>
-            </tr>
-            <tr>
-                <th>Home_phone</th>
-                <td>{{ customer_file.homePhone }}</td>
-            </tr>
-            <tr>
-                <th>Cellphone</th>
-                <td>{{ customer_file.cellphone }}</td>
-            </tr>
-            <tr>
-                <th>Referent_name</th>
-                <td>{{ customer_file.referentName }}</td>
-            </tr>
-            <tr>
-                <th>Referent_phone</th>
-                <td>{{ customer_file.referentPhone }}</td>
-            </tr>
-            <tr>
-                <th>Referent_statut</th>
-                <td>{{ customer_file.referentStatut }}</td>
-            </tr>
-            <tr>
-                <th>Stairs</th>
-                <td>{{ customer_file.stairs ? 'Yes' : 'No' }}</td>
-            </tr>
-            <tr>
-                <th>Mail_al</th>
-                <td>{{ customer_file.mailAl }}</td>
-            </tr>
-            <tr>
-                <th>Password_al</th>
-                <td>{{ customer_file.passwordAl }}</td>
-            </tr>
-            <tr>
-                <th>Annex_quote</th>
-                <td>{{ customer_file.annexQuote ? 'Yes' : 'No' }}</td>
-            </tr>
-            <tr>
-                <th>Annex_quote_description</th>
-                <td>{{ customer_file.annexQuoteDescription }}</td>
-            </tr>
-            <tr>
-                <th>Annex_quote_commentary</th>
-                <td>{{ customer_file.annexQuoteCommentary }}</td>
-            </tr>
-        </tbody>
-    </table>
-
+    <div class="row">
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">La source :</label>
+            <p class="form-control">{{customer_file.customerSource ?? 'Aucune source'}}</p>
+        </div>
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Installateur :</label>
+            <p class="form-control">{{customer_file.installer ?? 'Aucun installateur'}}</p>
+        </div>
+    </div>
+    <hr class="mt-2">
+    <h1 class="mb-4"><span class="text-underline">Information du client</span> :</h1>
+    <div class="row">
+        <div class="col form-group">
+            <label class="form-control-label">Sexe :</label>
+            <p class="form-control">{{customer_file.sexe}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col form-group">
+            <label class="form-control-label">Nom complet :</label>
+            <p class="form-control">{{customer_file.name}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Téléphone portable :</label>
+            <p class="form-control">{{customer_file.cellphone}}</p>
+        </div>
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Téléphone fixe :</label>
+            <p class="form-control">{{customer_file.homePhone}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 form-group">
+            <label class="form-control-label">N° :</label>
+            <p class="form-control">{{customer_file.routeNumber}}</p>
+        </div>
+        <div class="col form-group">
+            <label class="form-control-label">Adresse :</label>
+            <p class="form-control">{{customer_file.address}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Ville :</label>
+            <p class="form-control">{{customer_file.city}}</p>
+        </div>
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Adresse :</label>
+            <p class="form-control">{{customer_file.zipCode}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Etat :</label>
+            <p class="form-control">{{customer_file.state}}</p>
+        </div>
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Pays :</label>
+            <p class="form-control">{{customer_file.country}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col form-group">
+            <label class="form-control-label">Statut du client :</label>
+            <p class="form-control">{{customer_file.clientStatutId ?? 'Aucun statut client'}}</p>
+        </div>
+    </div>
+    <hr class="mt-2">
+    <h1 class="mb-4"><span class="text-underline">Informations du référent</span> :</h1>
+    <div class="row">
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Nom complet :</label>
+            <p class="form-control">{{customer_file.referentName}}</p>
+        </div>
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Téléphone :</label>
+            <p class="form-control">{{customer_file.referentPhone}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col form-group">
+            <label class="form-control-label">Etat matrimonial :</label>
+            <p class="form-control">{{customer_file.referentStatut}}</p>
+        </div>
+    </div>
+    <hr class="mt-2">
+    <h1 class="mb-4"><span class="text-underline">Informations du produit</span> : </h1>
+    <div class="row">
+        <div class="col form-group">
+            <label class="form-control-label">Produit :</label>
+            <p class="form-control">{{customer_file.product}}</p>
+        </div>
+    </div>
+    <hr class="mt-2">
+    <h1 class="mb-4"><span class="text-underline">Informations du dossier</span> : </h1>
+    <div class="row">
+        <div class="col form-group">
+            <label class="form-control-label">Statut du dossier :</label>
+            <p class="form-control">{{customer_file.customerStatut ?? 'Aucun statut de dossier'}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Mail AL :</label>
+            <p class="form-control">{{customer_file.mailAl}}</p>
+        </div>
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Mot de passe AL :</label>
+            <p class="form-control">{{customer_file.passwordAl}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Escalier :</label>
+            <p class="form-control">{{customer_file.stairs ? 'Oui' : 'Non'}}</p>
+        </div>
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Devis annexe :</label>
+            <p class="form-control">{{customer_file.annexQuote ? 'Oui' : 'Non'}}</p>
+        </div>
+    </div>
+    <hr class="mt-2">
+    <h1 class="mb-4"><span class="text-underline">Informations complémentaire</span>:</h1>
+    <div class="row">
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Description :</label>
+            <p class="form-control">{{customer_file.description}}</p>
+        </div>
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Commentaire :</label>
+            <p class="form-control">{{customer_file.commentary}}</p>
+        </div>
+    </div>
     <div class="col mt-4">
         <div class="row">
-            <a href="{{ path('customer_files_edit', {'id': customer_file.id}) }}">Modifier</a>
+            <a href="{{ path('customer_files_edit', {'id': customer_file.id}) }}" class="btn btn-primary">Modifier</a>
 
             {{ include('customer_files/_delete_form.html.twig') }}
         </div>

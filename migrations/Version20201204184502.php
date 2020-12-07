@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20201203152023 extends AbstractMigration
+final class Version20201204184502 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -20,12 +20,12 @@ final class Version20201203152023 extends AbstractMigration
     public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE customer_files ADD route_number INT NOT NULL, ADD state VARCHAR(255) NOT NULL, ADD country VARCHAR(255) NOT NULL');
+        $this->addSql('DROP INDEX UNIQ_E7301A07665648E9 ON customer_files_statut');
     }
 
     public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE customer_files DROP route_number, DROP state, DROP country');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_E7301A07665648E9 ON customer_files_statut (color)');
     }
 }

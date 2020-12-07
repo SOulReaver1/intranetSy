@@ -6,6 +6,7 @@ use App\Entity\CustomerFiles;
 use App\Entity\Provider;
 use App\Entity\ProviderProduct;
 use App\Form\CustomerFilesType;
+use App\Form\UpdateCustomerFileType;
 use App\Repository\CustomerFilesRepository;
 use App\Repository\ProviderProductRepository;
 use App\Repository\ProviderRepository;
@@ -59,26 +60,27 @@ class CustomerFilesController extends AbstractController
     /**
      * @Route("/getProviderParams/{id}", name="customer_files_get_provider_params", methods={"POST"}, requirements={"id":"\d+"})
     */
-    public function getProviderParams(Request $request, Provider $provider): object {
-        $parameters = [];
-        foreach($provider->getProviderProducts() as $value){
-            foreach($value->getParams() as $param){
-                $parameters[$param->getId()] = $param->getName();
-            }
-        }
-        return new JsonResponse(array_unique($parameters));
+    public function getProviderParams(Request $request, Provider $provider, CustomerFilesRepository $repository): object {
+        return new JsonResponse($repository->getProviderParams($provider));
     }
 
     /**
      * @Route("/getProviderProducts/{id}", name="customer_files_products", methods={"POST"}, requirements={"id":"\d+"})
     */
-    public function getProductsProvider(Request $request, Provider $provider, ProviderProductRepository $product): object {
-        $content = json_decode($request->getContent(), true)['data'];
-        $products = [];
-        foreach($product->findByProductParam($content, $provider->getId()) as $value){
-            $products[$value['id']] = $value['name'];
+    public function getProductsProvider(Request $request, Provider $provider, ProviderProductRepository $productsRepository): object {
+        $params = json_decode($request->getContent(), true)['data'];
+        $products = $productsRepository->findBy(['provider' => $provider]);
+        $productParams = [];
+        $result = [];
+        foreach($products as $product){
+            foreach($product->getParams() as $param){
+                $productParams[$product->getId()][] = $param->getId();
+            }
+            if(array_diff($productParams[$product->getId()], $params) === array_diff($params, $productParams[$product->getId()])){
+                $result[$product->getId()] = $product->getName();
+            }
         }
-        return new JsonResponse($products);
+        return new JsonResponse($result);
     }
 
 
@@ -95,9 +97,9 @@ class CustomerFilesController extends AbstractController
     /**
      * @Route("/{id}/edit", name="customer_files_edit", methods={"GET","POST"})
      */
-    public function edit(Request $request, CustomerFiles $customerFile): Response
+    public function edit(Request $request, CustomerFiles $customerFile, ProviderRepository $provider, CustomerFilesRepository $repository): Response
     {
-        $form = $this->createForm(CustomerFilesType::class, $customerFile);
+        $form = $this->createForm(UpdateCustomerFileType::class, $customerFile);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -109,6 +111,8 @@ class CustomerFilesController extends AbstractController
         return $this->render('customer_files/edit.html.twig', [
             'customer_file' => $customerFile,
             'form' => $form->createView(),
+            'providers' => $provider->findAll(),
+            'params' => $repository->getProviderParams($customerFile->getProduct()->getProvider())
         ]);
     }
 

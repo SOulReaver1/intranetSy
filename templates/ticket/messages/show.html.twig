@@ -4,6 +4,7 @@
 {% set title = ticket.title %}
 {% block header %}
      <a href="{{ path('ticket_index') }}" class="btn btn-primary">Retour</a>
+     <div class="row justify-content-start">
 {% endblock %}
 {% block body %}
     <div class="row px-lg-2 px-2">
@@ -32,13 +33,4 @@
         </div>  
     </div>
 {% endblock %}
-<!-- {% block javascripts %}
-    <script>
-        const url = new URL('https://localhost::2019/.well-known/mercure');
-        url.searchParams.append('topic', 'https://localhost::2019/hub');
 
-        const eventSource = new EventSource(url);
-
-        eventSource.onmessage = e => console.log(e);
-    </script>
-{% endblock javascripts %} -->

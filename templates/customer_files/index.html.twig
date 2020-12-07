@@ -15,45 +15,20 @@
                 <th>#</th>
                 <th>Genre</th>
                 <th>Nom</th>
-                <th>Numero de rue</th>
                 <th>Adresse</th>
-                <th>Ville</th>
-                <th>Code postal</th>
-                <th>Téléphone fixe</th>
-                <th>Téléphone portable</th>
-                <th>Nom du référent</th>
-                <th>Téléphone du référent</th>
-                <th>Etat matrimonial</th>
-                <th>Escalier</th>
-                <th>eMail AL</th>
-                <th>actions</th>
-                <th>actions</th>
-                <th>actions</th>
+                <th width="5%">Actions</th>
             </tr>
         </thead>
         <tbody class="list">
         {% for customer_file in customer_files %}
             <tr>
                 <td>{{ customer_file.id }}</td>
-                <td>{{ customer_file.Sexe }}</td>
-                <td>{{ customer_file.Name }}</td>
-                <td>{{ customer_file.Adresse }}</td>
-                <td>{{ customer_file.city }}</td>
-                <td>{{ customer_file.zipCode }}</td>
-                <td>{{ customer_file.homePhone }}</td>
-                <td>{{ customer_file.cellphone }}</td>
-                <td>{{ customer_file.referentName }}</td>
-                <td>{{ customer_file.referentPhone }}</td>
-                <td>{{ customer_file.referentStatut }}</td>
-                <td>{{ customer_file.stairs ? 'Yes' : 'No' }}</td>
-                <td>{{ customer_file.mailAl }}</td>
-                <td>{{ customer_file.passwordAl }}</td>
-                <td>{{ customer_file.annexQuote ? 'Yes' : 'No' }}</td>
-                <td>{{ customer_file.annexQuoteDescription }}</td>
-                <td>{{ customer_file.annexQuoteCommentary }}</td>
+                <td>{{ customer_file.sexe }}</td>
+                <td>{{ customer_file.name }}</td>
+                <td>{{ customer_file.address }}</td>
                 <td>
-                    <a href="{{ path('customer_files_show', {'id': customer_file.id}) }}">show</a>
-                    <a href="{{ path('customer_files_edit', {'id': customer_file.id}) }}">edit</a>
+                    <a href="{{ path('customer_files_show', {'id': customer_file.id}) }}" class="btn btn-primary">Regarder</a>
+                    <a href="{{ path('customer_files_edit', {'id': customer_file.id}) }}" class="btn btn-primary">Modifier</a>
                 </td>
             </tr>
         {% endfor %}

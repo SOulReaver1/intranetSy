@@ -3,12 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\CustomerFilesRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=CustomerFilesRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class CustomerFiles
 {
@@ -71,6 +73,7 @@ class CustomerFiles
 
     /**
      * @ORM\ManyToOne(targetEntity=CustomerFilesStatut::class, inversedBy="customerFiles")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $customer_statut;
 
@@ -111,11 +114,13 @@ class CustomerFiles
 
     /**
      * @ORM\OneToMany(targetEntity=Files::class, mappedBy="customerFiles")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $files_id;
 
     /**
      * @ORM\ManyToOne(targetEntity=CustomerSource::class, inversedBy="customerFiles")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $customer_source;
 
@@ -174,6 +179,21 @@ class CustomerFiles
      */
     private $product;
 
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updatedTimestamps(): void
+    {
+        $dateTimeNow = new DateTime('now');
+
+        $this->setUpdatedAt($dateTimeNow);
+
+        if ($this->getCreatedAt() === null) {
+            $this->setCreatedAt($dateTimeNow);
+        }
+    }
+
     public function __construct()
     {
         $this->files_id = new ArrayCollection();
@@ -182,7 +202,7 @@ class CustomerFiles
 
     public function __toString()
     {
-        return $this->Name;
+        return $this->name;
     }
 
     public function getId(): ?int

@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\CustomerFiles;
+use App\Entity\Provider;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * @method CustomerFiles|null find($id, $lockMode = null, $lockVersion = null)
@@ -17,6 +19,16 @@ class CustomerFilesRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, CustomerFiles::class);
+    }
+
+    public function getProviderParams(Provider $provider): array {
+        $parameters = [];
+        foreach($provider->getProviderProducts() as $value){
+            foreach($value->getParams() as $param){
+                $parameters[$param->getId()] = $param->getName();
+            }
+        }
+        return array_unique($parameters);
     }
 
     // /**

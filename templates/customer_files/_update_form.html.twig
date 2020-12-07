@@ -1,10 +1,13 @@
 {{ form_start(form) }}
+{% for [key, id] in params %}
+                    {{dump(key, id)}}
+                {% endfor %}
     <div class="row">
         {{form_row(form.customer_source)}}
         {{form_row(form.installer)}}
     </div>
     <hr class="mt-2">
-    <h1 class="mb-4"><span class="text-underline">Informations du client</span> :</h1>
+    <h1 class="mb-4"><span class="text-underline">Information du client</span> :</h1>
     <div class="row">
         {{form_row(form.sexe)}}
     </div>
@@ -56,16 +59,21 @@
             <select class="form-control" id="providers">
                 <option value="">Aucun fournisseur</option>
                 {% for provider in providers %}
-                    <option value="{{provider.id}}">{{provider.name}}</option>
+                    <option value="{{provider.id}}" {{provider.id == customer_file.product.provider.id ? 'selected' : ''}}>{{provider.name}}</option>
                 {% endfor %}
             </select>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6 form-group" id="providerParamsParent" style="display: none">
+        <div class="col-md-6 form-group" id="providerParamsParent">
             <label class="form-control-label" for="providerParams">Les paramètres</label>
             <select class="form-control ui fluid dropdown" id="providerParams" multiple="true">
+                
             </select>
+        </div>
+        <div class="col-md-6 form-group" id="alreadyProduct"> 
+            <label class="form-control-label" >Le produit :</label>
+            <p class="form-control">{{customer_file.product}}</p>
         </div>
         {{form_row(form.product, {id: 'providerProducts'})}}
     </div>
@@ -83,7 +91,7 @@
         {{form_row(form.annex_quote)}}
     </div>
     <hr class="mt-2">
-    <h1 class="mb-4"><span class="text-underline">Informations complémentaires</span>:</h1>
+    <h1 class="mb-4"><span class="text-underline">Informations complémentaire</span>:</h1>
     <div class="row">
         {{form_row(form.description)}}
         {{form_row(form.commentary)}}

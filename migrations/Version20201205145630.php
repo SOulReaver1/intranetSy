@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20201203170949 extends AbstractMigration
+final class Version20201205145630 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -20,12 +20,12 @@ final class Version20201203170949 extends AbstractMigration
     public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE customer_files_statut ADD color VARCHAR(255) NOT NULL');
+        $this->addSql('ALTER TABLE customer_files CHANGE customer_source_id customer_source_id INT DEFAULT NULL');
     }
 
     public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE customer_files_statut DROP color');
+        $this->addSql('ALTER TABLE customer_files CHANGE customer_source_id customer_source_id INT NOT NULL');
     }
 }

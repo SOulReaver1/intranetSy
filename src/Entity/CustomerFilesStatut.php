@@ -7,10 +7,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use DateTime;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=CustomerFilesStatutRepository::class)
  * @ORM\HasLifecycleCallbacks()
+ * @UniqueEntity(fields={"name"}, message="Ce nom existe déjà !")
+ * @UniqueEntity(fields={"color"}, message="Cette couleur existe déjà !")
  */
 class CustomerFilesStatut
 {
@@ -22,7 +25,7 @@ class CustomerFilesStatut
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
      */
     private $name;
 
@@ -42,7 +45,7 @@ class CustomerFilesStatut
     private $updated_at;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
      */
     private $color;
 
