@@ -44,9 +44,15 @@ class ClientStatutDocument
      */
     private $client_statut;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Files::class, mappedBy="document")
+     */
+    private $files;
+
     public function __construct()
     {
         $this->client_statut = new ArrayCollection();
+        $this->files = new ArrayCollection();
     }
 
      /**
@@ -62,6 +68,11 @@ class ClientStatutDocument
         if ($this->getCreatedAt() === null) {
             $this->setCreatedAt($dateTimeNow);
         }
+    }
+
+    public function __toString()
+    {
+        return $this->name;
     }
 
     public function getId(): ?int
@@ -127,6 +138,37 @@ class ClientStatutDocument
     {
         if ($this->client_statut->contains($clientStatut)) {
             $this->client_statut->removeElement($clientStatut);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Files[]
+     */
+    public function getFiles(): Collection
+    {
+        return $this->files;
+    }
+
+    public function addFile(Files $file): self
+    {
+        if (!$this->files->contains($file)) {
+            $this->files[] = $file;
+            $file->setDocument($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFile(Files $file): self
+    {
+        if ($this->files->contains($file)) {
+            $this->files->removeElement($file);
+            // set the owning side to null (unless already changed)
+            if ($file->getDocument() === $this) {
+                $file->setDocument(null);
+            }
         }
 
         return $this;

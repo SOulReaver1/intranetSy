@@ -149,16 +149,6 @@ class UpdateCustomerFileType extends AbstractType
             'label' => 'Escalier',
             'row_attr' => ['class' => 'col-md-6'],
         ])
-        ->add('mail_al', EmailType::class, [
-            'required' => false,
-            'label' => 'Mail AL',
-            'row_attr' => ['class' => 'col-md-6'],
-        ])
-        ->add('password_al', PasswordType::class, [
-            'required' => false,
-            'label' => 'Mot de passe AL',
-            'row_attr' => ['class' => 'col-md-6'],
-        ])
         ->add('annex_quote', CheckboxType::class, [
             'required' => false,
             'label' => 'Devis annexe',
@@ -175,14 +165,14 @@ class UpdateCustomerFileType extends AbstractType
             'row_attr' => ['class' => 'col-md-6'],
         ])
         ->add('client_statut_id', EntityType::class, [
-            'required' => false,
-            'placeholder' => 'Aucun statut client',
+            'required' => true,
             'class' => ClientStatut::class,
             'label' => 'Statut du client : ',
             'row_attr' => ['class' => 'col-md-6'],
         ])
         ->add('customer_statut', EntityType::class, [
             'required' => false,
+            'placeholder' => 'Aucun statut de dossier',
             'class' => CustomerFilesStatut::class,
             'label' => 'Statut du dossier : ',
             'row_attr' => ['class' => 'col'],

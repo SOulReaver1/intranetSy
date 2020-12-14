@@ -2,6 +2,7 @@
 
 {% block title %}CustomerSource index{% endblock %}
 {% set title = "Gérer les sources" %}
+{% set datatable = true %}
 {% block header %}
     <a href="{{ path('customer_source_new') }}" class="btn btn-primary">Ajouter une source</a>
 {% endblock %}
@@ -30,16 +31,4 @@
         </tbody>
     </table>
 
-{% endblock %}
-{% block javascripts %}
-    <script>
-        var tables = {};
-        $('.dt-table').each(function(){
-            tables[$(this).attr('id')] = $(this).DataTable({
-                responsive: true,
-                bInfo: false,
-                bLengthChange: false,
-            })
-        })
-    </script>
 {% endblock %}

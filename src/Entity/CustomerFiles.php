@@ -79,6 +79,7 @@ class CustomerFiles
 
     /**
      * @ORM\ManyToOne(targetEntity=ClientStatut::class, inversedBy="customerFiles")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $client_statut_id;
 
@@ -407,7 +408,7 @@ class CustomerFiles
         return $this->description;
     }
 
-    public function setAnnexQuoteDescription(?string $description): self
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
 

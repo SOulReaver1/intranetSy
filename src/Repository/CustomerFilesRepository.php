@@ -21,14 +21,25 @@ class CustomerFilesRepository extends ServiceEntityRepository
         parent::__construct($registry, CustomerFiles::class);
     }
 
-    public function getProviderParams(Provider $provider): array {
+    public function getProviderParams(?Provider $provider) {
         $parameters = [];
-        foreach($provider->getProviderProducts() as $value){
-            foreach($value->getParams() as $param){
-                $parameters[$param->getId()] = $param->getName();
+        if($provider !== null){
+            foreach($provider->getProviderProducts() as $value){
+                foreach($value->getParams() as $param){
+                    $parameters[] = $param;
+                }
             }
         }
+        
         return array_unique($parameters);
+    }
+
+    public function getAddresses(){
+        return $this->createQueryBuilder('c')
+        ->leftJoin('c.customer_statut', 'statut')
+        ->select('c.lat, c.lng, statut.color')
+        ->getQuery()
+        ->getResult();
     }
 
     // /**

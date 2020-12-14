@@ -3,10 +3,15 @@
 namespace App\Entity;
 
 use App\Repository\FilesRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=FilesRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class Files
 {
@@ -19,8 +24,10 @@ class Files
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Veuillez choisir un fichier !")
+     * @Assert\File(mimeTypes={ "application/pdf", "image/jpeg", "image/png"})
      */
-    private $path;
+    private $file;
 
     /**
      * @ORM\Column(type="datetime")
@@ -29,22 +36,48 @@ class Files
 
     /**
      * @ORM\ManyToOne(targetEntity=CustomerFiles::class, inversedBy="files_id")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $customerFiles;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updated_at;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=ClientStatutDocument::class, inversedBy="files")
+     */
+    private $document;
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+
+    public function updatedTimestamps(): void
+    {
+        $dateTimeNow = new DateTime('now');
+
+        $this->setUpdatedAt($dateTimeNow);
+
+        if ($this->getCreatedAt() === null) {
+            $this->setCreatedAt($dateTimeNow);
+        }
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getPath(): ?string
-    {
-        return $this->path;
+    public function getFile(){
+        return $this->file;
     }
 
-    public function setPath(string $path): self
+    public function setFile($file)
     {
-        $this->path = $path;
+        $this->file = $file;
 
         return $this;
     }
@@ -69,6 +102,30 @@ class Files
     public function setCustomerFiles(?CustomerFiles $customerFiles): self
     {
         $this->customerFiles = $customerFiles;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updated_at): self
+    {
+        $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    public function getDocument(): ?ClientStatutDocument
+    {
+        return $this->document;
+    }
+
+    public function setDocument(?ClientStatutDocument $document): self
+    {
+        $this->document = $document;
 
         return $this;
     }

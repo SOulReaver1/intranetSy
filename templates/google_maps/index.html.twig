@@ -3,6 +3,9 @@
 {% block title %}Hello GoogleMapsController!{% endblock %}
 {% set title = "La carte" %}
 {% set datatable = true %}
+{% block header %}
+    <p>Pour zoomer / dezoomer sur la carte : <strong>CTRL + MOLETTE DE LA SOURIS</strong></p>
+{% endblock %}
 {% block stylesheets %}
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <script
@@ -35,6 +38,16 @@
                     </td>
                 </tr>
             {% endfor %}
+                <tr>
+                    <td>
+                        Aucun statut de dossier
+                    </td>
+                    <td>
+                        <span class="badge" style="background-color: black">
+                            Noir
+                        </span>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -56,22 +69,22 @@
                 method: 'POST'
             }).then(response => response.json())
             .then(addresses => {
-                geocoder = new google.maps.Geocoder();
                 for(var i = 0; i < addresses.length; i++){
-                    var address = addresses[i];
-                    geocoder.geocode({
-                        'address': address
-                    }, (result, status) => {
-                        if(status == google.maps.GeocoderStatus.OK){
-                            var marker = new google.maps.Marker({
-                                map: map,
-                                position: result[0].geometry.location
-                            })
-                            marker.addListener("click", toggleBounce(marker));
-                        }else{
-                            console.log(address)
-                        }
+                    var color = addresses[i].color;
+                      const symbolThree = {
+                        path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z',
+                        fillColor: color ?? 'black',
+                        fillOpacity: 1,
+                        strokeColor: '#000',
+                        strokeWeight: 1,
+                        scale: 1
+                    };
+                    var marker = new google.maps.Marker({
+                        map: map,
+                        icon: symbolThree,
+                        position: {lat: addresses[i].lat, lng: addresses[i].lng}
                     })
+                    marker.addListener("click", toggleBounce(marker));
                 }
             })
         }

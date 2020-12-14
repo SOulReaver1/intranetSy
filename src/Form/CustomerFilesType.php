@@ -174,14 +174,14 @@ class CustomerFilesType extends AbstractType
                 'row_attr' => ['class' => 'col-md-6'],
             ])
             ->add('client_statut_id', EntityType::class, [
-                'required' => false,
-                'placeholder' => 'Aucun statut client',
+                'required' => true,
                 'class' => ClientStatut::class,
                 'label' => 'Statut du client : ',
                 'row_attr' => ['class' => 'col-md-6'],
             ])
             ->add('customer_statut', EntityType::class, [
                 'required' => false,
+                'placeholder' => 'Aucun statut de dossier',
                 'class' => CustomerFilesStatut::class,
                 'label' => 'Statut du dossier : ',
                 'row_attr' => ['class' => 'col'],

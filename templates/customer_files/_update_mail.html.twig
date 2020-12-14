@@ -1,0 +1,21 @@
+<div class="modal fade" id="changeMailAlModal" tabindex="-1" role="dialog" aria-labelledby="changeMailAlModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        {{ form_start(mailForm) }}
+            <div class="modal-header">
+                <h5 class="modal-title" id="changeMailAlModalTitle">Changer le mot de passe AL</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {{ form_widget(mailForm) }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                <button type="submit" class="btn btn-success">Sauvegarder</button>
+            </div>
+        {{ form_end(mailForm) }}
+    </div>
+  </div>
+</div>

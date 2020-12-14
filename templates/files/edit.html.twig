@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Files{% endblock %}
+{% set title = "Modifier un fichier" %}
+{% set require = true %}
+{% block header %}
+    <div class="row justify-content-end">
+        <a href="{{ path('files_index', {'id': customer_id}) }}" class="btn btn-primary">Retour</a>
+        {{ include('files/_delete_form.html.twig') }}
+    </div>
+{% endblock %}
+{% block body %}
+    {{ include('files/_form.html.twig', {'button_label': 'Modifier'}) }}
+{% endblock %}

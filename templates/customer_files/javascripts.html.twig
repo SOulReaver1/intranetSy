@@ -83,6 +83,7 @@ provider.addEventListener('change', evt => {
         method: 'POST'
     }).then(response => response.json())
     .then(data => {
+        console.log(data)
         const providerParams = document.getElementById('providerParams');
         document.getElementById('providerParamsParent').style.display = "block";
         for(const [key, value] of Object.entries(data)){
@@ -102,6 +103,7 @@ $('#providerParams').dropdown({
             body: JSON.stringify({data: array})
             }).then(response => response.json())
             .then(data => {
+                console.log(data)
                 if(document.getElementById('alreadyProduct')){
                     document.getElementById('alreadyProduct').style.display = "none"
                 }

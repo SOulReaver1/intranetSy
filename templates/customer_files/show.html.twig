@@ -3,7 +3,10 @@
 {% block title %}CustomerFiles{% endblock %}
 {% set title = customer_file.name %}
 {% block header %}
-    <a href="{{ path('default') }}" class="btn btn-primary">Retour</a>
+    <div class="row justify-content-end">
+        <a href="{{ path('files_index', {'id': customer_file.id}) }}" class="btn btn-primary">Les documents</a>
+        <a href="{{ path('default') }}" class="btn btn-primary">Retour</a>
+    </div>
 {% endblock %}
 {% block body %}
     <div class="row">
@@ -17,7 +20,7 @@
         </div>
     </div>
     <hr class="mt-2">
-    <h1 class="mb-4"><span class="text-underline">Information du client</span> :</h1>
+    <h1 class="mb-4"><span class="text-underline">Informations du client</span> :</h1>
     <div class="row">
         <div class="col form-group">
             <label class="form-control-label">Sexe :</label>
@@ -113,11 +116,17 @@
     <div class="row">
         <div class="col-md-6 form-group">
             <label class="form-control-label">Mail AL :</label>
-            <p class="form-control">{{customer_file.mailAl}}</p>
+            <div class="row form-control justify-content-between ml-0">
+                <span id="mailAl">{{customer_file.mailAL}}</span>
+                <button type="button" class="btn btn-sm btn-primary" data-clipboard-target="#mailAl">Copier</button>
+            </div>
         </div>
         <div class="col-md-6 form-group">
             <label class="form-control-label">Mot de passe AL :</label>
-            <p class="form-control">{{customer_file.passwordAl}}</p>
+            <div class="row form-control justify-content-between ml-0">
+                <span id="pwdAl">{{customer_file.passwordAl}}</span>
+                <button type="button" class="btn btn-sm btn-primary" data-clipboard-target="#pwdAl">Copier</button>
+            </div>
         </div>
     </div>
     <div class="row">
@@ -131,7 +140,7 @@
         </div>
     </div>
     <hr class="mt-2">
-    <h1 class="mb-4"><span class="text-underline">Informations complémentaire</span>:</h1>
+    <h1 class="mb-4"><span class="text-underline">Informations complémentaires</span>:</h1>
     <div class="row">
         <div class="col-md-6 form-group">
             <label class="form-control-label">Description :</label>
@@ -149,5 +158,8 @@
             {{ include('customer_files/_delete_form.html.twig') }}
         </div>
     </div>
-    
+{% endblock %}
+{% block javascripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
+    <script>new ClipboardJS('.btn')</script>
 {% endblock %}

@@ -11,6 +11,8 @@
 {% endblock %}
 {% block body %}
     {{ include('customer_files/_update_form.html.twig', {'button_label': 'Modifier'}) }}
+    {{ include('customer_files/_update_password.html.twig') }}
+    {{ include('customer_files/_update_mail.html.twig') }}
 {% endblock %}
 {% block stylesheets %}
     <link href="{{asset('assets/js/plugins/semantic/semantic.min.css')}}" rel="stylesheet">

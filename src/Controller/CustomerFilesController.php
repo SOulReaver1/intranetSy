@@ -7,6 +7,8 @@ use App\Entity\Provider;
 use App\Entity\ProviderProduct;
 use App\Form\CustomerFilesType;
 use App\Form\UpdateCustomerFileType;
+use App\Form\UpdateCustomerMailType;
+use App\Form\UpdateCustomerPasswordType;
 use App\Repository\CustomerFilesRepository;
 use App\Repository\ProviderProductRepository;
 use App\Repository\ProviderRepository;
@@ -61,7 +63,11 @@ class CustomerFilesController extends AbstractController
      * @Route("/getProviderParams/{id}", name="customer_files_get_provider_params", methods={"POST"}, requirements={"id":"\d+"})
     */
     public function getProviderParams(Request $request, Provider $provider, CustomerFilesRepository $repository): object {
-        return new JsonResponse($repository->getProviderParams($provider));
+        $result = [];
+        foreach ($repository->getProviderParams($provider) as $key => $value) {
+            $result[$value->getId()] = $value->getName();
+        }
+        return new JsonResponse($result);
     }
 
     /**
@@ -102,7 +108,21 @@ class CustomerFilesController extends AbstractController
         $form = $this->createForm(UpdateCustomerFileType::class, $customerFile);
         $form->handleRequest($request);
 
+        $password = $this->createForm(UpdateCustomerPasswordType::class, $customerFile);
+        $password->handleRequest($request);
+
+        $mail = $this->createForm(UpdateCustomerMailType::class, $customerFile);
+        $mail->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+
+            return $this->redirectToRoute('default');
+        }else if($password->isSubmitted() && $password->isValid()){
+            $this->getDoctrine()->getManager()->flush();
+
+            return $this->redirectToRoute('default');
+        }else if($mail->isSubmitted() && $mail->isValid()){
             $this->getDoctrine()->getManager()->flush();
 
             return $this->redirectToRoute('default');
@@ -111,8 +131,10 @@ class CustomerFilesController extends AbstractController
         return $this->render('customer_files/edit.html.twig', [
             'customer_file' => $customerFile,
             'form' => $form->createView(),
+            'mailForm' => $mail->createView(),
+            'pwdForm' => $password->createView(),
             'providers' => $provider->findAll(),
-            'params' => $repository->getProviderParams($customerFile->getProduct()->getProvider())
+            'params' => $repository->getProviderParams($customerFile->getProduct() ? $customerFile->getProduct()->getProvider() : null)
         ]);
     }
 

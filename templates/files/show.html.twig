@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Files{% endblock %}
+{% set title = "["~file.document ?? 'Image libre' ~"] "~file.customerFiles%}
+{% block header %}
+    <a href="{{ path('files_index', {'id': customer_id}) }}" class="btn btn-primary">Retour</a>
+{% endblock %}
+{% block body %}
+    <table class="table">
+        <tbody>
+            <tr>
+                <th># :</th>
+                <td>{{ file.id }}</td>
+            </tr>
+            <tr>
+                <th>Aperçu :</th>
+                <td><embed src="/uploads/files/{{file.file}}" width="200px"></td>
+            </tr>
+            <tr>
+                <th>Nom du fichier :</th>
+                <td>{{ file.file }}</td>
+            </tr>
+            <tr>
+                <th>Client :</th>
+                <td><a href="{{path('customer_files_show', {'id': customer_id})}}"> {{ file.customerFiles }}</a></td>
+            </tr>
+            <tr>
+                <th>Nom du document :</th>
+                <td>{{ file.document ?? 'Image libre' }}</td>
+            </tr>
+            <tr>
+                <th>Créer le :</th>
+                <td>{{ file.createdAt ? file.createdAt|date('d-m-Y H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Modifier le :</th>
+                <td>{{ file.updatedAt ? file.updatedAt|date('d-m-Y H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    
+    <div class="col mt-4">
+        <div class="row">
+            <a href="/uploads/files/{{file.file}}" class="btn btn-info">Regarder</a>
+            <a href="/uploads/files/{{file.file}}" class="btn btn-success" download="{{file.document}}-{{file.customerFiles}}">Télécharger</a>
+            <button onclick="printJS('/uploads/files/{{file.file}}', {{file.file|split('.')|last == 'pdf' ? '' : "'image'"}})" class="btn btn-warning">Imprimer</button>
+            <a href="{{ path('files_edit', {'id': customer_id, 'file': file.id}) }}" class="btn btn-primary">Modifier</a>
+            {{ include('files/_delete_form.html.twig') }}
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/print-js/1.5.0/print.min.js" integrity="sha512-lzGE9ZqdrztBEk1wtq4O60N3WbsTlIvvm6ULCxWRt+CwpRD4WUbgC5aatbtourCUC15PJpqcpZk3VLs12vpNoA==" crossorigin="anonymous"></script>
+{% endblock %}
