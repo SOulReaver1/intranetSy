@@ -118,11 +118,13 @@
                             </ul>
                         </div>
                     </li>
+                {% endif %}
+                {% if is_granted('ROLE_ADMIN') %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{url("customer_source_index")}}">
-                            <i class="fas fa-user-tag text-warning"></i>
-                            Gérer les sources
-                        </a>
+                            <a class="nav-link" href="{{url("customer_source_index")}}">
+                                <i class="fas fa-user-tag text-warning"></i>
+                                Gérer les sources
+                            </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{url("customer_files_statut_index")}}">
@@ -130,8 +132,6 @@
                             Gérer les statuts dossier
                         </a>
                     </li>
-                {% endif %}
-                {% if is_granted('ROLE_USER') %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{url("client_statut_index")}}">
                             <i class="fas fa-house-user text-success"></i>
@@ -144,6 +144,8 @@
                             Gérer les documents
                         </a>
                     </li>
+                {% endif %}
+                {% if is_granted('ROLE_USER') %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{url("google_maps")}}">
                             <i class="fas fa-map-marked-alt text-info"></i>

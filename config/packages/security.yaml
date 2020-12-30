@@ -22,6 +22,7 @@ security:
         main:
             anonymous: true
             lazy: true
+            access_denied_handler: App\Security\AccessDeniedHandler
             provider: app_user_provider
             form_login:
                 login_path: app_login

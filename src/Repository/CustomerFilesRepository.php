@@ -42,6 +42,15 @@ class CustomerFilesRepository extends ServiceEntityRepository
         ->getResult();
     }
 
+    public function getInstaller($installer){
+        return $this->createQueryBuilder('c')
+        ->leftJoin('c.installer', 'user')
+        ->where('user = :user')
+        ->setParameter('user', $installer)
+        ->getQuery()
+        ->getResult();
+    }
+
     // /**
     //  * @return CustomerFiles[] Returns an array of CustomerFiles objects
     //  */

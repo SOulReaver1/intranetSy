@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\CustomerFiles;
+use App\Entity\Notification;
 use App\Entity\Provider;
 use App\Entity\ProviderProduct;
 use App\Form\CustomerFilesType;
@@ -12,12 +13,12 @@ use App\Form\UpdateCustomerPasswordType;
 use App\Repository\CustomerFilesRepository;
 use App\Repository\ProviderProductRepository;
 use App\Repository\ProviderRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\Json;
 
 /**
  * @Route("/")
@@ -29,13 +30,18 @@ class CustomerFilesController extends AbstractController
      */
     public function index(CustomerFilesRepository $customerFilesRepository): Response
     {        
-        
+        $customer_files = $customerFilesRepository->findAll();
+        if(in_array('ROLE_INSTALLATEUR', $this->getUser()->getRoles())){
+            $customer_files = $customerFilesRepository->getInstaller($this->getUser());
+        }
+
         return $this->render('customer_files/index.html.twig', [
-            'customer_files' => $customerFilesRepository->findAll(),
+            'customer_files' => $customer_files,
         ]);
     }
 
     /**
+     * @IsGranted("ROLE_ALLOW_CREATE")
      * @Route("/new", name="customer_files_new", methods={"GET","POST"})
      */
     public function new(Request $request, ProviderRepository $provider): Response
@@ -48,7 +54,15 @@ class CustomerFilesController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($customerFile);
             $entityManager->flush();
-
+            if($customerFile->getInstaller()){
+                $em = $this->getDoctrine()->getManager();
+                $id = $customerFile->getId();
+                $notification = new Notification;
+                $notification->setTitle('Une nouvelle fiche vous à été attribuer !');
+                $notification->setUrl("/$id");
+                $notification->addUser($customerFile->getInstaller());
+                $em->persist($notification);
+            }
             return $this->redirectToRoute('default');
         }
 
@@ -60,6 +74,7 @@ class CustomerFilesController extends AbstractController
     }
 
     /**
+     * @IsGranted("ROLE_USER")
      * @Route("/getProviderParams/{id}", name="customer_files_get_provider_params", methods={"POST"}, requirements={"id":"\d+"})
     */
     public function getProviderParams(Request $request, Provider $provider, CustomerFilesRepository $repository): object {
@@ -71,6 +86,7 @@ class CustomerFilesController extends AbstractController
     }
 
     /**
+     * @IsGranted("ROLE_USER")
      * @Route("/getProviderProducts/{id}", name="customer_files_products", methods={"POST"}, requirements={"id":"\d+"})
     */
     public function getProductsProvider(Request $request, Provider $provider, ProviderProductRepository $productsRepository): object {
@@ -95,12 +111,17 @@ class CustomerFilesController extends AbstractController
      */
     public function show(CustomerFiles $customerFile): Response
     {
-        return $this->render('customer_files/show.html.twig', [
-            'customer_file' => $customerFile,
-        ]);
+        if(!in_array('ROLE_INSTALLATEUR', $this->getUser()->getRoles()) || $customerFile->getInstaller() === $this->getUser()){
+            return $this->render('customer_files/show.html.twig', [
+                'customer_file' => $customerFile,
+            ]);
+        }
+        $this->addFlash('error', 'Vous n\'avez pas accès à cette fiche ');
+        return $this->redirectToRoute('default');
     }
 
     /**
+     * @IsGranted("ROLE_USER")
      * @Route("/{id}/edit", name="customer_files_edit", methods={"GET","POST"})
      */
     public function edit(Request $request, CustomerFiles $customerFile, ProviderRepository $provider, CustomerFilesRepository $repository): Response
@@ -139,6 +160,7 @@ class CustomerFilesController extends AbstractController
     }
 
     /**
+     * @IsGranted("ROLE_USER")
      * @Route("/{id}", name="customer_files_delete", methods={"DELETE"})
      */
     public function delete(Request $request, CustomerFiles $customerFile): Response
