@@ -176,7 +176,13 @@ class CustomerFilesType extends AbstractType
             ->add('client_statut_id', EntityType::class, [
                 'required' => true,
                 'class' => ClientStatut::class,
-                'label' => 'Statut du client : ',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Le statut du client ne doit pas être vide !',
+                    ]),
+                ],
+                'label' => 'Statut du client : <span class="text-danger">*</span>',
+                'label_html' => true,
                 'row_attr' => ['class' => 'col-md-6'],
             ])
             ->add('customer_statut', EntityType::class, [
@@ -199,10 +205,7 @@ class CustomerFilesType extends AbstractType
                 'required' => false,
                 'placeholder' => 'Aucun installateur',
                 'query_builder' => function (UserRepository $user) {
-                    return $user->createQueryBuilder('u')
-                    ->orderBy('u.roles', 'ASC')
-                    ->where('u.roles LIKE :roles')
-                    ->setParameter('roles', '%"ROLE_INSTALLATEUR"%');
+                    return $user->findByRole('ROLE_INSTALLATEUR', false);
                 },
                 'label' => 'Installateur :',
                 'row_attr' => ['class' => 'col-md-6']

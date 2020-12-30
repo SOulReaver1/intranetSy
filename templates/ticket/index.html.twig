@@ -11,6 +11,7 @@
         <thead>
             <tr>
                 <th>#</th>
+                <th>Fiche client</th>
                 <th>Titre</th>
                 <th>Description</th>
                 <th>Créer le</th>
@@ -21,6 +22,7 @@
         {% for ticket in tickets %}
             <tr>
                 <td>{{ ticket.id }}</td>
+                <td>{{ ticket.customerFile }}</td>
                 <td>{{ ticket.title }}</td>
                 <td>{{ ticket.description }}</td>
                 <td>{{ ticket.createdAt ? ticket.createdAt|date('d-m-Y H:i:s') : '' }}</td>

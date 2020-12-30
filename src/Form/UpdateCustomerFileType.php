@@ -190,10 +190,7 @@ class UpdateCustomerFileType extends AbstractType
             'required' => false,
             'placeholder' => 'Aucun installateur',
             'query_builder' => function (UserRepository $user) {
-                return $user->createQueryBuilder('u')
-                ->orderBy('u.roles', 'ASC')
-                ->where('u.roles LIKE :roles')
-                ->setParameter('roles', '%"ROLE_INSTALLATEUR"%');
+                return $user->findByRole('ROLE_INSTALLATEUR', false);
             },
             'label' => 'Installateur :',
             'row_attr' => ['class' => 'col-md-6']

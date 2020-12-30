@@ -63,6 +63,7 @@
                     {% include 'footer.html.twig' %}
                 </div>
             </div>
+            {% include "notifications.html.twig" %}
         {% else %}
             {% block content %}{% endblock %}
         {% endif %}

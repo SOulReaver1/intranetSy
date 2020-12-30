@@ -23,6 +23,12 @@ class RegistrationFormType extends AbstractType
         ->add('roles', ChoiceType::class, ['choices' => ['Installateur' => 'ROLE_INSTALLATEUR', 'Ecrire des fiches' => 'ROLE_ALLOW_CREATE', 'Utilisateur' => 'ROLE_USER', 'Administrateur' => 'ROLE_ADMIN', 'Super Admin' => 'ROLE_SUPERADMIN', 'Developpeur' => 'ROLE_DEVELOPER'],
                 'expanded' => true,
                 'multiple' => true,
+                'required' => true,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'L\'utilisateur doit avoir au moins 1 role',
+                    ]),
+                ],
                 'label' => 'Role(s) : <span class="text-danger">*</span>',
                 'label_html' => true,
             ])

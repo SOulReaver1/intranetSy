@@ -10,6 +10,14 @@
         </a>
         <!-- User -->
         <ul class="nav align-items-center d-md-none">
+            <li class="nav-item"> 
+                <button class="btn nav-link position-relative" data-toggle="modal" data-target="#notificationModal">
+                {% if app.user.getNotifications|length > 0 %}
+                 <span class="position-absolute d-flex justify-content-center align-items-center text-center rounded-circle bg-danger text-white" style="width: 25px; height:25px; right:-10px; top:-10px">{{app.user.getNotifications|length}}</span>
+                {% endif %}
+                    <span class="nav-link-icon d-block"><i class="ni ni-bell-55"></i></span>
+                </button>
+            </li>
             <li class="nav-item dropdown">
                 <a class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <div class="media align-items-center">

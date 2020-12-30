@@ -21,6 +21,7 @@ class TicketMessage
 
     /**
      * @ORM\ManyToOne(targetEntity=Ticket::class, inversedBy="ticketMessages")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $ticket;
 

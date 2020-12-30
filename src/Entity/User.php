@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\CustomerFiles;
+use App\Repository\NotificationRepository;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -74,6 +75,10 @@ class User implements UserInterface
      */
     private $customerFiles;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Ticket::class, mappedBy="users")
+     */
+    private $ticket_inside;
 
     public function __construct()
     {
@@ -82,6 +87,7 @@ class User implements UserInterface
         $this->customerFiles = new ArrayCollection();
         $this->helps = new ArrayCollection();
         $this->ticketMessages = new ArrayCollection();
+        $this->ticket_inside = new ArrayCollection();
     }
 
     public function __toString()
@@ -331,6 +337,34 @@ class User implements UserInterface
             if ($customerFile->getInstaller() === $this) {
                 $customerFile->setInstaller(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Ticket[]
+     */
+    public function getTicketInside(): Collection
+    {
+        return $this->ticket_inside;
+    }
+
+    public function addTicketInside(Ticket $ticketInside): self
+    {
+        if (!$this->ticket_inside->contains($ticketInside)) {
+            $this->ticket_inside[] = $ticketInside;
+            $ticketInside->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTicketInside(Ticket $ticketInside): self
+    {
+        if ($this->ticket_inside->contains($ticketInside)) {
+            $this->ticket_inside->removeElement($ticketInside);
+            $ticketInside->removeUser($this);
         }
 
         return $this;

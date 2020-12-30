@@ -7,6 +7,8 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
 
 /**
  * @ORM\Entity(repositoryClass=TicketRepository::class)
@@ -64,11 +66,17 @@ class Ticket
      */
     private $ticketMessages;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=User::class, inversedBy="ticket_inside")
+     */
+    private $users;
+
 
     public function __construct()
     {
         $this->users_id = new ArrayCollection();
         $this->ticketMessages = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     /**
@@ -202,6 +210,32 @@ class Ticket
             if ($ticketMessage->getTicket() === $this) {
                 $ticketMessage->setTicket(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
         }
 
         return $this;

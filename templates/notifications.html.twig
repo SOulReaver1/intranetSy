@@ -1,0 +1,37 @@
+<div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="notificationModalTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="notificationModalTitle">Vos notifications !</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="list-group">
+            {% for notif in app.user.getNotifications|reverse %}
+                <div class="list-group-item list-group-item-action flex-column align-items-start mb-2" onClick="myFunction({{notif.id}}, '{{notif.url}}')" style="cursor:pointer;">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{notif.title}}</h5>
+                            <small>{{notif.createdAt ? notif.createdAt|date('d-m-Y H:i:s') : ''}}</small>
+                        </div>
+                        <p class="mb-1">{{notif.description ? notif.description : ''}}</p>
+                </div>
+            {% else %}
+                <p class="mb-1">Aucune notification !</p>
+            {% endfor %}
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+        </div>
+        </div>
+    </div>
+</div>
+{% block javascripts %}
+   <script>
+        const myFunction = (notif, url) => {
+            fetch(`/notification/${notif}`, {method: 'DELETE'}).then(response => response.json()).then(data => window.location.replace(url))
+        }
+    </script> 
+{% endblock %}

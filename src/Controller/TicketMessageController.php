@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Notification;
 use App\Entity\Ticket;
 use App\Entity\TicketMessage;
 use App\Form\TicketMessageType;
@@ -31,6 +32,15 @@ class TicketMessageController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($message);
             $entityManager->flush();
+            $notification = new Notification();
+            $ticket_id = $ticket->getId();
+            $em = $this->getDoctrine()->getManager();
+            $notification->setUrl("/ticket/message/$ticket_id");
+            $notification->setTitle("Nouveau message dans le ticket numero $ticket_id");
+            $notification->setDescription($message->getContent());
+            $em->persist($notification);
+            foreach ($ticket->getUsers() as $value) if($value !== $this->getUser()) $value->addNotification($notification);
+            $em->flush();
            
             return $this->redirectToRoute('ticket_message_index', [
                 'id' => $ticket->getId()

@@ -3,8 +3,11 @@
 {% block title %}Ticket{% endblock %}
 {% set title = ticket.title %}
 {% block header %}
-     <a href="{{ path('ticket_index') }}" class="btn btn-primary">Retour</a>
-     <div class="row justify-content-start">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#participantsModal">
+        Les participants
+    </button>
+    <a href="{{ path('ticket_show', {id: ticket.id}) }}" class="btn btn-primary">Retour</a>
+    <div class="row justify-content-start">
 {% endblock %}
 {% block body %}
     <div class="row px-lg-2 px-2">
@@ -32,5 +35,6 @@
             </div>
         </div>  
     </div>
+    {{ include('ticket/participants.html.twig', {'method': 'read'}) }}
 {% endblock %}
 

@@ -3,12 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\NotificationRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=NotificationRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class Notification
 {
@@ -16,7 +18,7 @@ class Notification
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     */
+    */
     private $id;
 
     /**
@@ -35,23 +37,39 @@ class Notification
     private $title;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     private $description;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $statut;
 
     /**
      * @ORM\Column(type="datetime")
      */
     private $created_at;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updated_at;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+
+    public function updatedTimestamps(): void
+    {
+        $dateTimeNow = new DateTime('now');
+
+        $this->setUpdatedAt($dateTimeNow);
+
+        if ($this->getCreatedAt() === null) {
+            $this->setCreatedAt($dateTimeNow);
+        }
     }
 
     public function getId(): ?int
@@ -81,7 +99,7 @@ class Notification
         if ($this->users->contains($user)) {
             $this->users->removeElement($user);
         }
-
+        
         return $this;
     }
 
@@ -121,18 +139,6 @@ class Notification
         return $this;
     }
 
-    public function getStatut(): ?bool
-    {
-        return $this->statut;
-    }
-
-    public function setStatut(bool $statut): self
-    {
-        $this->statut = $statut;
-
-        return $this;
-    }
-
     public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->created_at;
@@ -141,6 +147,18 @@ class Notification
     public function setCreatedAt(\DateTimeInterface $created_at): self
     {
         $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updated_at): self
+    {
+        $this->updated_at = $updated_at;
 
         return $this;
     }

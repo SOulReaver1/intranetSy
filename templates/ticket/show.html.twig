@@ -10,7 +10,7 @@
 {% endblock %}
 {% block body %}
 
-    <table class="table">
+    <table class="table table-responsive">
         <tbody>
             <tr>
                 <th>#</th>
@@ -18,7 +18,11 @@
             </tr>
              <tr>
                 <th>Créer par :</th>
-                <td>{{ ticket.creator }}</td>
+                <td>{{ ticket.creator == app.user ? 'Moi' : ticket.creator }}</td>
+            </tr>
+            <tr>
+                <th>Fiche client :</th>
+                <td>{{ ticket.customerFile }}</td>
             </tr>
             <tr>
                 <th>Titre :</th>
@@ -32,14 +36,28 @@
                 <th>Créer le :</th>
                 <td>{{ ticket.createdAt ? ticket.createdAt|date('d-m-Y H:i:s') : '' }}</td>
             </tr>
+            <tr>
+                <th>Modifier le :</th>
+                <td>{{ ticket.updatedAt ? ticket.updatedAt|date('d-m-Y H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Les participants :</th>
+                <td>{{ticket.users ? ticket.users|join(' -- ')}}</td>
+            </tr>
         </tbody>
     </table>
 
     <div class="col mt-4">
         <div class="row">
-            <a href="{{ path('ticket_edit', {'id': ticket.id}) }}" class="btn btn-primary">Modifier</a>
+            {% if is_granted('ROLE_ADMIN') or app.user == ticket.creator %}
+                <a href="{{ path('ticket_edit', {'id': ticket.id}) }}" class="btn btn-primary">Modifier</a>
+            {% endif %}
+        
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('ticket_users', {'id': ticket.id}) }}" class="btn btn-primary">Modifier les participants</a>
 
-            {{ include('ticket/_delete_form.html.twig') }}
+                {{ include('ticket/_delete_form.html.twig') }}
+            {% endif %}
         </div>
     </div>
 {% endblock %}
