@@ -62,6 +62,7 @@ class CustomerFilesController extends AbstractController
                 $notification->setUrl("/$id");
                 $notification->addUser($customerFile->getInstaller());
                 $em->persist($notification);
+                $em->flush();
             }
             return $this->redirectToRoute('default');
         }

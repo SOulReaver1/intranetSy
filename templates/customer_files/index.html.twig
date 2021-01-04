@@ -28,7 +28,9 @@
                 <td>{{ customer_file.address }}</td>
                 <td>
                     <a href="{{ path('customer_files_show', {'id': customer_file.id}) }}" class="btn btn-primary">Regarder</a>
-                    <a href="{{ path('customer_files_edit', {'id': customer_file.id}) }}" class="btn btn-primary">Modifier</a>
+                    {% if is_granted('ROLE_USER') %}
+                        <a href="{{ path('customer_files_edit', {'id': customer_file.id}) }}" class="btn btn-primary">Modifier</a>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}

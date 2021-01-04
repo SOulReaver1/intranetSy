@@ -4,7 +4,9 @@
 {% set title = "Voir les tickets" %}
 {% set datatable = true %}
 {% block header %}
-    <a href="{{ path('ticket_new') }}" class="btn btn-primary">Créer un ticket</a>
+    {% if is_granted('ROLE_USER') %}
+        <a href="{{ path('ticket_new') }}" class="btn btn-primary">Créer un ticket</a>
+    {% endif %}
 {% endblock %}
 {% block body %}
     <table id="ticketTable" class="table w-100 dt-table responsive display nowrap">
@@ -28,7 +30,9 @@
                 <td>{{ ticket.createdAt ? ticket.createdAt|date('d-m-Y H:i:s') : '' }}</td>
                 <td>
                     <a href="{{ path('ticket_show', {'id': ticket.id}) }}" class="btn btn-primary">Regarder</a>
-                    <a href="{{ path('ticket_edit', {'id': ticket.id}) }}" class="btn btn-primary">Modifier</a>
+                    {% if is_granted('ROLE_USER') %}
+                        <a href="{{ path('ticket_edit', {'id': ticket.id}) }}" class="btn btn-primary">Modifier</a>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}

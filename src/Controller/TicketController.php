@@ -4,17 +4,16 @@ namespace App\Controller;
 
 use App\Entity\Notification;
 use App\Entity\Ticket;
-use App\Entity\TicketMessage;
 use App\Form\AddUserToTicketType;
 use App\Form\TicketType;
 use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
-use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class TicketController extends AbstractController
 {
@@ -42,6 +41,7 @@ class TicketController extends AbstractController
     }
 
     /**
+     * @IsGranted("ROLE_USER")
      * @Route("/ticket/new", name="ticket_new", methods={"GET","POST"})
      */
     public function new(Request $request, UserRepository $user): Response
@@ -92,6 +92,7 @@ class TicketController extends AbstractController
     }
 
     /**
+     * @IsGranted("ROLE_ADMIN")
      * @Route("/admin/ticket/{id}/users", name="ticket_users", methods={"GET", "POST"}, requirements={"id":"\d+"})
      */
     public function addUser(Request $request, Ticket $ticket, UserRepository $user): Response
@@ -121,6 +122,7 @@ class TicketController extends AbstractController
     }
 
     /**
+     * @IsGranted("ROLE_USER")
      * @Route("/ticket/{id}/edit", name="ticket_edit", methods={"GET","POST"})
     */
     public function edit(Request $request, Ticket $ticket): Response
@@ -146,6 +148,7 @@ class TicketController extends AbstractController
     }
 
     /**
+     * @IsGranted("ROLE_USER")
      * @Route("/admin/ticket/{id}", name="ticket_delete", methods={"DELETE"})
      */
     public function delete(Request $request, Ticket $ticket): Response

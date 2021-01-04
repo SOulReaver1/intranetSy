@@ -27,8 +27,10 @@ class AddUserToTicketType extends AbstractType
                     return $er->createQueryBuilder('u')
                         ->andWhere('u.roles NOT LIKE :admin')
                         ->andWhere('u.roles NOT LIKE :sadmin')
+                        ->andWhere('u.roles NOT LIKE :dadmin')
                         ->setParameter('sadmin', '%"'.'ROLE_SUPERADMIN'.'"%')
-                        ->setParameter('admin', '%"'.'ROLE_ADMIN'.'"%');
+                        ->setParameter('admin', '%"'.'ROLE_ADMIN'.'"%')
+                        ->setParameter('dadmin', '%"'.'ROLE_DEVELOPER'.'"%');
                 },
                 'placeholder' => 'Aucun utilisateur',
                 'required' => false,

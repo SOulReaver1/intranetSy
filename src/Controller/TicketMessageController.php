@@ -22,35 +22,42 @@ class TicketMessageController extends AbstractController
      */
     public function index(Request $request, Ticket $ticket, TicketMessageRepository $messages): Response
     {
-        $message = new TicketMessage();
-        $form = $this->createForm(TicketMessageType::class, $message);
-        $form->handleRequest($request);
+        
+        if(in_array($this->getUser(), $ticket->getUsers()->toArray())){
+            $message = new TicketMessage();
+            $form = $this->createForm(TicketMessageType::class, $message);
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $message->setFromUser($this->getUser());
-            $message->setTicket($ticket);
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($message);
-            $entityManager->flush();
-            $notification = new Notification();
-            $ticket_id = $ticket->getId();
-            $em = $this->getDoctrine()->getManager();
-            $notification->setUrl("/ticket/message/$ticket_id");
-            $notification->setTitle("Nouveau message dans le ticket numero $ticket_id");
-            $notification->setDescription($message->getContent());
-            $em->persist($notification);
-            foreach ($ticket->getUsers() as $value) if($value !== $this->getUser()) $value->addNotification($notification);
-            $em->flush();
-           
-            return $this->redirectToRoute('ticket_message_index', [
-                'id' => $ticket->getId()
+            if ($form->isSubmitted() && $form->isValid()) {
+                $message->setFromUser($this->getUser());
+                $message->setTicket($ticket);
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($message);
+                $entityManager->flush();
+                $notification = new Notification();
+                $ticket_id = $ticket->getId();
+                $em = $this->getDoctrine()->getManager();
+                $notification->setUrl("/ticket/message/$ticket_id");
+                $notification->setTitle("Nouveau message dans le ticket numero $ticket_id");
+                $notification->setDescription($message->getContent());
+                $em->persist($notification);
+                foreach ($ticket->getUsers() as $value) if($value !== $this->getUser()) $value->addNotification($notification);
+                $em->flush();
+               
+                return $this->redirectToRoute('ticket_message_index', [
+                    'id' => $ticket->getId()
+                ]);
+            }
+    
+            return $this->render('ticket/messages/show.html.twig', [
+                'ticket' => $ticket,
+                'form' => $form->createView(),
+                'messages' => $messages->findById($ticket->getId())
             ]);
         }
 
-        return $this->render('ticket/messages/show.html.twig', [
-            'ticket' => $ticket,
-            'form' => $form->createView(),
-            'messages' => $messages->findById($ticket->getId())
-        ]);
+        $this->addFlash('error', 'Vous n\'avez pas accès à ce ticket !');
+        return $this->redirectToRoute('ticket_index');
+        
     }
 }
