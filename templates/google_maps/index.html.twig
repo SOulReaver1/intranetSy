@@ -7,6 +7,7 @@
     <p>Pour zoomer / dezoomer sur la carte : <strong>CTRL + MOLETTE DE LA SOURIS</strong></p>
 {% endblock %}
 {% block stylesheets %}
+    <link href="{{asset('assets/js/plugins/semantic/semantic.min.css')}}" rel="stylesheet">
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <script
       src="https://maps.googleapis.com/maps/api/js?key={{google_maps_api_key}}&callback=initMap&libraries=&v=weekly"
@@ -16,6 +17,15 @@
 {% block body %}
     <div class="container-fluid">
         <div id="map" style="height: 100vh"></div>
+        <hr class="mt-5">
+        <h1>Affichage :</h1>
+        <select name="skills" multiple="" class="ui fluid dropdown" id="filtre">
+            <option value="" selected="true">Tout</option>
+            <option value="0">Aucun statut</option>
+            {% for statut in statuts %}
+                <option value="{{statut.id}}">{{statut.name}}</option>
+            {% endfor %}
+        </select>
         <hr class="mt-5">
         <h1>Légende :</h1>
         <table id="legendTable" class="table w-100 dt-table responsive display nowrap">
@@ -53,9 +63,21 @@
     </div>
 {% endblock %}
 {% block javascripts %}
+    <script src="{{asset('assets/js/plugins/semantic/semantic.js')}}"></script>
     <script>
         var map;
         var geocoder;
+        var add;
+        let markers = [];
+
+        $("#filtre").dropdown({
+            cache: false,
+            saveRemoteData: false,
+            onChange: (filtres, b, c) => {
+                drawMarker(add, filtres);
+            },
+            transition: 'drop'
+        });
 
         function initMap() {
             var latlng = new google.maps.LatLng(46.232192999999995, 2.209666999999996);
@@ -69,32 +91,46 @@
                 method: 'POST'
             }).then(response => response.json())
             .then(addresses => {
-                for(var i = 0; i < addresses.length; i++){
-                    var color = addresses[i].color;
-                      const symbolThree = {
-                        path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z',
-                        fillColor: color ?? 'black',
-                        fillOpacity: 1,
-                        strokeColor: '#000',
-                        strokeWeight: 1,
-                        scale: 1
-                    };
-                    var marker = new google.maps.Marker({
-                        map: map,
-                        icon: symbolThree,
-                        position: {lat: addresses[i].lat, lng: addresses[i].lng}
-                    })
-                    marker.addListener("click", toggleBounce(marker));
-                }
+                drawMarker(addresses);
             })
         }
-        
-        function toggleBounce(marker) {
-            if (marker.getAnimation() !== null) {
-                marker.setAnimation(null);
-            } else {
-                marker.setAnimation(google.maps.Animation.BOUNCE);
+
+        function drawMarker(addresses, filtered = []){
+            add = addresses;
+            setMapOnAll(null);
+            markers = [];
+            for(var i = 0; i < addresses.length; i++){
+                if(addresses[i].statutId && filtered.includes(addresses[i].statutId.toString())){
+                    draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
+                }else if(filtered.length === 0){
+                    draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
+                }else if(addresses[i].statutId === null && filtered.includes("0")){
+                    draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
+                }
             }
+            setMapOnAll(map);
+        }
+
+        function setMapOnAll(map) {
+            for (let i = 0; i < markers.length; i++) {
+                markers[i].setMap(map);
+            }
+        }
+
+        function draw(lat, lng, color = 'black'){
+            const symbolThree = {
+                path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z',
+                fillColor: color,
+                fillOpacity: 1,
+                strokeColor: '#000',
+                strokeWeight: 1,
+                scale: 1
+            };
+            const marker = new google.maps.Marker({
+                icon: symbolThree,
+                position: {lat: lat, lng: lng}
+            })
+            markers.push(marker);
         }
     </script>
 {% endblock %}

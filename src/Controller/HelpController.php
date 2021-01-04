@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Help;
+use App\Entity\Notification;
 use App\Form\HelpType;
 use App\Repository\HelpRepository;
 use App\Repository\UserRepository;
@@ -15,9 +16,17 @@ use Symfony\Component\Mime\Address;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 
 class HelpController extends AbstractController
 {
+
+    private $roleHierarchy;
+
+    public function __construct(RoleHierarchyInterface $roleHierarchy){
+        $this->roleHierarchy = $roleHierarchy;
+    }
+
     /**
      * @Route("/dev/help/index", name="help_index", methods={"GET"})
      */
@@ -42,9 +51,22 @@ class HelpController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($help);
             $entityManager->flush();
+            $help_id = $help->getId();
+            $notification = new Notification();
+            $em = $this->getDoctrine()->getManager();
+            $notification->setUrl("/dev/help/$help_id");
+            $notification->setTitle('Un bug à été signaler !');
+            $em->persist($notification);
             $emails = [];
             $devs = $user->findByRole('ROLE_DEVELOPER');
-            foreach($devs as $dev) $emails[] = new Address($dev->getEmail());
+            foreach($devs as $dev) {
+                $emails[] = new Address($dev->getEmail());
+                $roles = $this->roleHierarchy->getReachableRoleNames($dev->getRoles());
+                if(in_array('ROLE_DEVELOPER', $roles)){
+                    $notification->addUser($dev);
+                }
+            }
+            $em->flush();
             $email = (new TemplatedEmail())
             ->from(new Address('contact@lergonhome.fr', 'Intranet Lergon\'Home'))
             ->to(...$emails)
