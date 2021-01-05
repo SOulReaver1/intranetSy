@@ -14,6 +14,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email;
 
 class TicketController extends AbstractController
 {
@@ -44,7 +48,7 @@ class TicketController extends AbstractController
      * @IsGranted("ROLE_USER")
      * @Route("/ticket/new", name="ticket_new", methods={"GET","POST"})
      */
-    public function new(Request $request, UserRepository $user): Response
+    public function new(Request $request, UserRepository $user,  MailerInterface $mailer): Response
     {
         $ticket = new Ticket();
         $form = $this->createForm(TicketType::class, $ticket);
@@ -71,6 +75,18 @@ class TicketController extends AbstractController
             $em->persist($notification);
             foreach ($ticket->getUsers() as $value) if($value !== $this->getUser()) $value->addNotification($notification);
             $em->flush();
+            $emails = [];
+            foreach($ticket->getUsers() as $ticketUser) {
+                $emails[] = new Address($ticketUser->getEmail());
+            }
+            $email = (new TemplatedEmail())
+            ->from(new Address('contact@lergonhome.fr', 'Intranet Lergon\'Home'))
+            ->to(...$emails)
+            ->priority(Email::PRIORITY_HIGH)
+            ->subject('Nouveau ticket Lergon\'Home')
+            ->context(['ticket' => $ticket])
+            ->htmlTemplate('ticket/_email.html.twig');
+            $mailer->send($email);
             $this->addFlash('success', 'Le ticket à bien été créer !');  
             return $this->redirectToRoute('ticket_index');
         }
@@ -86,9 +102,14 @@ class TicketController extends AbstractController
      */
     public function show(Ticket $ticket): Response
     {
-        return $this->render('ticket/show.html.twig', [
-            'ticket' => $ticket,
-        ]);
+        if(in_array($this->getUser(), $ticket->getUsers()->toArray())){
+            return $this->render('ticket/show.html.twig', [
+                'ticket' => $ticket,
+            ]);
+        }
+        
+        $this->addFlash('error', 'Vous n\'avez pas accès à cette fiche !');
+        return $this->redirectToRoute('ticket_index');
     }
 
     /**
