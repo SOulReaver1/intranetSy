@@ -49,6 +49,11 @@ class CustomerFilesStatut
      */
     private $color;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $ordered;
+
     public function __construct()
     {
         $this->customerFiles = new ArrayCollection();
@@ -155,6 +160,18 @@ class CustomerFilesStatut
     public function setColor(string $color): self
     {
         $this->color = $color;
+
+        return $this;
+    }
+
+    public function getOrdered(): ?int
+    {
+        return $this->ordered;
+    }
+
+    public function setOrdered(int $ordered): self
+    {
+        $this->ordered = $ordered;
 
         return $this;
     }

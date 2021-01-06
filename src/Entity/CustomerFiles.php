@@ -53,7 +53,7 @@ class CustomerFiles
     private $home_phone;
 
     /**
-     * @ORM\Column(type="string", length=20, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $cellphone;
 
@@ -85,9 +85,9 @@ class CustomerFiles
     private $client_statut_id;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="boolean", nullable=true, options={"default" : 0})
      */
-    private $stairs;
+    private $stairs = 0;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -100,7 +100,7 @@ class CustomerFiles
     private $password_al;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="boolean", nullable=true, options={"default" : 0})
      */
     private $annex_quote;
 

@@ -42,6 +42,7 @@ class FindByRoles {
     }
 
     public function findByRoles(array $roles, ?User $user = null, ?bool $me = true){
+        
         if($user){
             $rolesH = $this->roleHierarchy->getReachableRoleNames($user->getRoles());
             if(array_intersect($roles, $rolesH) == $roles){
@@ -50,8 +51,7 @@ class FindByRoles {
         }
 
         $users = [];
-
-        for ($i=0; $i < count($this->users) ; $i++) { 
+          for ($i=0; $i < count($this->users) ; $i++) { 
             if($this->users[$i] !== $this->security->getUser() || $me){
                 $rolesH = $this->roleHierarchy->getReachableRoleNames($this->users[$i]->getRoles());
                 if(array_intersect($roles, $rolesH) == $roles){

@@ -43,7 +43,7 @@ class HelpController extends AbstractController
     /**
      * @Route("/help/new", name="help_new", methods={"GET","POST"})
      */
-    public function new(Request $request, UserRepository $user, NotificationService $notificationService, Mailer $mailer, FindByRoles $findByRoles): Response
+    public function new(Request $request, NotificationService $notificationService, Mailer $mailer, FindByRoles $findByRoles): Response
     {
         $help = new Help();
         $form = $this->createForm(HelpType::class, $help);
@@ -55,7 +55,7 @@ class HelpController extends AbstractController
             $entityManager->persist($help);
             $entityManager->flush();
             // Send notification
-            $notificationService->sendNotification($findByRoles->findByRole('ROLE_DEVELOPER'), 'Un bug à été signaler !', "/dev/help/".$help->getId());
+            $notificationService->sendNotification($findByRoles->findByRole('ROLE_DEVELOPER'), 'Un bug à été signalé !', "/dev/help/".$help->getId());
             // Send mail
             $mailer->sendMail($findByRoles->findByRole('ROLE_DEVELOPER'), 'Nouvelle demande d\'aide Intranet Lergon\'Home', 'help/_email.html.twig', ['help' => $help]);
             $this->addFlash('success', 'Merci ! Votre bug à bien été signalé !');  
