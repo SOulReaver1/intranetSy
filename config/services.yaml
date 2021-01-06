@@ -33,6 +33,9 @@ services:
         arguments:
             $targetDirectory: '%files_directory%'
 
+    App\Service\NotificationService:
+        arguments: [ "@doctrine.orm.entity_manager" ]
+
     App\EventListener\BrochureUploadListener:
         tags:
             - { name: doctrine.event_listener, event: prePersist }

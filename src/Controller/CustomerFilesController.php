@@ -13,6 +13,8 @@ use App\Form\UpdateCustomerPasswordType;
 use App\Repository\CustomerFilesRepository;
 use App\Repository\ProviderProductRepository;
 use App\Repository\ProviderRepository;
+use App\Service\Mailer;
+use App\Service\NotificationService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -44,7 +46,7 @@ class CustomerFilesController extends AbstractController
      * @IsGranted("ROLE_ALLOW_CREATE")
      * @Route("/new", name="customer_files_new", methods={"GET","POST"})
      */
-    public function new(Request $request, ProviderRepository $provider): Response
+    public function new(Request $request, ProviderRepository $provider, NotificationService $notificationService, Mailer $mailer): Response
     {
         $customerFile = new CustomerFiles();
         $form = $this->createForm(CustomerFilesType::class, $customerFile);
@@ -55,14 +57,10 @@ class CustomerFilesController extends AbstractController
             $entityManager->persist($customerFile);
             $entityManager->flush();
             if($customerFile->getInstaller()){
-                $em = $this->getDoctrine()->getManager();
-                $id = $customerFile->getId();
-                $notification = new Notification;
-                $notification->setTitle('Une nouvelle fiche vous à été attribuer !');
-                $notification->setUrl("/$id");
-                $notification->addUser($customerFile->getInstaller());
-                $em->persist($notification);
-                $em->flush();
+                // Send notification
+                $notificationService->sendNotification([$customerFile->getInstaller()], 'Une nouvelle fiche vous à été attribuer !', "/".$customerFile->getId());
+                // // Send mail
+                $mailer->sendMail([$customerFile->getInstaller()], 'Nouveau ticket Lergon\'Home', 'customer_files/email_template/installer.html.twig', ['customer' => $customerFile]);
             }
             return $this->redirectToRoute('default');
         }

@@ -2,38 +2,37 @@
 
 namespace App\Controller;
 
-use App\Entity\Notification;
 use App\Entity\Ticket;
 use App\Form\AddUserToTicketType;
 use App\Form\TicketType;
 use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
+use App\Service\FindByRoles;
+use App\Service\Mailer;
+use App\Service\NotificationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Address;
-use Symfony\Component\Mime\Email;
 
 class TicketController extends AbstractController
 {
 
-    private $roleHierarchy;
+    private $findByRoles;
 
-    public function __construct(RoleHierarchyInterface $roleHierarchy){
-        $this->roleHierarchy = $roleHierarchy;
+    public function __construct(FindByRoles $findByRoles){
+        $this->findByRoles = $findByRoles;
     }
+    
     /**
      * @Route("/tickets", name="ticket_index", methods={"GET"})
      */
     public function index(TicketRepository $ticketRepository): Response
     {
 
-        if(in_array('ROLE_ADMIN', $this->roleHierarchy->getReachableRoleNames($this->getUser()->getRoles()))){
+
+        if($this->findByRoles->findByRole('ROLE_ADMIN', $this->getUser())){
             $tickets = $ticketRepository->findAll();
         }else{
             $tickets = $ticketRepository->findByUser($this->getUser());
@@ -48,45 +47,28 @@ class TicketController extends AbstractController
      * @IsGranted("ROLE_USER")
      * @Route("/ticket/new", name="ticket_new", methods={"GET","POST"})
      */
-    public function new(Request $request, UserRepository $user,  MailerInterface $mailer): Response
+    public function new(Request $request, UserRepository $user, Mailer $mailer, NotificationService $notificationService): Response
     {
         $ticket = new Ticket();
         $form = $this->createForm(TicketType::class, $ticket);
         $form->handleRequest($request);
        
         if ($form->isSubmitted() && $form->isValid()) {
-            foreach ($user->findAll() as $value) {
-                $roles = $this->roleHierarchy->getReachableRoleNames($value->getRoles());
-                if(in_array('ROLE_ADMIN', $roles)){
-                    $ticket->addUser($value);
-                }
-            }
-            $ticket->getCustomerFile() !== null && $ticket->getCustomerFile()->getInstaller() !== null && $ticket->addUser($ticket->getCustomerFile()->getInstaller());
-            $ticket->setCreator($this->getUser());
+            // Add all admin users
+            $ticket->addUser(...$this->findByRoles->findByRole('ROLE_ADMIN', null, false));
+            // Add the creator
             $ticket->addUser($this->getUser());
+            // Add the installer
+            $ticket->getCustomerFile() !== null && $ticket->getCustomerFile()->getInstaller() !== null && $ticket->addUser($ticket->getCustomerFile()->getInstaller());
+            // Set creator
+            $ticket->setCreator($this->getUser());
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($ticket);
             $entityManager->flush();
-            $ticket_id = $ticket->getId();
-            $notification = new Notification();
-            $em = $this->getDoctrine()->getManager();
-            $notification->setUrl("/ticket/$ticket_id");
-            $notification->setTitle('Un nouveau ticket à été ouvert !');
-            $em->persist($notification);
-            foreach ($ticket->getUsers() as $value) if($value !== $this->getUser()) $value->addNotification($notification);
-            $em->flush();
-            $emails = [];
-            foreach($ticket->getUsers() as $ticketUser) {
-                $emails[] = new Address($ticketUser->getEmail());
-            }
-            $email = (new TemplatedEmail())
-            ->from(new Address('contact@lergonhome.fr', 'Intranet Lergon\'Home'))
-            ->to(...$emails)
-            ->priority(Email::PRIORITY_HIGH)
-            ->subject('Nouveau ticket Lergon\'Home')
-            ->context(['ticket' => $ticket])
-            ->htmlTemplate('ticket/_email.html.twig');
-            $mailer->send($email);
+            // Send notification
+            $notificationService->sendNotification($ticket->getUsers()->toArray(), "Un nouveau ticket à été ouvert !", "/ticket/".$ticket->getId());
+            // Send mail
+            $mailer->sendMail($ticket->getUsers()->toArray(), 'Nouveau ticket Lergon\'Home', 'ticket/_email.html.twig', ['ticket' => $ticket]);
             $this->addFlash('success', 'Le ticket à bien été créer !');  
             return $this->redirectToRoute('ticket_index');
         }
@@ -121,12 +103,9 @@ class TicketController extends AbstractController
         $form = $this->createForm(AddUserToTicketType::class, $ticket);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            foreach ($user->findAll() as $value) {
-                $roles = $this->roleHierarchy->getReachableRoleNames($value->getRoles());
-                if(in_array('ROLE_ADMIN', $roles)){
-                    $ticket->addUser($value);
-                }
-            }
+            // Add all admin users to update changes
+            $ticket->addUser(...$this->findByRoles->findByRole('ROLE_ADMIN'));
+
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($ticket);
             $entityManager->flush();
@@ -148,7 +127,8 @@ class TicketController extends AbstractController
     */
     public function edit(Request $request, Ticket $ticket): Response
     {
-        if($this->getUser() === $ticket->getCreator() || in_array('ROLE_ADMIN', $this->roleHierarchy->getReachableRoleNames($this->getUser()->getRoles()))){
+        // If I am the creator or an administrator, i can edit the ticket
+        if($this->getUser() === $ticket->getCreator() || $this->findByRoles->findByRole('ROLE_ADMIN', $this->getUser())){
             $form = $this->createForm(TicketType::class, $ticket);
             $form->handleRequest($request);
     

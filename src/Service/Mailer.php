@@ -2,7 +2,11 @@
 
 namespace App\Service;
 
+use App\Entity\User;
+use Doctrine\ORM\PersistentCollection;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 
 class Mailer {
@@ -13,12 +17,22 @@ class Mailer {
         $this->mailerInterface = $mailer;
     }
 
-    public function sendMail($email){
-        $email = new Email();
-        $email->from('contact@lergonhome.fr')
-        ->to('ilan.journo555@gmail.com')
-        ->subject('Bienvenue sur mon site internet')
-        ->html('<h1>Bonjour</h1>');
+    public function sendMail(array $users, string $subject, string $template, ?array $context = []){
+        
+        $emails = array();
+        for ($i=0; $i < count($users) ; $i++) { 
+            $emails[] = new Address($users[$i]->getEmail(), $users[$i]->getUsername());
+        }
+        
+        $email = (new TemplatedEmail())
+        ->from(new Address('contact@lergonhome.fr', 'Intranet Lergon\'Home'))
+        ->to(...$emails)
+        ->priority(Email::PRIORITY_HIGH)
+        ->subject($subject)
+        ->context($context)
+        ->htmlTemplate($template);
+
+        $email->getHeaders()->addTextHeader('X-Auto-Response-Suppress', 'OOF, DR, RN, NRN, AutoReply');
 
         $this->mailerInterface->send($email);
     } 

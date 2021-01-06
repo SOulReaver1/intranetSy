@@ -7,6 +7,9 @@ use App\Entity\Notification;
 use App\Form\HelpType;
 use App\Repository\HelpRepository;
 use App\Repository\UserRepository;
+use App\Service\FindByRoles;
+use App\Service\Mailer;
+use App\Service\NotificationService;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +43,7 @@ class HelpController extends AbstractController
     /**
      * @Route("/help/new", name="help_new", methods={"GET","POST"})
      */
-    public function new(Request $request, UserRepository $user, MailerInterface $mailer): Response
+    public function new(Request $request, UserRepository $user, NotificationService $notificationService, Mailer $mailer, FindByRoles $findByRoles): Response
     {
         $help = new Help();
         $form = $this->createForm(HelpType::class, $help);
@@ -51,30 +54,10 @@ class HelpController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($help);
             $entityManager->flush();
-            $help_id = $help->getId();
-            $notification = new Notification();
-            $em = $this->getDoctrine()->getManager();
-            $notification->setUrl("/dev/help/$help_id");
-            $notification->setTitle('Un bug à été signaler !');
-            $em->persist($notification);
-            $emails = [];
-            $devs = $user->findByRole('ROLE_DEVELOPER');
-            foreach($devs as $dev) {
-                $emails[] = new Address($dev->getEmail());
-                $roles = $this->roleHierarchy->getReachableRoleNames($dev->getRoles());
-                if(in_array('ROLE_DEVELOPER', $roles)){
-                    $notification->addUser($dev);
-                }
-            }
-            $em->flush();
-            $email = (new TemplatedEmail())
-            ->from(new Address('contact@lergonhome.fr', 'Intranet Lergon\'Home'))
-            ->to(...$emails)
-            ->priority(Email::PRIORITY_HIGH)
-            ->subject('Nouvelle demande d\'aide Intranet Lergon\'Home')
-            ->context(['help' => $help])
-            ->htmlTemplate('help/_email.html.twig');
-            $mailer->send($email);
+            // Send notification
+            $notificationService->sendNotification($findByRoles->findByRole('ROLE_DEVELOPER'), 'Un bug à été signaler !', "/dev/help/".$help->getId());
+            // Send mail
+            $mailer->sendMail($findByRoles->findByRole('ROLE_DEVELOPER'), 'Nouvelle demande d\'aide Intranet Lergon\'Home', 'help/_email.html.twig', ['help' => $help]);
             $this->addFlash('success', 'Merci ! Votre bug à bien été signalé !');  
             return $this->redirectToRoute('default');
         }
