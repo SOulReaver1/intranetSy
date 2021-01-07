@@ -138,15 +138,20 @@ class CustomerFilesController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('default');
+            $this->addFlash('success', 'La fiche à bien été modifiée !');
+            return $this->redirectToRoute('customer_files_edit', ['id' => $customerFile->id]);
+
         }else if($password->isSubmitted() && $password->isValid()){
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('default');
+            $this->addFlash('success', 'Le mot de passe de la fiche à bien été modifié !');
+            return $this->redirectToRoute('customer_files_edit', ['id' => $customerFile->id]);
+
         }else if($mail->isSubmitted() && $mail->isValid()){
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('default');
+            $this->addFlash('success', 'L\'email de la fiche à bien été modifié !');
+            return $this->redirectToRoute('customer_files_edit', ['id' => $customerFile->id]);
         }
 
         return $this->render('customer_files/edit.html.twig', [
