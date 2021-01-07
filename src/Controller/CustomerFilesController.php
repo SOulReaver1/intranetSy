@@ -63,7 +63,10 @@ class CustomerFilesController extends AbstractController
                 // // Send mail
                 $mailer->sendMail([$customerFile->getInstaller()], 'Nouveau ticket Lergon\'Home', 'customer_files/email_template/installer.html.twig', ['customer' => $customerFile]);
             }
-            return $this->redirectToRoute('default');
+
+            $this->addFlash('success', 'La fiche a bien été enregistrée !');
+            return $this->redirectToRoute('customer_files_show', ['id' => $customerFile->id]);
+
         }
 
         return $this->render('customer_files/new.html.twig', [
