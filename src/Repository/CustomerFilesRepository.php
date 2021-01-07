@@ -43,6 +43,7 @@ class CustomerFilesRepository extends ServiceEntityRepository
             ->leftJoin('c.installer', 'user')
             ->where('user = :user')
             ->setParameter('user', $user)
+            ->orderBy('c.ordred')
             ->andWhere('c.lat is not null')
             ->andWhere('c.lng is not null')
             ->getQuery()

@@ -49,8 +49,8 @@
             <p class="form-control">{{customer_file.routeNumber}}</p>
         </div>
         <div class="col form-group">
-            <label class="form-control-label">Complément d'adresse :</label>
-            <p class="form-control">{{customer_file.addressComplement}}</p>
+            <label class="form-control-label">Adresse :</label>
+            <p class="form-control">{{customer_file.address}}</p>
         </div>
     </div>
     <div class="row">
@@ -59,7 +59,7 @@
             <p class="form-control">{{customer_file.city}}</p>
         </div>
         <div class="col-md-6 form-group">
-            <label class="form-control-label">Adresse :</label>
+            <label class="form-control-label">Code postal :</label>
             <p class="form-control">{{customer_file.zipCode}}</p>
         </div>
     </div>
@@ -73,6 +73,13 @@
             <p class="form-control">{{customer_file.country}}</p>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Complément d'adresse :</label>
+            <p class="form-control">{{customer_file.addressComplement}}</p>
+        </div>
+    </div>
+    
     <div class="row">
         <div class="col form-group">
             <label class="form-control-label">Statut du client :</label>

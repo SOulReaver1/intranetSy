@@ -28,13 +28,21 @@
         </select>
         <hr class="m-3"/>
         <h3>Filtrer par statut :</h3>
-        <select multiple="" class="ui fluid dropdown search" id="filtre">
-            <option value="" selected="true">Tout</option>
-            <option value="0">Aucun statut</option>
-            {% for statut in statuts %}
-                <option value="{{statut.id}}">{{statut.name}}</option>
-            {% endfor %}
-        </select>
+        <div class="ui fluid search selection multiple dropdown" id="filtre">
+            <input type="hidden" name="country">
+            <i class="dropdown icon"></i>
+            <div class="default text">Tout</div>
+            <div class="menu">
+                {% for statut in statuts %}
+                    <div class="item" data-value="{{statut.id}}">
+                        <span class="badge" style="background-color: {{statut.color}}">
+                            {{statut.color}}
+                        </span>
+                        {{statut.name}}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
         <button class="btn btn-danger mt-3" id="clearFiltre">Effacer</div>
         <hr class="mt-5">
         <h1>Légende :</h1>
