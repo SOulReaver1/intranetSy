@@ -5,7 +5,7 @@
 {% block header %}
     <div class="row justify-content-end">
         <a href="{{ path('files_index', {'id': customer_file.id}) }}" class="btn btn-primary">Les documents</a>
-        <a href="{{ path('default') }}" class="btn btn-primary">Retour</a>
+        <a href="{{app.request.headers.get('referer')}}" class="btn btn-primary">Retour</a>
     </div>
 {% endblock %}
 {% block body %}
