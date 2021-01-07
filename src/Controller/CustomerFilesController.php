@@ -65,7 +65,7 @@ class CustomerFilesController extends AbstractController
             }
 
             $this->addFlash('success', 'La fiche a bien été enregistrée !');
-            return $this->redirectToRoute('customer_files_show', ['id' => $customerFile->id]);
+            return $this->redirectToRoute('customer_files_show', ['id' => $customerFile->getId()]);
 
         }
 
@@ -142,19 +142,19 @@ class CustomerFilesController extends AbstractController
             $this->getDoctrine()->getManager()->flush();
 
             $this->addFlash('success', 'La fiche à bien été modifiée !');
-            return $this->redirectToRoute('customer_files_edit', ['id' => $customerFile->id]);
+            return $this->redirectToRoute('customer_files_edit', ['id' => $customerFile->getId()]);
 
         }else if($password->isSubmitted() && $password->isValid()){
             $this->getDoctrine()->getManager()->flush();
 
             $this->addFlash('success', 'Le mot de passe de la fiche à bien été modifié !');
-            return $this->redirectToRoute('customer_files_edit', ['id' => $customerFile->id]);
+            return $this->redirectToRoute('customer_files_edit', ['id' => $customerFile->getId()]);
 
         }else if($mail->isSubmitted() && $mail->isValid()){
             $this->getDoctrine()->getManager()->flush();
 
             $this->addFlash('success', 'L\'email de la fiche à bien été modifié !');
-            return $this->redirectToRoute('customer_files_edit', ['id' => $customerFile->id]);
+            return $this->redirectToRoute('customer_files_edit', ['id' => $customerFile->getId()]);
         }
 
         return $this->render('customer_files/edit.html.twig', [
