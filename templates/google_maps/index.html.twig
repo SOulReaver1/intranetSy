@@ -7,7 +7,7 @@
     <p>Pour zoomer / dezoomer sur la carte : <strong>CTRL + MOLETTE DE LA SOURIS</strong></p>
 {% endblock %}
 {% block stylesheets %}
-    <link href="{{asset('assets/js/plugins/semantic/semantic.min.css')}}" rel="stylesheet">
+    <link href="{{asset('assets/js/plugins/semantic/semantic.css')}}" rel="stylesheet">
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <script
       src="https://maps.googleapis.com/maps/api/js?key={{google_maps_api_key}}&callback=initMap&libraries=&v=weekly"
@@ -26,6 +26,7 @@
                 <option value="{{statut.id}}">{{statut.name}}</option>
             {% endfor %}
         </select>
+        <button class="btn btn-danger mt-3" id="clearFiltre">Effacer</div>
         <hr class="mt-5">
         <h1>Légende :</h1>
         <table id="legendTable" class="table w-100 dt-table responsive display nowrap">
@@ -73,10 +74,15 @@
         $("#filtre").dropdown({
             cache: false,
             saveRemoteData: false,
+            clearable: true,
             onChange: (filtres, b, c) => {
                 drawMarker(add, filtres);
             },
-            transition: 'drop'
+            transition: 'drop',
+        });
+
+        $("#clearFiltre").on('click', function() {
+            $('#filtre').dropdown('clear');  
         });
 
         function initMap() {

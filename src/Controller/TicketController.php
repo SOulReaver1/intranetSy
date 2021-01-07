@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\CustomerFiles;
 use App\Entity\Ticket;
 use App\Form\AddUserToTicketType;
 use App\Form\TicketType;
+use App\Repository\CustomerFilesRepository;
 use App\Repository\TicketRepository;
 use App\Repository\UserRepository;
 use App\Service\FindByRoles;
@@ -47,7 +49,7 @@ class TicketController extends AbstractController
      * @IsGranted("ROLE_USER")
      * @Route("/ticket/new", name="ticket_new", methods={"GET","POST"})
      */
-    public function new(Request $request, UserRepository $user, Mailer $mailer, NotificationService $notificationService): Response
+    public function new(Request $request, Mailer $mailer, NotificationService $notificationService): Response
     {
         $ticket = new Ticket();
         $form = $this->createForm(TicketType::class, $ticket);
@@ -98,7 +100,7 @@ class TicketController extends AbstractController
      * @IsGranted("ROLE_ADMIN")
      * @Route("/admin/ticket/{id}/users", name="ticket_users", methods={"GET", "POST"}, requirements={"id":"\d+"})
      */
-    public function addUser(Request $request, Ticket $ticket, UserRepository $user): Response
+    public function addUser(Request $request, Ticket $ticket): Response
     {
         $form = $this->createForm(AddUserToTicketType::class, $ticket);
         $form->handleRequest($request);

@@ -27,7 +27,6 @@ class FindByRoles {
                 return true;
             }
         }
-
         $users = [];
         for ($i=0; $i < count($this->users) ; $i++) {
             if($this->users[$i] !== $this->security->getUser() || $me){
@@ -38,7 +37,7 @@ class FindByRoles {
             }
         }
 
-        return $users;
+        return $users ? $users : [null];
     }
 
     public function findByRoles(array $roles, ?User $user = null, ?bool $me = true){
@@ -60,7 +59,7 @@ class FindByRoles {
             }
         }
 
-        return $users;
+        return $users ? $users : [null];
     }
 
 }

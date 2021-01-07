@@ -32,6 +32,7 @@ class TicketType extends AbstractType
                 'class' => CustomerFiles::class,
                 'label' => 'Choisir une fiche client :',
                 'required' => false,
+                'attr' => ['class' => 'ui fluid search dropdown'],
                 'placeholder' => 'Aucune fiche client'
             ])
             ->add('title', TextType::class, [

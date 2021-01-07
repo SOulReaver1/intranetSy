@@ -9,3 +9,15 @@
 {% block body %}
     {{ include('ticket/_form.html.twig') }}
 {% endblock %}
+{% block stylesheets %}
+    <link href="{{asset('assets/js/plugins/semantic/semantic.min.css')}}" rel="stylesheet">
+{% endblock %}
+{% block javascripts %}
+    <script src="{{asset('assets/js/plugins/semantic/semantic.js')}}"></script>
+    <script>
+        $("#ticket_customer_file").dropdown({
+            multiple: false,
+            clearable: true
+        })
+    </script>
+{% endblock %}

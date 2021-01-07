@@ -23,6 +23,7 @@ class NotificationService {
             $index = array_search($this->security->getUser(), $users);
             unset($users[$index]);
         }
+        if(empty($users)) return;
         $notification = new Notification();
         $notification->setTitle($title);
         $notification->setUrl($url);
