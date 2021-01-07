@@ -16,6 +16,10 @@
                     <i class="tags icon"></i>
                     Les statuts
                 </div>
+                <a href="/" class="item">
+                    <div class="ui red empty circular label"></div>
+                    Tout regarder
+                </a>
                 {% for statut in statuts %}
                     <a href="?statut={{statut.id}}" class="item">
                         <div class="ui red empty circular label"></div>
@@ -37,6 +41,8 @@
                 <th>Genre</th>
                 <th>Nom</th>
                 <th>Adresse</th>
+                <th>Mail AL</th>
+                <th>Mot de passe AL</th>
                 <th width="5%">Actions</th>
             </tr>
         </thead>
@@ -47,6 +53,8 @@
                 <td>{{ customer_file.sexe }}</td>
                 <td>{{ customer_file.name }}</td>
                 <td>{{ customer_file.address }}</td>
+                <td>{{ customer_file.mailAL }}</td>
+                <td>{{ customer_file.passwordAl }}</td>
                 <td>
                     <a href="{{ path('customer_files_show', {'id': customer_file.id}) }}" class="btn btn-primary">Regarder</a>
                     {% if is_granted('ROLE_USER') %}
