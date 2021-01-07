@@ -4,9 +4,30 @@
 {% set title = "Les fiches clients" %}
 {% set datatable = true %}
 {% block header %}
-    {% if is_granted('ROLE_ALLOW_CREATE') %}
-            <a class="btn btn-primary" href="{{url('customer_files_new')}}">Ajouter une fiche client</a>
-    {% endif %}
+    <div class="row justify-content-end">
+        <div class="ui left pointing dropdown icon button" id="test" style="max-height: 100px">
+            <i class="settings icon"></i>
+            <div class="menu">
+                <div class="ui left search icon input">
+                    <i class="search icon"></i>
+                    <input type="text" name="search" placeholder="Rechercher un statut">
+                </div>
+                <div class="header">
+                    <i class="tags icon"></i>
+                    Les statuts
+                </div>
+                {% for statut in statuts %}
+                    <a href="?statut={{statut.id}}" class="item">
+                        <div class="ui red empty circular label"></div>
+                        {{statut.name}}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% if is_granted('ROLE_ALLOW_CREATE') %}
+                <a class="btn btn-primary" href="{{url('customer_files_new')}}">Ajouter une fiche client</a>
+        {% endif %}
+    </div>
 {% endblock %}
 {% block body %}
     <table id="customerTable" class="table w-100 dt-table responsive display nowrap">
@@ -36,4 +57,11 @@
         {% endfor %}
         </tbody>
     </table>
+{% endblock %}
+{% block stylesheets %}
+    <link href="{{asset('assets/js/plugins/semantic/semantic.css')}}" rel="stylesheet">
+{% endblock %}
+{% block javascripts %}
+    <script src="{{asset('assets/js/plugins/semantic/semantic.js')}}"></script>
+    <script>$('#test').dropdown()</script>
 {% endblock %}

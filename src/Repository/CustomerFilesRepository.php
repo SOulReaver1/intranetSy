@@ -68,6 +68,15 @@ class CustomerFilesRepository extends ServiceEntityRepository
         ->getResult();
     }
 
+    public function findByStatut($id){
+        return $this->createQueryBuilder('c')
+        ->leftJoin('c.customer_statut', 'statut')
+        ->where('statut.id = :statut')
+        ->setParameter("statut", $id)
+        ->getQuery()
+        ->getResult();
+    }
+
     // /**
     //  * @return CustomerFiles[] Returns an array of CustomerFiles objects
     //  */

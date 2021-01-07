@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\CustomerFiles;
+use App\Entity\CustomerFilesStatut;
 use App\Entity\Notification;
 use App\Entity\Provider;
 use App\Entity\ProviderProduct;
@@ -11,6 +12,7 @@ use App\Form\UpdateCustomerFileType;
 use App\Form\UpdateCustomerMailType;
 use App\Form\UpdateCustomerPasswordType;
 use App\Repository\CustomerFilesRepository;
+use App\Repository\CustomerFilesStatutRepository;
 use App\Repository\ProviderProductRepository;
 use App\Repository\ProviderRepository;
 use App\Service\Mailer;
@@ -30,15 +32,19 @@ class CustomerFilesController extends AbstractController
     /**
      * @Route("/", name="default", methods={"GET"})
      */
-    public function index(CustomerFilesRepository $customerFilesRepository): Response
+    public function index(Request $request, CustomerFilesRepository $customerFilesRepository, CustomerFilesStatutRepository $customerFilesStatutRepository): Response
     {        
         $customer_files = $customerFilesRepository->findAll();
+
         if(in_array('ROLE_INSTALLATEUR', $this->getUser()->getRoles())){
             $customer_files = $customerFilesRepository->getInstaller($this->getUser());
+        }else if($request->query->get('statut')){
+            $customer_files = $customerFilesRepository->findByStatut($request->query->get('statut'));
         }
 
         return $this->render('customer_files/index.html.twig', [
             'customer_files' => $customer_files,
+            'statuts' => $customerFilesStatutRepository->findAll()
         ]);
     }
 
