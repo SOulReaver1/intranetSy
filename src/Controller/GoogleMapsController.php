@@ -15,6 +15,13 @@ class GoogleMapsController extends AbstractController
      */
     public function index(CustomerFilesStatutRepository $statut, CustomerFilesRepository $repository)
     {
+        if(in_array('ROLE_INSTALLATEUR', $this->getUser()->getRoles())){
+            return $this->render('google_maps/index.html.twig', [
+                'customers' => $repository->getInstaller($this->getUser()),
+                'statuts' => $statut->findAll()
+            ]);
+        }
+
         return $this->render('google_maps/index.html.twig', [
             'customers' => $repository->findAll(),
             'statuts' => $statut->findAll()
@@ -25,6 +32,11 @@ class GoogleMapsController extends AbstractController
      * @Route("/maps/addresses", name="google_maps_addresses", methods={"POST"})
     */
     public function getAddresses(CustomerFilesRepository $repository): object {
+
+        if(in_array('ROLE_INSTALLATEUR', $this->getUser()->getRoles())){
+            return new JsonResponse($repository->getAddresses($this->getUser()));
+        }
+        
         return new JsonResponse($repository->getAddresses());
     }
 }

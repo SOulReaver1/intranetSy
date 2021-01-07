@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\CustomerFiles;
 use App\Entity\Provider;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -34,7 +35,20 @@ class CustomerFilesRepository extends ServiceEntityRepository
         return array_unique($parameters);
     }
 
-    public function getAddresses(){
+    public function getAddresses(?User $user = null){
+        if($user){
+            return $this->createQueryBuilder('c')
+            ->leftJoin('c.customer_statut', 'statut')
+            ->select('c.id, c.lat, c.lng, statut.color, statut.id as statutId')
+            ->leftJoin('c.installer', 'user')
+            ->where('user = :user')
+            ->setParameter('user', $user)
+            ->andWhere('c.lat is not null')
+            ->andWhere('c.lng is not null')
+            ->getQuery()
+            ->getResult();
+        }
+
         return $this->createQueryBuilder('c')
         ->leftJoin('c.customer_statut', 'statut')
         ->select('c.id, c.lat, c.lng, statut.color, statut.id as statutId')
