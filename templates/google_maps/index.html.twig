@@ -139,22 +139,22 @@
             if(filtres.statut.length !== 0){
                 for(var i = 0; i < addresses.length; i++){
                     if(addresses[i].statutId && filtres.statut.includes(addresses[i].statutId.toString())){
-                        draw(addresses[i].lat, addresses[i].lng, [addresses[i].name, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].cellphone], addresses[i].color);
+                        draw(addresses[i].lat, addresses[i].lng, [addresses[i].name, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].zip_code, addresses[i].city, addresses[i].address_complement, addresses[i].cellphone], addresses[i].color);
                     }else if(addresses[i].statutId === null && filtres.statut.includes("0")){
-                        draw(addresses[i].lat, addresses[i].lng, [addresses[i].name, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].cellphone], addresses[i].color);
+                        draw(addresses[i].lat, addresses[i].lng, [addresses[i].name, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].zip_code, addresses[i].city, addresses[i].address_complement, addresses[i].cellphone], addresses[i].color);
                     }
                 }
             }
             if(filtres.fiche !== ""){
                 for(var i = 0; i < addresses.length; i++){
                     if(filtres.fiche == addresses[i].id){
-                        draw(addresses[i].lat, addresses[i].lng, [addresses[i].name, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].cellphone], addresses[i].color);
+                        draw(addresses[i].lat, addresses[i].lng, [addresses[i].name, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].zip_code, addresses[i].city, addresses[i].address_complement, addresses[i].cellphone], addresses[i].color);
                     }
                 }
             }
             if(filtres.statut.length === 0 && filtres.fiche === ""){
                 for(var i = 0; i < addresses.length; i++){
-                    draw(addresses[i].lat, addresses[i].lng, [addresses[i].name, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].cellphone], addresses[i].color);
+                    draw(addresses[i].lat, addresses[i].lng, [addresses[i].name, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].zip_code, addresses[i].city, addresses[i].address_complement, addresses[i].cellphone], addresses[i].color);
                 }
             }
 
@@ -167,7 +167,7 @@
             }
         }
 
-        function draw(lat, lng, [name, id, adresse, nbr, phone], color = 'black'){
+        function draw(lat, lng, [name, id, adresse, nbr, zipCode, city, complement, phone], color = 'black'){
             const symbolThree = {
                 path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z',
                 fillColor: color,
@@ -183,13 +183,19 @@
                 <div class="row">
                     <div class="col form-group">
                         <label class="form-control-label">Adresse</label>
-                        <p class="form-control">${nbr} ${adresse}</p>
+                        <p class="form-control">${nbr ?? ''} ${adresse ?? ''} ${zipCode ?? ''} ${city ?? ''}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col form-group">
+                        <label class="form-control-label">Complément d'adresse</label>
+                        <p class="form-control">${complement ?? ''}</p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col form-group">
                         <label class="form-control-label">Téléphone</label>
-                        <p class="form-control">${phone}</p>
+                        <p class="form-control">${phone ?? ''}</p>
                     </div>
                 </div>
                 <a href="/${id}" class="btn btn-primary">Voir la fiche</a>
@@ -214,7 +220,7 @@
                 marker.setAnimation(google.maps.Animation.BOUNCE);
                 setTimeout(function(){ marker.setAnimation(null); }, 2000);
             })
-            
+
             markers.push(marker);
         }
     </script>
