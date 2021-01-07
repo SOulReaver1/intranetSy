@@ -93,7 +93,7 @@
             saveRemoteData: false,
             clearable: true,
             onChange: (filtres, b, c) => {
-                drawMarker(filtres);
+                drawMarker({fiches: filtres});
             },
             transition: 'drop',
         });
@@ -103,7 +103,7 @@
             saveRemoteData: false,
             clearable: true,
             onChange: (filtres, b, c) => {
-                drawMarker(filtres);
+                drawMarker({statut: filtres});
             },
             transition: 'drop',
         });
@@ -133,14 +133,14 @@
             setMapOnAll(null);
             markers = [];
             for(var i = 0; i < addresses.length; i++){
-                if(addresses[i].statutId && filtered.includes(addresses[i].statutId.toString())){
+                if(addresses[i].statutId && filtered.statut && filtered.statut.includes(addresses[i].id.toString())){
                     draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
-                }else if(filtered.length === 0){
+                }else if(filtered.statut && filtered.statut.length === 0 || filtered.fiches && filtered.fiches.length === 0 || filtered.length === 0){
                     draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
-                }else if(addresses[i].statutId === null && filtered.includes("0")){
+                }else if(addresses[i].statutId === null && filtered.statut && filtered.statut.includes("0")){
                     draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
-                }else if(addresses[i].id && filtered.includes(addresses[i].id.toString())){
-                     draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
+                }else if(addresses[i].id && filtered.fiches && filtered.fiches.includes(addresses[i].id.toString())){
+                    draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
                 }
             }
             setMapOnAll(map);
