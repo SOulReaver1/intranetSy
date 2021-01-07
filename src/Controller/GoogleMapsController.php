@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Repository\CustomerFilesRepository;
 use App\Repository\CustomerFilesStatutRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\BrowserKit\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
