@@ -139,22 +139,22 @@
             if(filtres.statut.length !== 0){
                 for(var i = 0; i < addresses.length; i++){
                     if(addresses[i].statutId && filtres.statut.includes(addresses[i].statutId.toString())){
-                        draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
+                        draw(addresses[i].lat, addresses[i].lng, [addresses[i].name, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].cellphone], addresses[i].color);
                     }else if(addresses[i].statutId === null && filtres.statut.includes("0")){
-                        draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
+                        draw(addresses[i].lat, addresses[i].lng, [addresses[i].name, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].cellphone], addresses[i].color);
                     }
                 }
             }
             if(filtres.fiche !== ""){
                 for(var i = 0; i < addresses.length; i++){
                     if(filtres.fiche == addresses[i].id){
-                        draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
+                        draw(addresses[i].lat, addresses[i].lng, [addresses[i].name, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].cellphone], addresses[i].color);
                     }
                 }
             }
             if(filtres.statut.length === 0 && filtres.fiche === ""){
                 for(var i = 0; i < addresses.length; i++){
-                    draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
+                    draw(addresses[i].lat, addresses[i].lng, [addresses[i].name, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].cellphone], addresses[i].color);
                 }
             }
 
@@ -167,7 +167,7 @@
             }
         }
 
-        function draw(lat, lng, color = 'black'){
+        function draw(lat, lng, [name, id, adresse, nbr, phone], color = 'black'){
             const symbolThree = {
                 path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z',
                 fillColor: color,
@@ -176,10 +176,45 @@
                 strokeWeight: 1,
                 scale: 1
             };
+
+            const information = `
+            <div class="container">
+                <h1>${name}</h1>
+                <div class="row">
+                    <div class="col form-group">
+                        <label class="form-control-label">Adresse</label>
+                        <p class="form-control">${nbr} ${adresse}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col form-group">
+                        <label class="form-control-label">Téléphone</label>
+                        <p class="form-control">${phone}</p>
+                    </div>
+                </div>
+                <a href="/${id}" class="btn btn-primary">Voir la fiche</a>
+            </div>
+            `;
+
+            const infowindow = new google.maps.InfoWindow({
+                content: information,
+            });
+
             const marker = new google.maps.Marker({
                 icon: symbolThree,
-                position: {lat: lat, lng: lng}
+                animation: google.maps.Animation.DROP,
+                position: {lat: lat, lng: lng},
+                title: name
             })
+
+            marker.addListener('click', (rers) => {
+                infowindow.open(map, marker);
+                map.setZoom(8);
+                map.panTo(marker.position);
+                marker.setAnimation(google.maps.Animation.BOUNCE);
+                setTimeout(function(){ marker.setAnimation(null); }, 2000);
+            })
+            
             markers.push(marker);
         }
     </script>
