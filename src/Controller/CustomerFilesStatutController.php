@@ -21,20 +21,37 @@ class CustomerFilesStatutController extends AbstractController
     public function index(CustomerFilesStatutRepository $customerFilesStatutRepository): Response
     {
         return $this->render('customer_files_statut/index.html.twig', [
-            'customer_files_statuts' => $customerFilesStatutRepository->findAll(),
+            'customer_files_statuts' => $customerFilesStatutRepository->findAllByOrder(),
         ]);
+    }
+
+    /**
+     * @Route("/changeOrder", name="customer_statut_changerOrder", methods={"POST"})
+     */
+    public function changeOrder(Request $request, CustomerFilesStatutRepository $customerFilesStatutRepository){
+        $from = $request->request->get('from');
+        $to = $request->request->get('to');
+        $customer = $customerFilesStatutRepository->findOneByOrder($from);
+        $old_customer = $customerFilesStatutRepository->findOneByOrder($to);
+        $em = $this->getDoctrine()->getManager();
+        $customer->setOrdered($to);
+        $old_customer->setOrdered($from);
+        $em->flush();
+
+        return $this->json(['status' => 200]);
     }
 
     /**
      * @Route("/new", name="customer_files_statut_new", methods={"GET","POST"})
      */
-    public function new(Request $request): Response
+    public function new(Request $request, CustomerFilesStatutRepository $customerFilesStatutRepository): Response
     {
         $customerFilesStatut = new CustomerFilesStatut();
         $form = $this->createForm(CustomerFilesStatutType::class, $customerFilesStatut);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $customerFilesStatut->setOrdered($customerFilesStatutRepository->getNbr() + 1);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($customerFilesStatut);
             $entityManager->flush();

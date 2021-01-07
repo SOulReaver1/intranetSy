@@ -42,6 +42,7 @@ class CustomerFilesController extends AbstractController
         ]);
     }
 
+
     /**
      * @IsGranted("ROLE_ALLOW_CREATE")
      * @Route("/new", name="customer_files_new", methods={"GET","POST"})

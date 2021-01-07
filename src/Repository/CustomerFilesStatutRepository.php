@@ -19,6 +19,28 @@ class CustomerFilesStatutRepository extends ServiceEntityRepository
         parent::__construct($registry, CustomerFilesStatut::class);
     }
 
+    public function getNbr(){
+        return $this->createQueryBuilder('c')
+        ->select('count(c.id)')
+        ->getQuery()
+        ->getSingleScalarResult();
+    }
+
+    public function findAllByOrder(){
+        return $this->createQueryBuilder('c')
+        ->orderBy('c.ordered')
+        ->getQuery()
+        ->getResult();
+    }
+
+    public function findOneByOrder($order){
+        return $this->createQueryBuilder('c')
+        ->andWhere('c.ordered = :order')
+        ->setParameter('order', $order)
+        ->getQuery()
+        ->getResult()[0];
+    }
+
     // /**
     //  * @return CustomerFilesStatut[] Returns an array of CustomerFilesStatut objects
     //  */
