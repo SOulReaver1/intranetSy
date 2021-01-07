@@ -82,14 +82,44 @@
         <!-- Argon JS -->
         <script src="{{ asset('argon') }}/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
         {% if datatable is defined %}
-                <script type="text/javascript" src="{{asset('assets/js/plugins/datatables.js')}}"></script>
+                <script type="text/javascript" src="{{asset('assets/js/plugins/datatables.min.js')}}"></script>
                 <script>
                     var tables = {};
                     $('.dt-table').each(function(){
                         tables[$(this).attr('id')] = $(this).DataTable({
+                            processing: true,
                             responsive: true,
+                            fixedHeader: true,
                             bInfo: false,
-                            bLengthChange: false,
+                            dom: 'lBfrtip',
+                            buttons: [{
+                                extend: 'copy',
+                                text: 'Copier le tableau',
+                                key: {
+                                    key: 'c',
+                                    ctrlKey: true
+                                }
+                            },
+                            {
+                                extend: 'pdf',
+                                exportOptions:{
+                                    columns:':visible',
+                                },
+                            },
+                            {
+                                extend: 'excel',
+                                exportOptions:{
+                                    columns:':visible',
+                                },
+                            },
+                            {
+                                extend: 'colvis',
+                                text: 'Filter le tableau',
+                            },
+                            {
+                                extend: 'print',
+                                text: 'Imprimer le tableau',
+                            }]
                         })
                     })
                 </script>
