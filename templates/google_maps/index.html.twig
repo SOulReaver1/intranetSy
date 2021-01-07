@@ -18,8 +18,17 @@
     <div class="container-fluid">
         <div id="map" style="height: 100vh"></div>
         <hr class="mt-5">
-        <h1>Affichage :</h1>
-        <select name="skills" multiple="" class="ui fluid dropdown" id="filtre">
+        <h1>Les filtres :</h1>
+        <h3>Filtrer par fiche :</h3>
+        <select class="ui fluid dropdown search" id="filtre1">
+            <option value="" selected="true">Tout</option>
+            {% for customer in customers %}
+                <option value="{{customer.id}}">{{customer.name}}</option>
+            {% endfor %}
+        </select>
+        <hr class="m-3"/>
+        <h3>Filtrer par statut :</h3>
+        <select multiple="" class="ui fluid dropdown search" id="filtre">
             <option value="" selected="true">Tout</option>
             <option value="0">Aucun statut</option>
             {% for statut in statuts %}
@@ -68,15 +77,25 @@
     <script>
         var map;
         var geocoder;
-        var add;
+        var addresses;
         let markers = [];
+
+        $("#filtre1").dropdown({
+            cache: false,
+            saveRemoteData: false,
+            clearable: true,
+            onChange: (filtres, b, c) => {
+                drawMarker(filtres);
+            },
+            transition: 'drop',
+        });
 
         $("#filtre").dropdown({
             cache: false,
             saveRemoteData: false,
             clearable: true,
             onChange: (filtres, b, c) => {
-                drawMarker(add, filtres);
+                drawMarker(filtres);
             },
             transition: 'drop',
         });
@@ -96,13 +115,13 @@
             fetch('/maps/addresses', {
                 method: 'POST'
             }).then(response => response.json())
-            .then(addresses => {
-                drawMarker(addresses);
+            .then(res => {
+                addresses = res;
+                drawMarker();
             })
         }
 
-        function drawMarker(addresses, filtered = []){
-            add = addresses;
+        function drawMarker(filtered = []){
             setMapOnAll(null);
             markers = [];
             for(var i = 0; i < addresses.length; i++){
@@ -112,6 +131,8 @@
                     draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
                 }else if(addresses[i].statutId === null && filtered.includes("0")){
                     draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
+                }else if(addresses[i].id && filtered.includes(addresses[i].id.toString())){
+                     draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
                 }
             }
             setMapOnAll(map);

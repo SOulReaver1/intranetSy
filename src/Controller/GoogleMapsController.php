@@ -17,6 +17,7 @@ class GoogleMapsController extends AbstractController
     public function index(CustomerFilesStatutRepository $statut, CustomerFilesRepository $repository)
     {
         return $this->render('google_maps/index.html.twig', [
+            'customers' => $repository->findAll(),
             'statuts' => $statut->findAll()
         ]);
     }

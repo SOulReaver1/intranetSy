@@ -37,7 +37,7 @@ class CustomerFilesRepository extends ServiceEntityRepository
     public function getAddresses(){
         return $this->createQueryBuilder('c')
         ->leftJoin('c.customer_statut', 'statut')
-        ->select('c.lat, c.lng, statut.color, statut.id as statutId')
+        ->select('c.id, c.lat, c.lng, statut.color, statut.id as statutId')
         ->andWhere('c.lat is not null')
         ->andWhere('c.lng is not null')
         ->getQuery()
