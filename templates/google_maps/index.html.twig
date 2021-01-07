@@ -87,13 +87,15 @@
         var geocoder;
         var addresses;
         let markers = [];
+        var filtres = {statut: [], fiche: ""};
 
         $("#filtre1").dropdown({
             cache: false,
             saveRemoteData: false,
             clearable: true,
-            onChange: (filtres, b, c) => {
-                drawMarker({fiches: filtres});
+            onChange: (filtre, b, c) => {
+                filtres.fiche = filtre;
+                drawMarker();
             },
             transition: 'drop',
         });
@@ -102,8 +104,9 @@
             cache: false,
             saveRemoteData: false,
             clearable: true,
-            onChange: (filtres, b, c) => {
-                drawMarker({statut: filtres});
+            onChange: (filtre, b, c) => {
+                filtres.statut = filtre ? filtre.split(',') : [];
+                drawMarker();
             },
             transition: 'drop',
         });
@@ -129,20 +132,33 @@
             })
         }
 
-        function drawMarker(filtered = []){
+
+        function drawMarker(){
             setMapOnAll(null);
             markers = [];
-            for(var i = 0; i < addresses.length; i++){
-                if(addresses[i].statutId && filtered.statut && filtered.statut.includes(addresses[i].id.toString())){
-                    draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
-                }else if(filtered.statut && filtered.statut.length === 0 || filtered.fiches && filtered.fiches.length === 0 || filtered.length === 0){
-                    draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
-                }else if(addresses[i].statutId === null && filtered.statut && filtered.statut.includes("0")){
-                    draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
-                }else if(addresses[i].id && filtered.fiches && filtered.fiches.includes(addresses[i].id.toString())){
+            if(filtres.statut.length !== 0){
+                for(var i = 0; i < addresses.length; i++){
+                    if(addresses[i].statutId && filtres.statut.includes(addresses[i].statutId.toString())){
+                        draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
+                    }else if(addresses[i].statutId === null && filtres.statut.includes("0")){
+                        draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
+                    }
+                }
+            }
+            if(filtres.fiche !== ""){
+                console.log(filtres.fiche)
+                for(var i = 0; i < addresses.length; i++){
+                    if(filtres.fiche == addresses[i].id){
+                        draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
+                    }
+                }
+            }
+            if(filtres.statut.length === 0 && filtres.fiche === ""){
+                for(var i = 0; i < addresses.length; i++){
                     draw(addresses[i].lat, addresses[i].lng, addresses[i].color);
                 }
             }
+
             setMapOnAll(map);
         }
 
