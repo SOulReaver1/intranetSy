@@ -5,6 +5,9 @@ namespace App\Controller;
 use App\Entity\CustomerFiles;
 use App\Entity\Files;
 use App\Form\FilesType;
+use App\Repository\ClientStatutDocumentRepository;
+use App\Repository\CustomerFilesRepository;
+use App\Repository\CustomerFilesStatutRepository;
 use App\Repository\FilesRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,27 +36,35 @@ class FilesController extends AbstractController
     /**
      * @Route("/new", name="files_new", methods={"GET","POST"})
      */
-    public function new(Request $request, CustomerFiles $customer, FileUploader $fileUploader): Response
+    public function new(Request $request, CustomerFiles $customer, FileUploader $fileUploader, ClientStatutDocumentRepository $clientStatutDocumentRepository): Response
     {
-        $product = new Files();
-        $form = $this->createForm(FilesType::class, $product, array('customer' => $customer));
-        $form->handleRequest($request);
+        if ($request->isMethod('post')) {
+            if($request->files->get('files') !== null){
+                $files = $request->files->get('files')['file'];
+                foreach ($files as $documentId => $value) {
+                    $product = new Files(); 
+                    $product->setFile($value);
+                    $file = $product->getFile();
+                    $fileName = $fileUploader->upload($file);
+                    $product->setFile($fileName);
+                    $product->setCustomerFiles($customer);
+                    $document = $clientStatutDocumentRepository->find($documentId);
+                    $product->setDocument($document);
+                    $entityManager = $this->getDoctrine()->getManager();
+                    $entityManager->persist($product);
+                    $entityManager->flush();
+                }
+                return $this->redirectToRoute('files_index', ['id' => $customer->getId()]);
+            }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $file = $product->getFile();
-            $fileName = $fileUploader->upload($file);
-            $product->setFile($fileName);
-            $product->setCustomerFiles($customer);
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($product);
-            $entityManager->flush();
-            return $this->redirectToRoute('files_index', ['id' => $customer->getId()]);
+            $this->addFlash('error', 'Vous n\'avez rentrer aucun fichier !');
+            return $this->redirectToRoute('files_new', ['id' => $customer->getId()]);
         }
+        
         return $this->render('files/new.html.twig', [
-            'file' => $product,
+            'statuts' => $clientStatutDocumentRepository->findStatut($customer),
             'client_statut' => $customer->getClientStatutId()->getName(),
             'customer_id' => $customer->getId(),
-            'form' => $form->createView(),
         ]);
     }
 

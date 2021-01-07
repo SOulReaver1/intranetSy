@@ -19,6 +19,14 @@ class ClientStatutDocumentRepository extends ServiceEntityRepository
         parent::__construct($registry, ClientStatutDocument::class);
     }
 
+    public function findStatut($customer){
+        return $this->createQueryBuilder('u')
+        ->leftJoin('u.client_statut', 'client') 
+        ->where('client.id = :id')
+        ->setParameter('id', $customer->getClientStatutId())
+        ->getQuery()->getResult();
+    }
+
     // /**
     //  * @return ClientStatutDocument[] Returns an array of ClientStatutDocument objects
     //  */

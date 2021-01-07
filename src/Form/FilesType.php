@@ -21,27 +21,26 @@ class FilesType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $this->customer = $options['customer'];
         $builder
-            ->add('document', EntityType::class, array(
-                'class' => ClientStatutDocument::class,
-                'query_builder' => function(ClientStatutDocumentRepository $repository){
-                    return $repository->createQueryBuilder('u')
-                    ->leftJoin('u.client_statut', 'client') 
-                    ->where('client.id = :id')
-                    ->setParameter('id', $this->customer->getClientStatutId());
-                },
-                'label' => 'Type de document : <span class="text-danger">*</span>',
-                'label_html' => true,
-                'placeholder' => 'Image libre',
-                'required' => false
-                )
-            )
+            // ->add('document', EntityType::class, array(
+            //     'class' => ClientStatutDocument::class,
+            //     'query_builder' => function(ClientStatutDocumentRepository $repository){
+            //         return $repository->createQueryBuilder('u')
+            //         ->leftJoin('u.client_statut', 'client') 
+            //         ->where('client.id = :id')
+            //         ->setParameter('id', $this->customer->getClientStatutId());
+            //     },
+            //     'label' => 'Type de document : <span class="text-danger">*</span>',
+            //     'label_html' => true,
+            //     'placeholder' => 'Image libre',
+            //     'required' => false
+            //     )
+            // )
             ->add('file', FileType::class, array(
                 'label' => 'Votre document <span class="text-danger">*</span>',
                 'label_html' => true,
+                'multiple' => true,
                 'required' => true,
-                'data_class' => null,
                 )
             )
         ;
@@ -51,7 +50,6 @@ class FilesType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Files::class,
-            'customer' => CustomerFiles::class,
         ]);
     }
 }

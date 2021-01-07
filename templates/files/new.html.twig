@@ -1,11 +1,42 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}New Files{% endblock %}
-{% set title = "["~client_statut~"] Créer un nouveau fichier :" %}
+{% set title = "["~client_statut~"] Créer des nouveaux fichiers :" %}
 {% set require = true %}
 {% block header %}
     <a href="{{ path('files_index', {'id': customer_id}) }}" class="btn btn-primary">Retour</a>
 {% endblock %}
 {% block body %}
     {{ include('files/_form.html.twig') }}
+{% endblock %}
+{% block javascripts %}
+    <script>
+        $('#statuts').dropdown({
+            onChange: (changes, a, v, x) => {
+                addFile(changes)
+            }
+        });
+
+        function addFile(files){
+            const parent = document.getElementById('addFiles');
+            parent.innerHTML = "";
+            files.forEach(value => {
+                const [id, element] = value.split(',');
+                const label = document.createElement('label');
+                const input = document.createElement('input');
+                const div = document.createElement('div');
+                div.setAttribute('class', 'col-md-6 form-group');
+                label.setAttribute('for', `file${id}`);
+                label.setAttribute('class', 'form-control-label');
+                label.innerHTML = element;
+                input.setAttribute('type', 'file');
+                input.setAttribute('id', `file${id}`);
+                input.setAttribute('name', `files[file][${id}]`);
+                input.setAttribute('class', `form-control`);
+                div.appendChild(label);
+                div.appendChild(input);
+                parent.appendChild(div);
+            })
+        }
+    </script>
 {% endblock %}

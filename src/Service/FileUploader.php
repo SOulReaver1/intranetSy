@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use App\Entity\Files;
-use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class FileUploader

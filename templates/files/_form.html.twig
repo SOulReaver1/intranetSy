@@ -1,4 +1,14 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
+<form method="POST" name="files" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col form-group">
+            <label for="statuts">Choisir les types de documents : <span class="text-danger">*</span></label>
+            <select id="statuts" class="ui fluid dropdown search" multiple>
+                {% for statut in statuts %}
+                    <option value="{{statut.id}},{{statut.name}}">{{statut.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="row" id="addFiles"></div>
     <button class="btn btn-success">{{ button_label|default('Ajouter') }}</button>
-{{ form_end(form) }}
+</form>
