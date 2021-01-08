@@ -8,6 +8,7 @@ use App\Entity\CustomerFilesStatut;
 use App\Entity\CustomerSource;
 use App\Entity\ProviderProduct;
 use App\Entity\User;
+use App\Repository\CustomerFilesStatutRepository;
 use App\Repository\UserRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -189,6 +190,10 @@ class CustomerFilesType extends AbstractType
                 'required' => false,
                 'placeholder' => 'Aucun statut de dossier',
                 'class' => CustomerFilesStatut::class,
+                'query_builder' => function(CustomerFilesStatutRepository $repository) {
+                    return $repository->createQueryBuilder('c')
+                    ->orderBy('c.ordered');
+                },
                 'label' => 'Statut du dossier : ',
                 'row_attr' => ['class' => 'col'],
             ])
