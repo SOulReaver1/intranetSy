@@ -22,6 +22,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -32,13 +33,14 @@ class CustomerFilesController extends AbstractController
     /**
      * @Route("/", name="default", methods={"GET"})
      */
-    public function index(Request $request, CustomerFilesRepository $customerFilesRepository, CustomerFilesStatutRepository $customerFilesStatutRepository): Response
+    public function index(Request $request, CustomerFilesRepository $customerFilesRepository, CustomerFilesStatutRepository $customerFilesStatutRepository, SessionInterface $session): Response
     {        
         $customer_files = $customerFilesRepository->findAll();
 
         if(in_array('ROLE_INSTALLATEUR', $this->getUser()->getRoles())){
             $customer_files = $customerFilesRepository->getInstaller($this->getUser());
         }else if($request->query->get('statut')){
+            $session->set('statut', $request->query->get('statut'));
             $customer_files = $customerFilesRepository->findByStatut($request->query->get('statut'));
         }
 
