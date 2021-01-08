@@ -9,7 +9,8 @@
 {% block body %}
     {{ include('files/_form.html.twig') }}
 {% endblock %}
-{% block javascripts %}
+{% block javascripts %}*
+    <script src="{{asset('assets/js/plugins/semantic/semantic.js')}}"></script>
     <script>
         $('#statuts').dropdown({
             onChange: (changes, a, v, x) => {
