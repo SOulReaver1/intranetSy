@@ -36,7 +36,7 @@ class CustomerFilesController extends AbstractController
     public function index(Request $request, CustomerFilesRepository $customerFilesRepository, CustomerFilesStatutRepository $customerFilesStatutRepository, SessionInterface $session): Response
     {        
         $customer_files = $customerFilesRepository->findAll();
-
+        $session->remove('statut');
         if(in_array('ROLE_INSTALLATEUR', $this->getUser()->getRoles())){
             $customer_files = $customerFilesRepository->getInstaller($this->getUser());
         }else if($request->query->get('statut')){
