@@ -19,10 +19,11 @@
         <tbody class="list">
         {% for customer_files_statut in customer_files_statuts %}
             <tr>
-                <td>{{ customer_files_statut.ordered }}</td>
-                <td>{{ customer_files_statut.name }}</td>
-                <td><span class="badge" style="background-color: {{ customer_files_statut.color }}">{{ customer_files_statut.color }}</span></td>
-                <td>{{ customer_files_statut.createdAt ? customer_files_statut.createdAt|date('d-m-Y H:i:s') : '' }}</td>
+                <td class="d-none">{{ customer_files_statut.id }}</td>
+                <td class="handle">{{ customer_files_statut.ordered }}</td>
+                <td class="handle">{{ customer_files_statut.name }}</td>
+                <td class="handle"><span class="badge" style="background-color: {{ customer_files_statut.color }}">{{ customer_files_statut.color }}</span></td>
+                <td class="handle">{{ customer_files_statut.createdAt ? customer_files_statut.createdAt|date('d-m-Y H:i:s') : '' }}</td>
                 <td>
                     <a href="{{ path('customer_files_statut_show', {'id': customer_files_statut.id}) }}" class="btn btn-primary">Voir</a>
                     <a href="{{ path('customer_files_statut_edit', {'id': customer_files_statut.id}) }}" class="btn btn-primary">Modifier</a>

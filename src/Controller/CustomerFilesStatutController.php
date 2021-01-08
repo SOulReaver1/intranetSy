@@ -29,15 +29,14 @@ class CustomerFilesStatutController extends AbstractController
      * @Route("/changeOrder", name="customer_statut_changerOrder", methods={"POST"})
      */
     public function changeOrder(Request $request, CustomerFilesStatutRepository $customerFilesStatutRepository){
-        $from = $request->request->get('from');
-        $to = $request->request->get('to');
-        $customer = $customerFilesStatutRepository->findOneByOrder($from);
-        $old_customer = $customerFilesStatutRepository->findOneByOrder($to);
-        $em = $this->getDoctrine()->getManager();
-        $customer->setOrdered($to);
-        $old_customer->setOrdered($from);
-        $em->flush();
-
+        $object = $request->request->get('object');
+        foreach ($object as $key => $value) {
+            $customer = $customerFilesStatutRepository->find($key);
+            $entityManager = $this->getDoctrine()->getManager();
+            $customer->setOrdered($value);
+            $entityManager->persist($customer);
+            $entityManager->flush();
+        }
         return $this->json(['status' => 200]);
     }
 
