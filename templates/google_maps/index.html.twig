@@ -20,12 +20,13 @@
         <hr class="mt-5">
         <h1>Les filtres :</h1>
         <h3>Filtrer par fiche :</h3>
-        <select class="ui fluid dropdown search" id="filtre1">
-            <option value="" selected="true">Tout</option>
-            {% for customer in customers %}
-                <option value="{{customer.id}}">{{customer.name}}</option>
-            {% endfor %}
-        </select>
+        <div class="ui search" id="filtre1">
+            <div class="ui icon input w-100">
+                <input class="prompt" type="text" placeholder="Rechercher une fiche">
+                <i class="search icon"></i>
+            </div>
+            <div class="results"></div>
+        </div>
         <hr class="m-3"/>
         <h3>Filtrer par statut :</h3>
         <div class="ui fluid search selection multiple dropdown" id="filtre">
@@ -89,17 +90,6 @@
         let markers = [];
         var filtres = {statut: [], fiche: ""};
 
-        $("#filtre1").dropdown({
-            cache: false,
-            saveRemoteData: false,
-            clearable: true,
-            onChange: (filtre, b, c) => {
-                filtres.fiche = filtre;
-                drawMarker();
-            },
-            transition: 'drop',
-        });
-
         $("#filtre").dropdown({
             cache: false,
             saveRemoteData: false,
@@ -128,6 +118,21 @@
             }).then(response => response.json())
             .then(res => {
                 addresses = res;
+
+                $("#filtre1").search({
+                    source: res,
+                    clearable: true,
+                    transition: 'drop',
+                    onSelect: (result) => {
+                        filtres.fiche = result.id;
+                        drawMarker();
+                    },
+                    onResultsOpen: () => {
+                        filtres.fiche = "";
+                        drawMarker();
+                    },
+                    
+                });
                 drawMarker();
             })
         }
@@ -139,22 +144,22 @@
             if(filtres.statut.length !== 0){
                 for(var i = 0; i < addresses.length; i++){
                     if(addresses[i].statutId && filtres.statut.includes(addresses[i].statutId.toString())){
-                        draw(addresses[i].lat, addresses[i].lng, [addresses[i].name, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].zip_code, addresses[i].city, addresses[i].address_complement, addresses[i].cellphone], addresses[i].color);
+                        draw(addresses[i].lat, addresses[i].lng, [addresses[i].title, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].zip_code, addresses[i].city, addresses[i].address_complement, addresses[i].cellphone], addresses[i].color);
                     }else if(addresses[i].statutId === null && filtres.statut.includes("0")){
-                        draw(addresses[i].lat, addresses[i].lng, [addresses[i].name, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].zip_code, addresses[i].city, addresses[i].address_complement, addresses[i].cellphone], addresses[i].color);
+                        draw(addresses[i].lat, addresses[i].lng, [addresses[i].title, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].zip_code, addresses[i].city, addresses[i].address_complement, addresses[i].cellphone], addresses[i].color);
                     }
                 }
             }
             if(filtres.fiche !== ""){
                 for(var i = 0; i < addresses.length; i++){
                     if(filtres.fiche == addresses[i].id){
-                        draw(addresses[i].lat, addresses[i].lng, [addresses[i].name, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].zip_code, addresses[i].city, addresses[i].address_complement, addresses[i].cellphone], addresses[i].color);
+                        draw(addresses[i].lat, addresses[i].lng, [addresses[i].title, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].zip_code, addresses[i].city, addresses[i].address_complement, addresses[i].cellphone], addresses[i].color);
                     }
                 }
             }
             if(filtres.statut.length === 0 && filtres.fiche === ""){
                 for(var i = 0; i < addresses.length; i++){
-                    draw(addresses[i].lat, addresses[i].lng, [addresses[i].name, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].zip_code, addresses[i].city, addresses[i].address_complement, addresses[i].cellphone], addresses[i].color);
+                    draw(addresses[i].lat, addresses[i].lng, [addresses[i].title, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].zip_code, addresses[i].city, addresses[i].address_complement, addresses[i].cellphone], addresses[i].color);
                 }
             }
 

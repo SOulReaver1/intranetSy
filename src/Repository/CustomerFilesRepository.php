@@ -39,7 +39,7 @@ class CustomerFilesRepository extends ServiceEntityRepository
         if($user){
             return $this->createQueryBuilder('c')
             ->leftJoin('c.customer_statut', 'statut')
-            ->select('c.id, c.name, c.address, c.route_number, c.zip_code, c.city, c.cellphone, c.address_complement, c.lat, c.lng, statut.color, statut.id as statutId')
+            ->select('c.id, c.name as title, c.address, c.route_number, c.zip_code, c.city, c.cellphone, c.address_complement, c.lat, c.lng, statut.color, statut.id as statutId')
             ->leftJoin('c.installer', 'user')
             ->where('user = :user')
             ->setParameter('user', $user)
@@ -52,7 +52,7 @@ class CustomerFilesRepository extends ServiceEntityRepository
 
         return $this->createQueryBuilder('c')
         ->leftJoin('c.customer_statut', 'statut')
-        ->select('c.id, c.name, c.address, c.route_number, c.zip_code, c.city, c.address_complement, c.cellphone, c.lat, c.lng, statut.color, statut.id as statutId')
+        ->select('c.id, c.name as title, c.address, c.route_number, c.zip_code, c.city, c.address_complement, c.cellphone, c.lat, c.lng, statut.color, statut.id as statutId')
         ->andWhere('c.lat is not null')
         ->andWhere('c.lng is not null')
         ->getQuery()
