@@ -46,7 +46,7 @@ class CustomerFilesController extends AbstractController
 
         return $this->render('customer_files/index.html.twig', [
             'customer_files' => $customer_files,
-            'statuts' => $customerFilesStatutRepository->findAll()
+            'statuts' => $customerFilesStatutRepository->findAllByOrder()
         ]);
     }
 
