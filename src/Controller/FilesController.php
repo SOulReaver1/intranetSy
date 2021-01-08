@@ -56,7 +56,7 @@ class FilesController extends AbstractController
                 }
                 return $this->redirectToRoute('files_index', ['id' => $customer->getId()]);
             }
-
+            
             $this->addFlash('error', 'Vous n\'avez rentrer aucun fichier !');
             return $this->redirectToRoute('files_new', ['id' => $customer->getId()]);
         }

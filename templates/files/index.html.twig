@@ -12,9 +12,9 @@
             <tr>
                 <th>#</th>
                 <th>Aperçu</th>
-                <th>Nom</th>
                 <th>Client</th>
                 <th>Document</th>
+                <th>Nom</th>
                 <th>Créer le :</th>
                 <th>Modifier le :</th>
                 <th>actions</th>
@@ -25,9 +25,9 @@
             <tr>
                 <td>{{ file.id }}</td>
                 <td><embed src="/uploads/files/{{file.file}}" width="200px"></td>
-                <td>{{ file.file }}</td>
                 <td><a href="{{path('customer_files_show', {'id': customer_id})}}">{{ file.customerFiles }}</a></td>
                 <td>{{ file.document ?? 'Image libre' }}</td>
+                <td>{{ file.file }}</td>
                 <td>{{ file.createdAt ? file.createdAt|date('d-m-Y H:i:s') : '' }}</td>
                 <td>{{ file.updatedAt ? file.updatedAt|date('d-m-Y H:i:s') : '' }}</td>
                 <td>
