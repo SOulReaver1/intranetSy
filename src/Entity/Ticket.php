@@ -223,17 +223,14 @@ class Ticket
         return $this->users;
     }
 
-    public function addUser(?User $user)
+    public function addUser(?User ...$users): self
     {
-        if($user){
-            if (!$this->users->contains($user)) {
-                $this->users[] = $user;
+        if (!$this->users->contains(...$users)) {
+            foreach ($users as $value) {
+                $this->users[] = $value;
             }
-    
-            return $this;
         }
-        
-        return;
+        return $this;
     }
 
     public function removeUser(User $user): self
