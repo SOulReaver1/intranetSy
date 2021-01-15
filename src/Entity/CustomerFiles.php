@@ -217,6 +217,11 @@ class CustomerFiles
     private $date_install;
 
     /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $date_expertise;
+
+    /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
@@ -737,6 +742,18 @@ class CustomerFiles
     public function setDateInstall(?\DateTimeInterface $date_install): self
     {
         $this->date_install = $date_install;
+
+        return $this;
+    }
+
+    public function getDateExpertise(): ?\DateTimeInterface
+    {
+        return $this->date_expertise;
+    }
+
+    public function setDateExpertise(?\DateTimeInterface $date_expertise): self
+    {
+        $this->date_expertise = $date_expertise;
 
         return $this;
     }

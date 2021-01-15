@@ -201,6 +201,12 @@ class UpdateCustomerFileType extends AbstractType
             'widget' => 'single_text',
             'row_attr' => ['class' => 'col-md-6'],
         ])
+        ->add('date_expertise', DateType::class, [
+            'required' => false,
+            'label' => 'Date d\'éxpertise',
+            'widget' => 'single_text',
+            'row_attr' => ['class' => 'col-md-6'],
+        ])
         ->add('commentary', TextareaType::class, [
             'required' => false,
             'label' => 'Commentaire :',

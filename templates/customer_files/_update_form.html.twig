@@ -90,6 +90,10 @@
     <hr class="mt-2">
     <h1 class="mb-4"><span class="text-underline">Informations du dossier</span> : </h1>
     <div class="row">
+        {{form_row(form.date_expertise)}}
+        {{form_row(form.date_depot)}}
+    </div>
+    <div class="row">
         {{form_row(form.customer_statut)}}
     </div>
     <div class="row">
@@ -110,7 +114,6 @@
     </div>
     <div class="row">
         {{form_row(form.dossier_number)}}
-        {{form_row(form.date_depot)}}
     </div>
     <div class="row">
         {{form_row(form.stairs)}}
