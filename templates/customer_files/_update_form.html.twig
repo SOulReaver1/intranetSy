@@ -58,6 +58,10 @@
     <hr class="mt-2">
     <h1 class="mb-4"><span class="text-underline">Informations du produit</span> : </h1>
     <div class="row">
+        {{form_row(form.date_cmd_materiel)}}
+        {{form_row(form.date_install)}}
+    </div>
+    <div class="row">
         <div class="col form-group">
             <label class="form-control-label" for="providers">Choisir un fournisseur :</label>
             <select class="form-control" id="providers">
@@ -106,6 +110,7 @@
     </div>
     <div class="row">
         {{form_row(form.dossier_number)}}
+        {{form_row(form.date_depot)}}
     </div>
     <div class="row">
         {{form_row(form.stairs)}}

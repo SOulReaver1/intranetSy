@@ -202,6 +202,21 @@ class CustomerFiles
     private $dossier_number;
 
     /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $date_depot;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $date_cmd_materiel;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $date_install;
+
+    /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
@@ -686,6 +701,42 @@ class CustomerFiles
     public function setDossierNumber(?string $dossier_number): self
     {
         $this->dossier_number = $dossier_number;
+
+        return $this;
+    }
+
+    public function getDateDepot(): ?\DateTimeInterface
+    {
+        return $this->date_depot;
+    }
+
+    public function setDateDepot(?\DateTimeInterface $date_depot): self
+    {
+        $this->date_depot = $date_depot;
+
+        return $this;
+    }
+
+    public function getDateCmdMateriel(): ?\DateTimeInterface
+    {
+        return $this->date_cmd_materiel;
+    }
+
+    public function setDateCmdMateriel(?\DateTimeInterface $date_cmd_materiel): self
+    {
+        $this->date_cmd_materiel = $date_cmd_materiel;
+
+        return $this;
+    }
+
+    public function getDateInstall(): ?\DateTimeInterface
+    {
+        return $this->date_install;
+    }
+
+    public function setDateInstall(?\DateTimeInterface $date_install): self
+    {
+        $this->date_install = $date_install;
 
         return $this;
     }

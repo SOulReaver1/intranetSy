@@ -228,6 +228,24 @@ class CustomerFilesType extends AbstractType
                 'label' => 'Numéro de dossier :',
                 'row_attr' => ['class' => 'col-md-6'],
             ])
+            ->add('date_depot', DateType::class, [
+                'required' => false,
+                'label' => 'Date de dépot :',
+                'widget' => 'single_text',
+                'row_attr' => ['class' => 'col-md-6'],
+            ])
+            ->add('date_cmd_materiel', DateType::class, [
+                'required' => false,
+                'label' => 'Date de commande matériel :',
+                'widget' => 'single_text',
+                'row_attr' => ['class' => 'col-md-6'],
+            ])
+            ->add('date_install', DateType::class, [
+                'required' => false,
+                'label' => 'Date d\'installation',
+                'widget' => 'single_text',
+                'row_attr' => ['class' => 'col-md-6'],
+            ])
             ->add('installer', EntityType::class, [
                 'class' => User::class,
                 'required' => false,

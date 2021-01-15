@@ -28,11 +28,11 @@
     <div class="row">
         <div class="col-md-6 form-group">
             <label class="form-control-label">Acompte :</label>
-            <p class="form-control">{{customer_file.acompte ? customer_file.acompte|date('d-m-Y H:i:s') : 'Aucun acompte'}}</p>
+            <p class="form-control">{{customer_file.acompte ? customer_file.acompte|date('d-m-Y') : 'Aucun acompte'}}</p>
         </div>
         <div class="col-md-6 form-group">
             <label class="form-control-label">Solde :</label>
-            <p class="form-control">{{customer_file.solde ? customer_file.solde|date('d-m-Y H:i:s') : 'Aucun solde'}}</p>
+            <p class="form-control">{{customer_file.solde ? customer_file.solde|date('d-m-Y') : 'Aucun solde'}}</p>
         </div>
     </div>
     <div class="row">
@@ -130,6 +130,16 @@
     <h1 class="mb-4"><span class="text-underline">Informations du produit</span> : </h1>
     <div class="row">
         <div class="col form-group">
+            <label class="form-control-label">Date de commande de matériel :</label>
+            <p class="form-control">{{customer_file.dateCmdMateriel ? customer_file.dateCmdMateriel|date('d-m-Y') ? ''}}</p>
+        </div>
+        <div class="col form-group">
+            <label class="form-control-label">Date d'installation :</label>
+            <p class="form-control">{{customer_file.dateInstall ? customer_file.dateInstall|date('d-m-Y') ? ''}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col form-group">
             <label class="form-control-label">Produit :</label>
             <p class="form-control">{{customer_file.product}}</p>
         </div>
@@ -162,6 +172,10 @@
         <div class="col-md-6 form-group">
             <label class="form-control-label">Numero de dossier :</label>
             <p class="form-control">{{customer_file.dossierNumber ?? 'Aucun numéro de dossier'}}</p>
+        </div>
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Date de dépot</label>
+            <p class="form-control">{{customer_file.dateDepot ? customer_file.dateDepot|date('d-m-Y') : ''}}</p>
         </div>
     </div>
     <div class="row">
