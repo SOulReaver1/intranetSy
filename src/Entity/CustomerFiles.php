@@ -74,7 +74,7 @@ class CustomerFiles
 
     /**
      * @ORM\ManyToOne(targetEntity=CustomerFilesStatut::class, inversedBy="customerFiles")
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private $customer_statut;
 
