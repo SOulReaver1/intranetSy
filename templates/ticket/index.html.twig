@@ -24,7 +24,11 @@
         {% for ticket in tickets %}
             <tr>
                 <td>{{ ticket.id }}</td>
-                <td>{{ ticket.customerFile }}</td>
+                {% if ticket.customerFile.getId is defined %}
+                    <td><a href="{{path('customer_files_show', {'id': ticket.getCustomerFile.getId})}}">{{ticket.customerFile}}</a></td>
+                {% else %}
+                    <td>Aucune fiche client</td>
+                {% endif %}
                 <td>{{ ticket.title }}</td>
                 <td>{{ ticket.description }}</td>
                 <td>{{ ticket.createdAt ? ticket.createdAt|date('d-m-Y H:i:s') : '' }}</td>

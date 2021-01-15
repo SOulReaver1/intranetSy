@@ -98,6 +98,23 @@ class CustomerFilesController extends AbstractController
 
     /**
      * @IsGranted("ROLE_USER")
+     * @Route("/{id}/commentary", name="customer_file_change_commentary", methods={"POST"}, requirements={"id":"\d+"})
+    */
+    public function changeCommentary(Request $request, CustomerFiles $customerFile): object {
+        $data = json_decode($request->getContent(), true);
+        $commentary = $data['commentary'] ?? null;
+        if($commentary){
+            $customerFile->setCommentary($commentary);
+            $this->getDoctrine()->getManager()->flush();
+            return new JsonResponse(['status' => 200]);
+
+        }
+        return new JsonResponse(['status' => 404]);
+
+    }
+
+    /**
+     * @IsGranted("ROLE_USER")
      * @Route("/getProviderProducts/{id}", name="customer_files_products", methods={"POST"}, requirements={"id":"\d+"})
     */
     public function getProductsProvider(Request $request, Provider $provider, ProviderProductRepository $productsRepository): object {

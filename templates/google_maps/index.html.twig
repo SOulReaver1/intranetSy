@@ -151,22 +151,22 @@
             if(filtres.statut.length !== 0){
                 for(var i = 0; i < addresses.length; i++){
                     if(addresses[i].statutId && filtres.statut.includes(addresses[i].statutId.toString())){
-                        draw(addresses[i].lat, addresses[i].lng, [addresses[i].title, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].zip_code, addresses[i].city, addresses[i].address_complement, addresses[i].cellphone], addresses[i].color);
+                        draw(addresses[i].lat, addresses[i].lng, [addresses[i].title, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].zip_code, addresses[i].city, addresses[i].address_complement, addresses[i].cellphone, addresses[i].home_phone, addresses[i].commentary], addresses[i].color);
                     }else if(addresses[i].statutId === null && filtres.statut.includes("0")){
-                        draw(addresses[i].lat, addresses[i].lng, [addresses[i].title, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].zip_code, addresses[i].city, addresses[i].address_complement, addresses[i].cellphone], addresses[i].color);
+                        draw(addresses[i].lat, addresses[i].lng, [addresses[i].title, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].zip_code, addresses[i].city, addresses[i].address_complement, addresses[i].cellphone, addresses[i].home_phone, addresses[i].commentary], addresses[i].color);
                     }
                 }
             }
             if(filtres.fiche !== ""){
                 for(var i = 0; i < addresses.length; i++){
                     if(filtres.fiche == addresses[i].id){
-                        draw(addresses[i].lat, addresses[i].lng, [addresses[i].title, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].zip_code, addresses[i].city, addresses[i].address_complement, addresses[i].cellphone], addresses[i].color);
+                        draw(addresses[i].lat, addresses[i].lng, [addresses[i].title, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].zip_code, addresses[i].city, addresses[i].address_complement, addresses[i].cellphone, addresses[i].home_phone, addresses[i].commentary], addresses[i].color);
                     }
                 }
             }
             if(filtres.statut.length === 0 && filtres.fiche === ""){
                 for(var i = 0; i < addresses.length; i++){
-                    draw(addresses[i].lat, addresses[i].lng, [addresses[i].title, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].zip_code, addresses[i].city, addresses[i].address_complement, addresses[i].cellphone], addresses[i].color);
+                    draw(addresses[i].lat, addresses[i].lng, [addresses[i].title, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].zip_code, addresses[i].city, addresses[i].address_complement, addresses[i].cellphone, addresses[i].home_phone, addresses[i].commentary], addresses[i].color);
                 }
             }
 
@@ -179,7 +179,29 @@
             }
         }
 
-        function draw(lat, lng, [name, id, adresse, nbr, zipCode, city, complement, phone], color = 'black'){
+        function changeCommentary(evt, id){
+            evt.preventDefault();
+            fetch(`/${id}/commentary`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({commentary: evt.target[0].value})
+            }).then(response => response.json())
+            .then(response => {
+                if(response.status === 200){
+                    evt.target.children[0].style.display = 'block';
+                    setTimeout(function(){ evt.target.children[0].style.display = 'none'; }, 3000);
+                }else{
+                    evt.target.children[1].style.display = 'block';
+                    setTimeout(function(){ evt.target.children[1].style.display = 'none'; }, 3000);
+                }
+
+                return true;
+            })
+        }
+
+        function draw(lat, lng, [name, id, adresse, nbr, zipCode, city, complement, cellphone, homePhone, commentary], color = 'black'){
             const symbolThree = {
                 path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z',
                 fillColor: color,
@@ -194,20 +216,46 @@
                 <h1>${name}</h1>
                 <div class="row">
                     <div class="col form-group">
-                        <label class="form-control-label">Adresse</label>
+                        <label class="form-control-label">Adresse : </label>
                         <p class="form-control">${nbr ?? ''} ${adresse ?? ''} ${zipCode ?? ''} ${city ?? ''}</p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col form-group">
-                        <label class="form-control-label">Complément d'adresse</label>
+                        <label class="form-control-label">Complément d'adresse :</label>
                         <p class="form-control">${complement ?? ''}</p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col form-group">
-                        <label class="form-control-label">Téléphone</label>
-                        <p class="form-control">${phone ?? ''}</p>
+                        <label class="form-control-label">Téléphone portable :</label>
+                        <p class="form-control">${cellphone ?? ''}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col form-group">
+                        <label class="form-control-label">Téléphone fixe :</label>
+                        <p class="form-control">${homePhone ?? ''}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col form-group">
+                        
+                        <form method="post" id="changeCommentaryForm" onSubmit="changeCommentary(event, ${id});">
+                            <div class="alert alert-success" role="alert" style="display: none;">
+                                Le commentaire à bien été modifier
+                            </div>
+                            <div class="alert alert-danger" role="alert" style="display: none;">
+                                Le commentaire n'a pas pu être modifier !
+                            </div>
+                            <div class="form-group">
+                                <label for="commentary" class="form-control-label">Commentaire :</label>
+                                <input id="commentary" type="text" class="form-control" value="${commentary ?? ''}" name="commentary"/>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-success">Modifier le commentaire</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
                 <a href="/${id}" class="btn btn-primary">Voir la fiche</a>
