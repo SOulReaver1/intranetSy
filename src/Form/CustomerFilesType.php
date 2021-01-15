@@ -14,6 +14,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -204,6 +205,28 @@ class CustomerFilesType extends AbstractType
                 'label' => 'La source : ',
                 'row_attr' => ['class' => 'col'],
                 'attr' => ['class' => 'ui fluid dropdown']
+            ])
+            ->add('acompte', DateType::class, [
+                'required' => false,
+                'widget' => 'single_text',
+                'label' => 'Acompte :',
+                'row_attr' => ['class' => 'col-md-6'],
+            ])
+            ->add('solde', DateType::class, [
+                'required' => false,
+                'widget' => 'single_text',
+                'label' => 'Solde :',
+                'row_attr' => ['class' => 'col-md-6'],
+            ])
+            ->add('invoice_number', TextType::class, [
+                'required' => false,
+                'label' => 'Numéro de facture :',
+                'row_attr' => ['class' => 'col-md-6'],
+            ])
+            ->add('dossier_number', TextType::class, [
+                'required' => false,
+                'label' => 'Numéro de dossier :',
+                'row_attr' => ['class' => 'col-md-6'],
             ])
             ->add('installer', EntityType::class, [
                 'class' => User::class,

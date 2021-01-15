@@ -19,6 +19,22 @@
             <p class="form-control">{{customer_file.installer ?? 'Aucun installateur'}}</p>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Acompte :</label>
+            <p class="form-control">{{customer_file.acompte ? customer_file.acompte|date('d-m-Y H:i:s') : 'Aucun acompte'}}</p>
+        </div>
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Solde :</label>
+            <p class="form-control">{{customer_file.solde ? customer_file.solde|date('d-m-Y H:i:s') : 'Aucun solde'}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Numéro de facture :</label>
+            <p class="form-control">{{customer_file.invoiceNumber ?? 'Aucun numéro de facture'}}</p>
+        </div>
+    </div>
     <hr class="mt-2">
     <h1 class="mb-4"><span class="text-underline">Informations du client</span> :</h1>
     <div class="row">
@@ -134,6 +150,12 @@
                 <span id="pwdAl">{{customer_file.passwordAl}}</span>
                 <button type="button" class="btn btn-sm btn-primary" data-clipboard-target="#pwdAl">Copier</button>
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Numero de dossier :</label>
+            <p class="form-control">{{customer_file.dossierNumber ?? 'Aucun numéro de dossier'}}</p>
         </div>
     </div>
     <div class="row">

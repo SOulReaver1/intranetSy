@@ -182,6 +182,26 @@ class CustomerFiles
     private $product;
 
     /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $acompte;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $solde;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $invoice_number;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $dossier_number;
+
+    /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
@@ -618,6 +638,54 @@ class CustomerFiles
     public function setProduct(?ProviderProduct $product): self
     {
         $this->product = $product;
+
+        return $this;
+    }
+
+    public function getAcompte(): ?\DateTimeInterface
+    {
+        return $this->acompte;
+    }
+
+    public function setAcompte(?\DateTimeInterface $acompte): self
+    {
+        $this->acompte = $acompte;
+
+        return $this;
+    }
+
+    public function getSolde(): ?\DateTimeInterface
+    {
+        return $this->solde;
+    }
+
+    public function setSolde(?\DateTimeInterface $solde): self
+    {
+        $this->solde = $solde;
+
+        return $this;
+    }
+
+    public function getInvoiceNumber(): ?string
+    {
+        return $this->invoice_number;
+    }
+
+    public function setInvoiceNumber(?string $invoice_number): self
+    {
+        $this->invoice_number = $invoice_number;
+
+        return $this;
+    }
+
+    public function getDossierNumber(): ?string
+    {
+        return $this->dossier_number;
+    }
+
+    public function setDossierNumber(?string $dossier_number): self
+    {
+        $this->dossier_number = $dossier_number;
 
         return $this;
     }
