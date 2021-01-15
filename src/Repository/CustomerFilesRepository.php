@@ -77,6 +77,15 @@ class CustomerFilesRepository extends ServiceEntityRepository
         ->getResult();
     }
 
+    public function countNullFileStatut(){
+        return $this->createQueryBuilder('c')
+        ->leftJoin('c.customer_statut', 'statut')
+        ->andWhere('c.address IS NOT NULL')
+        ->andWhere('statut.id IS NULL')
+        ->select('count(c.id) as count')
+        ->getQuery()->getResult()[0];
+    }
+
     
 
     // /**

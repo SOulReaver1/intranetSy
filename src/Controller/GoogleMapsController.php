@@ -17,12 +17,14 @@ class GoogleMapsController extends AbstractController
     {
         if(in_array('ROLE_INSTALLATEUR', $this->getUser()->getRoles())){
             return $this->render('google_maps/index.html.twig', [
-                'statuts' => $statut->findAll()
+                'statuts' => $statut->googleMaps(),
+                'nullCount' => $repository->countNullFileStatut()['count']
             ]);
         }
-
+    
         return $this->render('google_maps/index.html.twig', [
-            'statuts' => $statut->findAll()
+            'statuts' => $statut->googleMaps(),
+            'nullCount' => $repository->countNullFileStatut()['count']
         ]);
     }
 
