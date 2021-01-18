@@ -113,10 +113,17 @@ class CustomerFilesController extends AbstractController
                         ->leftJoin('e.customer_statut', 'customer_statut');
 
                     }
-                    return $builder
+                    if($this->session->get('statut')){
+                        return $builder
                         ->select('e, customer_statut')
                         ->where('customer_statut.id = :statut')
                         ->setParameter("statut", $this->session->get('statut'))
+                        ->from(CustomerFiles::class, 'e')
+                        ->leftJoin('e.customer_statut', 'customer_statut')
+                        ;
+                    }
+                    return $builder
+                        ->select('e, customer_statut')
                         ->from(CustomerFiles::class, 'e')
                         ->leftJoin('e.customer_statut', 'customer_statut')
                     ;
