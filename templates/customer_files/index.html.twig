@@ -2,7 +2,7 @@
 
 {% block title %}CustomerFiles index{% endblock %}
 {% set title = "Les fiches clients" %}
-{% set datatable = true %}
+{# {% set datatable = true %} #}
 {% block header %}
     <div class="row justify-content-end">
         <div class="ui right pointing dropdown icon button" id="test" style="max-height: 100px">
@@ -34,50 +34,53 @@
     </div>
 {% endblock %}
 {% block body %}
-    <table id="customerTable" class="table w-100 dt-table responsive display nowrap">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Genre</th>
-                <th>Nom</th>
-                <th>Téléphone portable</th>
-                <th>Téléphone fixe</th>
-                <th>Adresse</th>
-                <th>Statut dossier</th>
-                <th>Date d'expertise</th>
-                <th>Mail AL</th>
-                <th>Mot de passe AL</th>
-                <th width="5%">Actions</th>
-            </tr>
-        </thead>
-        <tbody class="list">
-        {% for customer_file in customer_files %}
-            <tr>
-                <td>{{ customer_file.id }}</td>
-                <td>{{ customer_file.sexe }}</td>
-                <td>{{ customer_file.name }}</td>
-                <td>{{ customer_file.cellphone }}</td>
-                <td>{{ customer_file.homePhone }}</td>
-                <td>{{ customer_file.address }}</td>
-                <td>{{ customer_file.customerStatut }}</td>
-                <td>{{ customer_file.dateExpertise ? customer_file.dateExpertise|date('d-m-Y') : ''}}</td>
-                <td>{{ customer_file.mailAL }}</td>
-                <td>{{ customer_file.passwordAl }}</td>
-                <td>
-                    <a href="{{ path('customer_files_show', {'id': customer_file.id}) }}" class="btn btn-primary">Regarder</a>
-                    {% if is_granted('ROLE_USER') %}
-                        <a href="{{ path('customer_files_edit', {'id': customer_file.id}) }}" class="btn btn-primary">Modifier</a>
-                    {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <div id="customers">Chargement...</div>
 {% endblock %}
 {% block stylesheets %}
     <link href="{{asset('assets/js/plugins/semantic/semantic.css')}}" rel="stylesheet">
 {% endblock %}
 {% block javascripts %}
+    <script type="text/javascript" src="{{asset('assets/js/plugins/datatables.min.js')}}"></script>
+    <script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
     <script src="{{asset('assets/js/plugins/semantic/semantic.js')}}"></script>
     <script>$('#test').dropdown()</script>
+    <script>
+        $(function() {
+            $('#customers').initDataTables({{ datatable_settings(datatable) }}, {
+                responsive: true,
+                searching: true,
+                processing: true,
+                dom: 'lBfrtip',
+                buttons: [
+                {
+                    extend: 'copy',
+                    text: 'Copier le tableau',
+                    key: {
+                        key: 'c',
+                        ctrlKey: true
+                    }
+                },
+                {
+                    extend: 'pdf',
+                    exportOptions:{
+                        columns:':visible',
+                    },
+                },
+                {
+                    extend: 'excel',
+                    exportOptions:{
+                        columns:':visible',
+                    },
+                },
+                {
+                    extend: 'colvis',
+                    text: 'Filter le tableau',
+                },
+                {
+                    extend: 'print',
+                    text: 'Imprimer le tableau',
+                }]
+            });
+        });
+    </script>
 {% endblock %}

@@ -17,6 +17,14 @@ use App\Repository\ProviderProductRepository;
 use App\Repository\ProviderRepository;
 use App\Service\Mailer;
 use App\Service\NotificationService;
+use Doctrine\ORM\QueryBuilder;
+use Omines\DataTablesBundle\Adapter\ArrayAdapter;
+use Omines\DataTablesBundle\Adapter\Doctrine\Event\ORMAdapterQueryEvent;
+use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
+use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapterEvents;
+use Omines\DataTablesBundle\Column\DateTimeColumn;
+use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\DataTable;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,32 +32,107 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
+use Omines\DataTablesBundle\DataTableFactory;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * @Route("/")
  */
 class CustomerFilesController extends AbstractController
 {
+
+    private $session;
+
+    public function __construct(SessionInterface $sessionInterface)
+    {
+        $this->session = $sessionInterface;
+    }
     /**
-     * @Route("/", name="default", methods={"GET"})
+     * @Route("/", name="default", methods={"GET", "POST"})
      */
-    public function index(Request $request, CustomerFilesRepository $customerFilesRepository, CustomerFilesStatutRepository $customerFilesStatutRepository, SessionInterface $session): Response
+    public function index(Request $request, CustomerFilesStatutRepository $customerFilesStatutRepository, CustomerFilesRepository $customerFilesRepository, DataTableFactory $dataTableFactory)
     {        
-        $customer_files = $customerFilesRepository->findAll();
-        $session->remove('statut');
-        if(in_array('ROLE_INSTALLATEUR', $this->getUser()->getRoles())){
-            $customer_files = $customerFilesRepository->getInstaller($this->getUser());
-        }else if($request->query->get('statut')){
-            $session->set('statut', $request->query->get('statut'));
-            $customer_files = $customerFilesRepository->findByStatut($request->query->get('statut'));
+        if($request->isMethod('get')){
+            $this->session->remove('statut');
+            if($request->query->get('statut')){
+                $this->session->set('statut', $request->query->get('statut'));
+            }
+        }
+
+        $table = $dataTableFactory->create()
+            ->setTemplate('@DataTables/datatable_html.html.twig', ['className' => 'table table-striped'])
+            ->add('id', TextColumn::class, ['label' => '#'])
+            ->add('customer_statut', TextColumn::class, [
+                'field' => 'customer_statut.name', 
+                'label' => 'Statut dossier'
+            ])
+            ->add('name', TextColumn::class, ['label' => 'Nom complet'])
+            ->add('date_expertise', DateTimeColumn::class, ['label' => 'Date d\'expertise'])
+            ->add('address', TextColumn::class, ['label' => 'Adresse'])
+            ->add('city', TextColumn::class, ['label' => 'Ville'])
+            ->add('zip_code', TextColumn::class, ['label' => 'Code postal'])
+            ->add('cellphone', TextColumn::class, ['label' => 'Téléphone portable'])
+            ->add('home_phone', TextColumn::class, ['label' => 'Téléphone fixe'])
+            ->add('mail_al', TextColumn::class, ['label' => 'Mail AL'])
+            ->add('password_al', TextColumn::class, ['label' => 'Mot de passe AL'])
+            ->add('actions', TextColumn::class, [
+                'data' => function($context) {
+                    return $context->getId();
+                }, 
+                'render' => function($value, $context){
+                    $show = sprintf('<a href="%s" class="btn btn-primary">Regarder</a>', $this->generateUrl('customer_files_show', ['id' => $value]));
+                    $edit = sprintf('<a href="%s" class="btn btn-primary">Modifier</a>', $this->generateUrl('customer_files_edit', ['id' => $value]));
+                    return $show.$edit;
+                }, 
+                'label' => 'Actions'
+            ])
+            ->addOrderBy('id', DataTable::SORT_ASCENDING)
+            ->createAdapter(ORMAdapter::class, [
+                'entity' => CustomerFiles::class,
+                'query' => function (QueryBuilder $builder) {
+                    
+                    if(in_array('ROLE_INSTALLATEUR', $this->getUser()->getRoles())){
+                        if($this->session->get('statut')){
+                            return $builder
+                            ->select('c, customer_statut')
+                            ->where('i = :i')
+                            ->where('customer_statut.id = :statut')
+                            ->setParameter("statut", $this->session->get('statut'))
+                            ->setParameter('i', $this->getUser())
+                            ->from(CustomerFiles::class, 'c')
+                            ->leftJoin('c.installer', 'i')
+                            ->leftJoin('e.customer_statut', 'customer_statut');
+                        }
+                        return $builder
+                        ->select('c, customer_statut')
+                        ->where('i = :i')
+                        ->setParameter('i', $this->getUser())
+                        ->from(CustomerFiles::class, 'c')
+                        ->leftJoin('c.installer', 'i')
+                        ->leftJoin('e.customer_statut', 'customer_statut');
+
+                    }
+                    return $builder
+                        ->select('e, customer_statut')
+                        ->where('customer_statut.id = :statut')
+                        ->setParameter("statut", $this->session->get('statut'))
+                        ->from(CustomerFiles::class, 'e')
+                        ->leftJoin('e.customer_statut', 'customer_statut')
+                    ;
+                },
+            ])
+            ->handleRequest($request);
+
+        if ($table->isCallback()) {
+            return $table->getResponse();
         }
 
         return $this->render('customer_files/index.html.twig', [
-            'customer_files' => $customer_files,
-            'statuts' => $customerFilesStatutRepository->findAllByOrder()
+            'statuts' => $customerFilesStatutRepository->findAllByOrder(),
+            'datatable' => $table
         ]);
     }
-
 
     /**
      * @IsGranted("ROLE_ALLOW_CREATE")

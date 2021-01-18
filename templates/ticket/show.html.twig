@@ -3,7 +3,7 @@
 {% block title %}Ticket{% endblock %}
 {% set title = ticket.title %}
 {% block header %}
-    <div class="row justify-content-end">
+    <div class="row justify-content-end">        
         <a href="{{ path('ticket_message_index', {'id': ticket.id}) }}" class="btn btn-primary">Lire les messages</a>
         <a href="{{ path('ticket_index') }}" class="btn btn-primary">Retour</a>
     </div>

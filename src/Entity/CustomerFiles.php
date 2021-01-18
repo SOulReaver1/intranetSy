@@ -7,7 +7,7 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=CustomerFilesRepository::class)
@@ -19,6 +19,7 @@ class CustomerFiles
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"show"})
      */
     private $id;
 
@@ -29,31 +30,37 @@ class CustomerFiles
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"show"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"show"})
      */
     private $address;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"show"})
      */
     private $city;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"show"})
      */
     private $zip_code;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"show"})
      */
     private $home_phone;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"show"})
      */
     private $cellphone;
 
@@ -75,6 +82,7 @@ class CustomerFiles
     /**
      * @ORM\ManyToOne(targetEntity=CustomerFilesStatut::class, inversedBy="customerFiles")
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     * @Groups({"show"})
      */
     private $customer_statut;
 
@@ -91,11 +99,13 @@ class CustomerFiles
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"show"})
      */
     private $mail_al;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"show"})
      */
     private $password_al;
 
@@ -218,6 +228,7 @@ class CustomerFiles
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"show"})
      */
     private $date_expertise;
 
