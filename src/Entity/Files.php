@@ -77,6 +77,8 @@ class Files
 
     public function setFile($file)
     {
+        is_array($file) && $file = $file[0];
+        
         $this->file = $file;
 
         return $this;

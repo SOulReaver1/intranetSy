@@ -87,6 +87,7 @@ class FilesController extends AbstractController
         $oldFile = $file->getFile();
         $form = $this->createForm(FilesType::class, $file, ['customer' => $customer]);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $fileUploader->delete($oldFile);
             $this->getDoctrine()->getManager()->flush();
