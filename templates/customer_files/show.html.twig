@@ -5,7 +5,7 @@
 {% block header %}
     <div class="row justify-content-end">
         <a href="{{ path('files_index', {'id': customer_file.id}) }}" class="btn btn-primary">Les documents</a>
-        <a href="/{{app.session.get('statut') ? "?statut=" ~ app.session.get('statut') : ''}}" class="btn btn-primary">Retour</a>
+        <a href="/{{app.session.get('statut') ? "?statut=" ~ app.session.get('statut') : ''}}" class="btn btn-primary" id="back">Retour</a>
     </div>
 {% endblock %}
 {% block body %}
@@ -219,4 +219,7 @@
 {% block javascripts %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
     <script>new ClipboardJS('.btn')</script>
+    <script>
+        document.getElementById('back').href = `${document.getElementById('back').href}${sessionStorage.getItem('datatable')}`
+    </script>
 {% endblock %}

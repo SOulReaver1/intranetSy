@@ -5,7 +5,7 @@
 {% set require = true %}
 {% block header %}
     <div class="row justify-content-end">
-        <a href="{{app.session.get('statut') ? "/?statut=" ~ app.session.get('statut') : path('customer_files_show', {'id': customer_file.id})}}" class="btn btn-primary">Retour</a>
+        <a id="back" href="{{app.session.get('statut') ? "/?statut=" ~ app.session.get('statut') : path('customer_files_show', {'id': customer_file.id})}}" class="btn btn-primary">Retour</a>
         {{ include('customer_files/_delete_form.html.twig') }}
     </div>
 {% endblock %}
@@ -19,4 +19,7 @@
 {% endblock %}
 {% block javascripts %}
     {{ include('customer_files/javascripts.html.twig') }}
+    <script>
+        document.getElementById('back').href = `${document.getElementById('back').href}${sessionStorage.getItem('datatable')}`
+    </script>
 {% endblock %}

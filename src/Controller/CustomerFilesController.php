@@ -51,7 +51,7 @@ class CustomerFilesController extends AbstractController
     /**
      * @Route("/", name="default", methods={"GET", "POST"})
      */
-    public function index(Request $request, CustomerFilesStatutRepository $customerFilesStatutRepository, CustomerFilesRepository $customerFilesRepository, DataTableFactory $dataTableFactory)
+    public function index(Request $request, CustomerFilesStatutRepository $customerFilesStatutRepository, DataTableFactory $dataTableFactory)
     {        
         if($request->isMethod('get')){
             $this->session->remove('statut');
@@ -91,7 +91,6 @@ class CustomerFilesController extends AbstractController
             ->createAdapter(ORMAdapter::class, [
                 'entity' => CustomerFiles::class,
                 'query' => function (QueryBuilder $builder) {
-                    
                     if(in_array('ROLE_INSTALLATEUR', $this->getUser()->getRoles())){
                         if($this->session->get('statut')){
                             return $builder
@@ -110,7 +109,7 @@ class CustomerFilesController extends AbstractController
                         ->setParameter('i', $this->getUser())
                         ->from(CustomerFiles::class, 'c')
                         ->leftJoin('c.installer', 'i')
-                        ->leftJoin('e.customer_statut', 'customer_statut');
+                        ->leftJoin('e.&customer_statut', 'customer_statut');
 
                     }
                     if($this->session->get('statut')){
@@ -227,7 +226,7 @@ class CustomerFilesController extends AbstractController
     /**
      * @Route("/{id}", name="customer_files_show", methods={"GET"}, requirements={"id":"\d+"})
      */
-    public function show(CustomerFiles $customerFile): Response
+    public function show(Request $request, CustomerFiles $customerFile): Response
     {
         if(!in_array('ROLE_INSTALLATEUR', $this->getUser()->getRoles()) || $customerFile->getInstaller() === $this->getUser()){
             return $this->render('customer_files/show.html.twig', [
