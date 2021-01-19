@@ -20,7 +20,7 @@
 {% block javascripts %}
     {{ include('customer_files/javascripts.html.twig') }}
     <script>
-i       if(sessionStorage.getItem('datatable')){
+        if(sessionStorage.getItem('datatable') !== null){
             document.getElementById('back').href = `${document.getElementById('back').href}${sessionStorage.getItem('datatable')}`
         }    </script>
 {% endblock %}

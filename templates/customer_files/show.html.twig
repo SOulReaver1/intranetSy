@@ -220,6 +220,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
     <script>new ClipboardJS('.btn')</script>
     <script>
-        document.getElementById('back').href = `${document.getElementById('back').href}${sessionStorage.getItem('datatable')}`
+        if(sessionStorage.getItem('datatable') !== null){
+            document.getElementById('back').href = `${document.getElementById('back').href}${sessionStorage.getItem('datatable')}`
+        }
     </script>
 {% endblock %}
