@@ -188,13 +188,18 @@ class CustomerFilesType extends AbstractType
                 'row_attr' => ['class' => 'col-md-6'],
             ])
             ->add('customer_statut', EntityType::class, [
-                'required' => false,
+                'required' => true,
                 'placeholder' => 'Aucun statut de dossier',
                 'class' => CustomerFilesStatut::class,
                 'query_builder' => function(CustomerFilesStatutRepository $repository) {
                     return $repository->createQueryBuilder('c')
                     ->orderBy('c.ordered');
                 },
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Le statut du client ne doit pas être vide !',
+                    ]),
+                ],
                 'label' => 'Statut du dossier : ',
                 'row_attr' => ['class' => 'col'],
             ])
