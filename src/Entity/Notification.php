@@ -87,8 +87,8 @@ class Notification
 
     public function addUser(?User ...$users): self
     {
-        if (!$this->users->contains(...$users)) {
-            foreach ($users as $value) {
+        foreach ($users as $value) {
+            if (!$this->users->contains($value)) {
                 $this->users[] = $value;
             }
         }
