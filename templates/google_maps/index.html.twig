@@ -90,6 +90,7 @@
 {% endblock %}
 {% block javascripts %}
     <script src="{{asset('assets/js/plugins/semantic/semantic.js?v=1.0.0')}}"></script>
+    <script src="https://unpkg.com/@googlemaps/markerclustererplus/dist/index.min.js"></script>
     <script>
         var map;
         var geocoder;
@@ -112,7 +113,7 @@
             $('#filtre').dropdown('clear');  
         });
 
-        function initMap() {
+        async function initMap() {
             var latlng = new google.maps.LatLng(46.232192999999995, 2.209666999999996);
             var mapOptions = {
                 zoom: 5,
@@ -120,7 +121,7 @@
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             }
             map = new google.maps.Map(document.getElementById("map"), mapOptions);
-            fetch('/maps/addresses', {
+            await fetch('/maps/addresses', {
                 method: 'POST'
             }).then(response => response.json())
             .then(res => {
@@ -141,7 +142,10 @@
                     
                 });
                 drawMarker();
-            })
+            }).then(res => new MarkerClusterer(map, markers, {
+                imagePath:
+                "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m",
+            }));
         }
 
 
@@ -275,7 +279,7 @@
 
             marker.addListener('click', (rers) => {
                 infowindow.open(map, marker);
-                map.setZoom(8);
+                map.setZoom(15);
                 map.panTo(marker.position);
                 marker.setAnimation(google.maps.Animation.BOUNCE);
                 setTimeout(function(){ marker.setAnimation(null); }, 2000);
