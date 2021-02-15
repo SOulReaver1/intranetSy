@@ -169,11 +169,13 @@ class CustomerFilesType extends AbstractType
                 'required' => false,
                 'label' => 'Description :',
                 'row_attr' => ['class' => 'col-md-6'],
+                'attr' => ['class' => 'autosize']
             ])
             ->add('commentary', TextareaType::class, [
                 'required' => false,
                 'label' => 'Commentaire :',
                 'row_attr' => ['class' => 'col-md-6'],
+                'attr' => ['class' => 'autosize']
             ])
             ->add('client_statut_id', EntityType::class, [
                 'required' => true,

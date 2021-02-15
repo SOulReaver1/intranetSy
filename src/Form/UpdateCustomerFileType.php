@@ -160,6 +160,7 @@ class UpdateCustomerFileType extends AbstractType
             'required' => false,
             'label' => 'Description :',
             'row_attr' => ['class' => 'col-md-6'],
+            'attr' => ['class' => 'autosize']
         ])
         ->add('acompte', DateType::class, [
             'required' => false,
@@ -211,6 +212,7 @@ class UpdateCustomerFileType extends AbstractType
             'required' => false,
             'label' => 'Commentaire :',
             'row_attr' => ['class' => 'col-md-6'],
+            'attr' => ['class' => 'autosize']
         ])
         ->add('client_statut_id', EntityType::class, [
             'required' => true,
