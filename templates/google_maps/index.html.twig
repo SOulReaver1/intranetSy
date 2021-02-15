@@ -95,7 +95,9 @@
         var map;
         var geocoder;
         var addresses;
+        var clusters;
         let markers = [];
+
         var filtres = {statut: [], fiche: ""};
 
         $("#filtre").dropdown({
@@ -121,6 +123,10 @@
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             }
             map = new google.maps.Map(document.getElementById("map"), mapOptions);
+            clusters = new MarkerClusterer(map, markers, {
+                imagePath:
+                "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m",
+            })
             await fetch('/maps/addresses', {
                 method: 'POST'
             }).then(response => response.json())
@@ -142,16 +148,13 @@
                     
                 });
                 drawMarker();
-            }).then(res => new MarkerClusterer(map, markers, {
-                imagePath:
-                "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m",
-            }));
+            });
         }
 
 
         function drawMarker(){
-            setMapOnAll(null);
             markers = [];
+            clusters.clearMarkers()
             if(filtres.statut.length !== 0){
                 for(var i = 0; i < addresses.length; i++){
                     if(addresses[i].statutId && filtres.statut.includes(addresses[i].statutId.toString())){
@@ -172,15 +175,9 @@
                 for(var i = 0; i < addresses.length; i++){
                     draw(addresses[i].lat, addresses[i].lng, [addresses[i].title, addresses[i].id, addresses[i].address, addresses[i].route_number, addresses[i].zip_code, addresses[i].city, addresses[i].address_complement, addresses[i].cellphone, addresses[i].home_phone, addresses[i].commentary], addresses[i].color);
                 }
-            }
+            }  
 
-            setMapOnAll(map);
-        }
-
-        function setMapOnAll(map) {
-            for (let i = 0; i < markers.length; i++) {
-                markers[i].setMap(map);
-            }
+            clusters.addMarkers(markers);
         }
 
         function changeCommentary(evt, id){
