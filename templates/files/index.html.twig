@@ -3,7 +3,10 @@
 {% block title %}Files index{% endblock %}
 {% set title = "Les fichiers" %}
 {% block header %}
-    <a href="{{path('files_new', {'id': customer_id})}}" class="btn btn-primary">Ajouter des fichiers</a>
+    <div class="row justify-content-end">
+        <a href="{{path('customer_files_show', {'id': customer_id})}}" class="btn btn-primary">Retour</a>
+        <a href="{{path('files_new', {'id': customer_id})}}" class="btn btn-primary">Ajouter des fichiers</a>
+    </div>
 {% endblock %}
 {% set datatable = true %}
 {% block body %}
