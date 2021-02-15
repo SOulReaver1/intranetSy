@@ -83,6 +83,10 @@
 
         <!-- Argon JS -->
         <script src="{{ asset('argon') }}/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+        <script>
+            document.querySelectorAll('.autosize').forEach(element => autosize(element))
+        </script>
         {% if datatable is defined %}
                 <script type="text/javascript" src="{{asset('assets/js/plugins/datatables.min.js')}}"></script>
                 <script>
