@@ -126,6 +126,7 @@
             clusters = new MarkerClusterer(map, markers, {
                 imagePath:
                 "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m",
+                maxZoom: 20
             })
             await fetch('/maps/addresses', {
                 method: 'POST'
