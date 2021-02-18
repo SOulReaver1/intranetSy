@@ -101,7 +101,7 @@ class CustomerFilesController extends AbstractController
                             ->setParameter('i', $this->getUser())
                             ->from(CustomerFiles::class, 'c')
                             ->leftJoin('c.installer', 'i')
-                            ->leftJoin('e.customer_statut', 'customer_statut');
+                            ->leftJoin('c.customer_statut', 'customer_statut');
                         }
                         return $builder
                         ->select('c, customer_statut')
