@@ -109,7 +109,7 @@ class CustomerFilesController extends AbstractController
                         ->setParameter('i', $this->getUser())
                         ->from(CustomerFiles::class, 'c')
                         ->leftJoin('c.installer', 'i')
-                        ->leftJoin('e.&customer_statut', 'customer_statut');
+                        ->leftJoin('c.customer_statut', 'customer_statut');
 
                     }
                     if($this->session->get('statut')){
@@ -200,6 +200,15 @@ class CustomerFilesController extends AbstractController
         }
         return new JsonResponse(['status' => 404]);
 
+    }
+
+    /**
+     * @IsGranted("ROLE_USER")
+     * @Route("/api/customers", name="api_customers", methods={"POST"})
+    */
+    public function getCustomers(Request $request, CustomerFilesRepository $repository): object {
+        
+        return new JsonResponse($repository->getCustomers());
     }
 
     /**
