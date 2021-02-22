@@ -233,6 +233,11 @@ class CustomerFiles
     private $date_expertise;
 
     /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $date_footage;
+
+    /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
@@ -765,6 +770,18 @@ class CustomerFiles
     public function setDateExpertise(?\DateTimeInterface $date_expertise): self
     {
         $this->date_expertise = $date_expertise;
+
+        return $this;
+    }
+
+    public function getDateFootage(): ?\DateTimeInterface
+    {
+        return $this->date_footage;
+    }
+
+    public function setDateFootage(?\DateTimeInterface $date_footage): self
+    {
+        $this->date_footage = $date_footage;
 
         return $this;
     }

@@ -15,6 +15,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -187,6 +188,12 @@ class UpdateCustomerFileType extends AbstractType
         ->add('date_depot', DateType::class, [
             'required' => false,
             'label' => 'Date de dépot :',
+            'widget' => 'single_text',
+            'row_attr' => ['class' => 'col-md-6'],
+        ])
+        ->add('date_footage', DateTimeType::class, [
+            'required' => false,
+            'label' => 'Date de métrage :',
             'widget' => 'single_text',
             'row_attr' => ['class' => 'col-md-6'],
         ])
