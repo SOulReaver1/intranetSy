@@ -20878,12 +20878,21 @@ textarea[resize='horizontal']
     margin: 0;
 }
 
-.table td,
+#dt td,
 .table th
 {
     font-size: .8125rem;
 
     white-space: nowrap;
+}
+
+.table td{
+    font-size: .8125rem;
+    white-space: inherit;
+}
+
+.table tbody tr.child td.child{
+    white-space: inherit !important;
 }
 
 .table.align-items-center td,

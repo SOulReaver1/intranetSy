@@ -1,6 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit ProviderProduct{% endblock %}
 {% set title = "Modifier le produit" %}
 {% block header %}
     <div class="row justify-content-end">
@@ -10,16 +9,8 @@
     </div>
 {% endblock %}
 {% block body %}
-
     {{ include('provider_product/_form.html.twig', {'button_label': 'Modifier'}) }}
-
-{% endblock %}
-{% block stylesheets %}
-        <link href="{{asset('assets/js/plugins/semantic/semantic.min.css')}}" rel="stylesheet">
 {% endblock %}
 {% block javascripts %}
-    <script src="{{asset('assets/js/plugins/semantic/semantic.js')}}"></script>
-    <script>
-        $('#provider_product_params').dropdown();
-    </script>
+    <script>$('#provider_product_params').dropdown();</script>
 {% endblock %}

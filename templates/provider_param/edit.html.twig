@@ -1,6 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit ProviderParam{% endblock %}
 {% set title = "Modifier la paramètre" %}
 {% block header %}
     <div class="row justify-content-end">
@@ -10,6 +9,5 @@
     </div>
 {% endblock %}
 {% block body %}
-
     {{ include('provider_param/_form.html.twig', {'button_label': 'Modifier'}) }}
 {% endblock %}

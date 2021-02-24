@@ -4,7 +4,12 @@ namespace App\Controller;
 
 use App\Entity\ProviderProduct;
 use App\Form\ProviderProductType;
-use App\Repository\ProviderProductRepository;
+use Doctrine\ORM\QueryBuilder;
+use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
+use Omines\DataTablesBundle\Column\DateTimeColumn;
+use Omines\DataTablesBundle\Column\NumberColumn;
+use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\DataTableFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,12 +21,52 @@ use Symfony\Component\Routing\Annotation\Route;
 class ProviderProductController extends AbstractController
 {
     /**
-     * @Route("/", name="provider_product_index", methods={"GET"})
+     * @Route("/", name="provider_product_index", methods={"GET", "POST"})
      */
-    public function index(ProviderProductRepository $providerProductRepository): Response
+    public function index(Request $request, DataTableFactory $dataTableFactory): Response
     {
+        
+        $table = $dataTableFactory->create()
+        ->add('id', NumberColumn::class, ['label' => '#'])
+        ->add('name', TextColumn::class, ['label' => 'Nom'])
+        ->add('provider', TextColumn::class, ['label' => 'Fournisseur', 'field' => 'provider.name'])
+        ->add('params', TextColumn::class, [
+            'data' => function($context){
+                $params = array();
+                foreach ($context->getParams() as $value) {
+                   $params[] = $value->getName();
+                }
+                return implode(', ', $params);
+            },
+            'label' => 'Les paramètres'
+        ])
+        ->add('created_at', DateTimeColumn::class, ['label' => 'Créer le', 'format' => 'd-m-Y H:i:s'])
+        ->add('actions', TextColumn::class, [
+            'data' => function($context) {
+                return $context->getId();
+            }, 
+            'render' => function($value, $context){
+                $show = sprintf('<a href="%s" class="btn btn-primary">Regarder</a>', $this->generateUrl('provider_product_show', ['id' => $value]));
+                $edit = sprintf('<a href="%s" class="btn btn-primary">Modifier</a>', $this->generateUrl('provider_product_edit', ['id' => $value]));
+                return $show.$edit;
+            }, 
+            'label' => 'Actions'
+        ])->createAdapter(ORMAdapter::class, [
+            'entity' => ProviderProduct::class,
+            'query' => function(QueryBuilder $builder){
+                return $builder
+                ->select('c, provider')
+                ->from(ProviderProduct::class, 'c')
+                ->leftJoin('c.provider', 'provider');
+            }
+        ])->handleRequest($request);
+
+        if ($table->isCallback()) {
+            return $table->getResponse();
+        }
+
         return $this->render('provider_product/index.html.twig', [
-            'provider_products' => $providerProductRepository->findAll(),
+            'datatable' => $table
         ]);
     }
 

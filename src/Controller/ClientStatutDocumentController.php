@@ -4,7 +4,12 @@ namespace App\Controller;
 
 use App\Entity\ClientStatutDocument;
 use App\Form\ClientStatutDocumentType;
-use App\Repository\ClientStatutDocumentRepository;
+use Doctrine\ORM\QueryBuilder;
+use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
+use Omines\DataTablesBundle\Column\DateTimeColumn;
+use Omines\DataTablesBundle\Column\NumberColumn;
+use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\DataTableFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,12 +21,43 @@ use Symfony\Component\Routing\Annotation\Route;
 class ClientStatutDocumentController extends AbstractController
 {
     /**
-     * @Route("/", name="client_statut_document_index", methods={"GET"})
+     * @Route("/", name="client_statut_document_index", methods={"GET", "POST"})
      */
-    public function index(ClientStatutDocumentRepository $clientStatutDocumentRepository): Response
+    public function index(Request $request, DataTableFactory $dataTableFactory): Response
     {
+        $table = $dataTableFactory->create()
+        ->add('id', NumberColumn::class, ['label' => '#'])
+        ->add('name', TextColumn::class, ['label' => 'Nom'])
+        ->add('client_statut', TextColumn::class, [
+            'data' => function($context){
+                $client_statut = array();
+                foreach ($context->getClientStatut() as $value) {
+                    $client_statut[] = $value->getName();
+                }
+                return implode(', ', $client_statut);
+            },
+            'label' => 'Statut(s)'
+        ])
+        ->add('created_at', DateTimeColumn::class, ['label' => 'Date de création', 'format' => 'd-m-Y H:i:s'])
+        ->add('actions', TextColumn::class, [
+            'data' => function($context) {
+                return $context->getId();
+            }, 
+            'render' => function($value, $context){
+                $show = sprintf('<a href="%s" class="btn btn-primary">Regarder</a>', $this->generateUrl('client_statut_document_show', ['id' => $value]));
+                $edit = sprintf('<a href="%s" class="btn btn-primary">Modifier</a>', $this->generateUrl('client_statut_document_edit', ['id' => $value]));
+                return $show.$edit;
+            }, 
+            'label' => 'Actions'
+        ])->createAdapter(ORMAdapter::class, [
+            'entity' => ClientStatutDocument::class,
+        ])->handleRequest($request);
+
+        if ($table->isCallback()) {
+            return $table->getResponse();
+        }
         return $this->render('client_statut_document/index.html.twig', [
-            'client_statut_documents' => $clientStatutDocumentRepository->findAll(),
+            'datatable' => $table
         ]);
     }
 

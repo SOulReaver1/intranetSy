@@ -1,14 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello GoogleMapsController!{% endblock %}
 {% set title = "La carte" %}
-{% set datatable = true %}
 {% block header %}
     <p>Pour zoomer / dezoomer sur la carte : <strong>CTRL + MOLETTE DE LA SOURIS</strong></p>
 {% endblock %}
 {% block stylesheets %}
-    <link href="{{asset('assets/js/plugins/semantic/semantic.css')}}" rel="stylesheet">
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+       <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <script
       src="https://maps.googleapis.com/maps/api/js?key={{google_maps_api_key}}&callback=initMap&libraries=&v=weekly"
       defer
@@ -47,7 +44,7 @@
         <button class="btn btn-danger mt-3" id="clearFiltre">Effacer</div>
         <hr class="mt-5">
         <h1>Légende :</h1>
-        <table id="legendTable" class="table w-100 table-striped table-bordered dt-table responsive display nowrap">
+        <table id="legendTable" class="table w-100 table-striped">
             <thead>
                 <tr>
                     <th>Nom</th>
@@ -89,7 +86,6 @@
     </div>
 {% endblock %}
 {% block javascripts %}
-    <script src="{{asset('assets/js/plugins/semantic/semantic.js?v=1.0.0')}}"></script>
     <script src="https://unpkg.com/@googlemaps/markerclustererplus/dist/index.min.js"></script>
     <script>
         var map;

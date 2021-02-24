@@ -12,6 +12,13 @@ use App\Repository\UserRepository;
 use App\Service\FindByRoles;
 use App\Service\Mailer;
 use App\Service\NotificationService;
+use Doctrine\ORM\QueryBuilder;
+use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
+use Omines\DataTablesBundle\Column\DateTimeColumn;
+use Omines\DataTablesBundle\Column\NumberColumn;
+use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\DataTable;
+use Omines\DataTablesBundle\DataTableFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,20 +35,62 @@ class TicketController extends AbstractController
     }
     
     /**
-     * @Route("/tickets", name="ticket_index", methods={"GET"})
+     * @Route("/tickets", name="ticket_index", methods={"GET", "POST"})
      */
-    public function index(TicketRepository $ticketRepository): Response
+    public function index(Request $request, DataTableFactory $dataTableFactory): Response
     {
 
+        $table = $dataTableFactory->create()
+        ->add('id', NumberColumn::class, ['label' => '#'])
+        ->add('customerFile', TextColumn::class, [
+            'label' => 'Fiche client', 
+            'field' => 'customerFile.name',
+            'render' => function($data, $context){
+                return sprintf("<a href='%s'>$data</a>", $this->generateUrl('customer_files_show', ['id' => $context->getCustomerFile()->getId()]));
+            }
+        ])
+        ->add('title', TextColumn::class, ['label' => 'Titre'])
+        ->add('description', TextColumn::class, ['label' => 'Description'])
+        ->add('created_at', DateTimeColumn::class, ['label' => 'Créer le', 'format' => 'd-m-Y H:i:s'])
+        ->add('updated_at', DateTimeColumn::class, ['label' => 'Modifier le', 'format' => 'd-m-Y H:i:s'])
+        ->add('actions', TextColumn::class, [
+            'data' => function($context) {
+                return $context->getId();
+            }, 
+            'render' => function($value, $context){
+                $show = sprintf('<a href="%s" class="btn btn-primary">Regarder</a>', $this->generateUrl('ticket_show', ['id' => $value]));
+                $edit = sprintf('<a href="%s" class="btn btn-primary">Modifier</a>', $this->generateUrl('ticket_edit', ['id' => $value]));
+                return $show.$edit;
+            }, 
+            'label' => 'Actions'
+        ])
+        ->addOrderBy('id', DataTable::SORT_ASCENDING)
+        ->createAdapter(ORMAdapter::class, [
+            'entity' => Ticket::class,
+            'query' => function (QueryBuilder $builder) {
+                if($this->findByRoles->findByRole('ROLE_ADMIN', $this->getUser())){
+                    return $builder
+                    ->select('t, customerFile')
+                    ->from(Ticket::class, 't')
+                    ->leftJoin('t.customer_file', 'customerFile');
+                }else{
+                    return $builder
+                    ->select('t, customerFile')
+                    ->from(Ticket::class, 't')
+                    ->leftJoin('t.users', 'users')
+                    ->leftJoin('t.customer_file', 'customerFile')
+                    ->where('users = :val')
+                    ->setParameter('val', $this->getUser());
+                }
+            }
+        ])->handleRequest($request);
 
-        if($this->findByRoles->findByRole('ROLE_ADMIN', $this->getUser())){
-            $tickets = $ticketRepository->findAll();
-        }else{
-            $tickets = $ticketRepository->findByUser($this->getUser());
+        if ($table->isCallback()) {
+            return $table->getResponse();
         }
         
         return $this->render('ticket/index.html.twig', [
-            'tickets' => $tickets,
+            'datatable' => $table,
         ]);
     }
 
@@ -87,7 +136,7 @@ class TicketController extends AbstractController
      */
     public function show(Ticket $ticket): Response
     {
-        if(in_array($this->getUser(), $ticket->getUsers()->toArray())){
+        if(in_array($this->getUser(), $ticket->getUsers()->toArray()) || $this->findByRoles->findByRole('ROLE_ADMIN', $this->getUser())){
             return $this->render('ticket/show.html.twig', [
                 'ticket' => $ticket,
             ]);

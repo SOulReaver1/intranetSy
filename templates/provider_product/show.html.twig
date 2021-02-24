@@ -1,6 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}ProviderProduct{% endblock %}
 {% set title = provider_product.name  %}
 {% block header %}
     <a href="{{ path('provider_product_index') }}" class="btn btn-primary">Retour</a>
@@ -10,7 +9,7 @@
     <table class="table">
         <tbody>
             <tr>
-                <th>#</th>
+                <th># :</th>
                 <td>{{ provider_product.id }}</td>
             </tr>
             <tr>

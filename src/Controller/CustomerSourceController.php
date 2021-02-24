@@ -4,7 +4,10 @@ namespace App\Controller;
 
 use App\Entity\CustomerSource;
 use App\Form\CustomerSourceType;
-use App\Repository\CustomerSourceRepository;
+use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
+use Omines\DataTablesBundle\Column\DateTimeColumn;
+use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\DataTableFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,12 +19,34 @@ use Symfony\Component\Routing\Annotation\Route;
 class CustomerSourceController extends AbstractController
 {
     /**
-     * @Route("/", name="customer_source_index", methods={"GET"})
+     * @Route("/", name="customer_source_index", methods={"GET", "POST"})
      */
-    public function index(CustomerSourceRepository $customerSourceRepository): Response
+    public function index(Request $request, DataTableFactory $dataTableFactory): Response
     {
+        $table = $dataTableFactory->create()
+        ->add('id', TextColumn::class, ['label' => 'id'])
+        ->add('name', TextColumn::class, ['label' => 'Nom'])
+        ->add('created_at', DateTimeColumn::class, ['label' => 'Date de création', 'format' => 'd-m-Y H:i:s'])
+        ->add('actions', TextColumn::class, [
+            'data' => function($context) {
+                return $context->getId();
+            }, 
+            'render' => function($value, $context){
+                $show = sprintf('<a href="%s" class="btn btn-primary">Regarder</a>', $this->generateUrl('customer_source_show', ['id' => $value]));
+                $edit = sprintf('<a href="%s" class="btn btn-primary">Modifier</a>', $this->generateUrl('customer_source_edit', ['id' => $value]));
+                return $show.$edit;
+            }, 
+            'label' => 'Actions'
+        ])->createAdapter(ORMAdapter::class, [
+            'entity' => CustomerSource::class
+        ])->handleRequest($request);
+
+        if ($table->isCallback()) {
+            return $table->getResponse();
+        }
+
         return $this->render('customer_source/index.html.twig', [
-            'customer_sources' => $customerSourceRepository->findAll(),
+            'datatable' => $table
         ]);
     }
 
@@ -49,7 +74,7 @@ class CustomerSourceController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="customer_source_show", methods={"GET"})
+     * @Route("/{id}", name="customer_source_show", methods={"GET"}, requirements={"id":"\d+"})
      */
     public function show(CustomerSource $customerSource): Response
     {

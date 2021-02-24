@@ -1,34 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}ProviderProduct index{% endblock %}
 {% set title = "Les produits" %}
-{% set datatable = true %}
 {% block header %}
     <a href="{{ path('provider_product_new') }}" class="btn btn-primary">Créer un produit</a>
-{% endblock %}
-{% block body %}
-    <table id="providerProductTable" class="table w-100 dt-table responsive display nowrap">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Nom</th>
-                <th>Créer le</th>
-                <th width=5%>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for provider_product in provider_products %}
-            <tr>
-                <td>{{ provider_product.id }}</td>
-                <td>{{ provider_product.name }}</td>
-                <td>{{ provider_product.createdAt ? provider_product.createdAt|date('d-m-Y H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('provider_product_show', {'id': provider_product.id}) }}" class="btn btn-primary">Regarder</a>
-                    <a href="{{ path('provider_product_edit', {'id': provider_product.id}) }}" class="btn btn-primary">Modifier</a>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
 {% endblock %}

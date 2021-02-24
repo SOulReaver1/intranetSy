@@ -1,6 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Help{% endblock %}
 {% set title = help.title %}
 {% block header %}
     <a href="{{ path('help_index') }}" class="btn btn-primary">Retour</a>
@@ -9,7 +8,7 @@
     <table class="table">
         <tbody>
             <tr>
-                <th>#</th>
+                <th># :</th>
                 <td>{{ help.id }}</td>
             </tr>
             <tr>
@@ -21,11 +20,11 @@
                 <td>{{ help.statut }}</td>
             </tr>
             <tr>
-                <th>Title</th>
+                <th>Titre :</th>
                 <td>{{ help.title }}</td>
             </tr>
             <tr>
-                <th>Description</th>
+                <th>Description :</th>
                 <td>{{ help.description }}</td>
             </tr>
             <tr>

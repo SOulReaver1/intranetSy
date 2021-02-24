@@ -1,22 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New ProviderProduct{% endblock %}
 {% set title = "Créer un produit" %}
 {% set require = true %}
 {% block header %}
     <a href="{{ path('provider_product_index') }}" class="btn btn-primary">Retour</a>
 {% endblock %}
 {% block body %}
-
     {{ include('provider_product/_form.html.twig') }}
-
-{% endblock %}
-{% block stylesheets %}
-        <link href="{{asset('assets/js/plugins/semantic/semantic.min.css')}}" rel="stylesheet">
 {% endblock %}
 {% block javascripts %}
-    <script src="{{asset('assets/js/plugins/semantic/semantic.js')}}"></script>
-    <script>
-        $('#provider_product_params').dropdown();
-    </script>
+    <script>$('#provider_product_params').dropdown();</script>
 {% endblock %}

@@ -4,7 +4,10 @@ namespace App\Controller;
 
 use App\Entity\HelpStatut;
 use App\Form\HelpStatutType;
-use App\Repository\HelpStatutRepository;
+use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
+use Omines\DataTablesBundle\Column\NumberColumn;
+use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\DataTableFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,12 +19,33 @@ use Symfony\Component\Routing\Annotation\Route;
 class HelpStatutController extends AbstractController
 {
     /**
-     * @Route("/", name="help_statut_index", methods={"GET"})
+     * @Route("/", name="help_statut_index", methods={"GET", "POST"})
      */
-    public function index(HelpStatutRepository $helpStatutRepository): Response
+    public function index(Request $request, DataTableFactory $dataTableFactory): Response
     {
+        $table = $dataTableFactory->create()
+        ->add('id', NumberColumn::class, ['label' => '#'])
+        ->add('name', TextColumn::class, ['label' => 'Nom'])
+        ->add('actions', TextColumn::class, [
+            'data' => function($context) {
+                return $context->getId();
+            }, 
+            'render' => function($value, $context){
+                $show = sprintf('<a href="%s" class="btn btn-primary">Regarder</a>', $this->generateUrl('help_statut_show', ['id' => $value]));
+                $edit = sprintf('<a href="%s" class="btn btn-primary">Modifier</a>', $this->generateUrl('help_statut_edit', ['id' => $value]));
+                return $show.$edit;
+            }, 
+            'label' => 'Actions'
+        ])->createAdapter(ORMAdapter::class, [
+            'entity' => HelpStatut::class
+        ])->handleRequest($request);
+
+        if ($table->isCallback()) {
+            return $table->getResponse();
+        }
+
         return $this->render('help_statut/index.html.twig', [
-            'help_statuts' => $helpStatutRepository->findAll(),
+            'datatable' => $table
         ]);
     }
 

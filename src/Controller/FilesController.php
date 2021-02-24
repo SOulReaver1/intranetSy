@@ -14,6 +14,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service\FileUploader;
+use Doctrine\ORM\QueryBuilder;
+use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
+use Omines\DataTablesBundle\Column\DateTimeColumn;
+use Omines\DataTablesBundle\Column\NumberColumn;
+use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\DataTableFactory;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 
@@ -22,14 +28,65 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 class FilesController extends AbstractController
 {
+
+    private $customer;
     /**
-     * @Route("/", name="files_index", methods={"GET"})
+     * @Route("/", name="files_index", methods={"GET", "POST"})
      */
-    public function index(CustomerFiles $customer, FilesRepository $filesRepository): Response
+    public function index(Request $request, CustomerFiles $customer, DataTableFactory $dataTableFactory): Response
     {
+        $this->customer = $customer;
+
+        $table = $dataTableFactory->create()
+        ->add('id', NumberColumn::class, ['label' => '#'])
+        ->add('preview', TextColumn::class, [
+            'data' => function($context) {
+                return $context->getFile();
+            },
+            'render' => function($value, $context){
+                return sprintf("<embed src='/uploads/files/$value' width='200px'/>");
+            },
+            'label' => 'Aperçu'
+        ])
+        ->add('document', TextColumn::class, [
+            'label' => 'Document', 
+            'data' => function($context, $data){
+                return $data ?? 'Image libre';
+            }
+        ])
+        ->add('file', TextColumn::class, ['label' => 'Nom du fichier'])
+        ->add('created_at', DateTimeColumn::class, ['label' => 'Créer le', 'format' => 'd-m-Y H:i:s'])
+        ->add('updated_at', DateTimeColumn::class, ['label' => 'Modifier le', 'format' => 'd-m-Y H:i:s'])
+        ->add('actions', TextColumn::class, [
+            'data' => function($context) {
+                return $context->getId();
+            }, 
+            'render' => function($value, $context){
+                $show = sprintf('<a href="%s" class="btn btn-primary">Regarder</a>', $this->generateUrl('files_show', ['file' => $value, 'id' => $this->customer->getId()]));
+                $edit = sprintf('<a href="%s" class="btn btn-primary">Modifier</a>', $this->generateUrl('files_edit', ['file' => $value, 'id' => $this->customer->getId()]));
+                return $show.$edit;
+            }, 
+            'label' => 'Actions'
+        ])
+        ->createAdapter(ORMAdapter::class, [
+            'entity' => Files::class,
+            'query' => function (QueryBuilder $builder) {
+                return $builder
+                ->select('f')
+                ->from(Files::class, 'f')
+                ->leftJoin('f.customerFiles', 'customerFiles')
+                ->where('customerFiles = :i')
+                ->setParameter('i', $this->customer);
+            }
+        ])->handleRequest($request);
+
+        if ($table->isCallback()) {
+            return $table->getResponse();
+        }
+
         return $this->render('files/index.html.twig', [
-            'files' => $filesRepository->findBy(['customerFiles' => $customer->getId()]),
-            'customer_id' => $customer->getId()
+            'customer_id' => $customer->getId(),
+            'datatable' => $table
         ]);
     }
 

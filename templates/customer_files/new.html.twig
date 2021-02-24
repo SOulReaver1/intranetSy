@@ -1,6 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New CustomerFiles{% endblock %}
 {% set title = "Créer une nouvelle fiche client" %}
 {% set require = true %}
 {% block header %}
@@ -8,9 +7,6 @@
 {% endblock %}
 {% block body %}
     {{ include('customer_files/_form.html.twig') }}
-{% endblock %}
-{% block stylesheets %}
-    <link href="{{asset('assets/js/plugins/semantic/semantic.min.css')}}" rel="stylesheet">
 {% endblock %}
 {% block javascripts %}
     {{ include('customer_files/javascripts.html.twig') }}

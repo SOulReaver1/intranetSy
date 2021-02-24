@@ -1,34 +1,3 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Help index{% endblock %}
 {% set title = "Les bugs" %}
-{% set datatable = true %}
-{% block body %}
-    <table id="bugsTable" class="table w-100 dt-table responsive display nowrap">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Statut</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Créer le :</th>
-                <th width=5%>actions</th>
-            </tr>
-        </thead>
-        <tbody class="list">
-        {% for help in helps %}
-            <tr>
-                <td>{{ help.id }}</td>
-                <td>{{ help.statut }}</td>
-                <td>{{ help.title }}</td>
-                <td>{{ help.description }}</td>
-                <td>{{ help.createdAt ? help.createdAt|date('d-m-Y H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('help_show', {'id': help.id}) }}" class="btn btn-primary">Regarder</a>
-                    <a href="{{ path('help_edit', {'id': help.id}) }}" class="btn btn-primary">Modifier</a>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-{% endblock %}

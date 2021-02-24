@@ -3,10 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\CustomerFiles;
-use App\Entity\CustomerFilesStatut;
-use App\Entity\Notification;
 use App\Entity\Provider;
-use App\Entity\ProviderProduct;
 use App\Form\CustomerFilesType;
 use App\Form\UpdateCustomerFileType;
 use App\Form\UpdateCustomerMailType;
@@ -17,11 +14,9 @@ use App\Repository\ProviderProductRepository;
 use App\Repository\ProviderRepository;
 use App\Service\Mailer;
 use App\Service\NotificationService;
+use App\Service\SendSms;
 use Doctrine\ORM\QueryBuilder;
-use Omines\DataTablesBundle\Adapter\ArrayAdapter;
-use Omines\DataTablesBundle\Adapter\Doctrine\Event\ORMAdapterQueryEvent;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
-use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapterEvents;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\DataTable;
@@ -32,9 +27,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
 use Omines\DataTablesBundle\DataTableFactory;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * @Route("/")
@@ -61,7 +54,6 @@ class CustomerFilesController extends AbstractController
         }
 
         $table = $dataTableFactory->create()
-            ->setTemplate('@DataTables/datatable_html.html.twig', ['className' => 'table table-striped'])
             ->add('id', TextColumn::class, ['label' => '#'])
             ->add('customer_statut', TextColumn::class, [
                 'field' => 'customer_statut.name', 
@@ -160,7 +152,7 @@ class CustomerFilesController extends AbstractController
                 // // Send mail
                 $mailer->sendMail([$customerFile->getInstaller()], 'Nouveau ticket Lergon\'Home', 'customer_files/email_template/installer.html.twig', ['customer' => $customerFile]);
             }
-
+            // $sms->send();
             $this->addFlash('success', 'La fiche a bien été enregistrée !');
             return $this->redirectToRoute('customer_files_show', ['id' => $customerFile->getId()]);
 
@@ -215,17 +207,19 @@ class CustomerFilesController extends AbstractController
      * @IsGranted("ROLE_USER")
      * @Route("/getProviderProducts/{id}", name="customer_files_products", methods={"POST"}, requirements={"id":"\d+"})
     */
-    public function getProductsProvider(Request $request, Provider $provider, ProviderProductRepository $productsRepository): object {
+    public function getProductsProvider(Request $request, Provider $provider, ProviderProductRepository $productsRepository) {
         $params = json_decode($request->getContent(), true)['data'];
-        $products = $productsRepository->findBy(['provider' => $provider]);
+        $products = $provider->getProviderProducts();
         $productParams = [];
         $result = [];
         foreach($products as $product){
             foreach($product->getParams() as $param){
                 $productParams[$product->getId()][] = $param->getId();
             }
-            if(array_diff($productParams[$product->getId()], $params) === array_diff($params, $productParams[$product->getId()])){
-                $result[$product->getId()] = $product->getName();
+            if(isset($productParams[$product->getId()])){
+                if(array_diff($productParams[$product->getId()], $params) === array_diff($params, $productParams[$product->getId()])){
+                    $result[] = ['id' => $product->getId(), "name" => $product->getName()];
+                }
             }
         }
         return new JsonResponse($result);

@@ -1,45 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Files index{% endblock %}
 {% set title = "Les fichiers" %}
 {% block header %}
     <div class="row justify-content-end">
         <a href="{{path('customer_files_show', {'id': customer_id})}}" class="btn btn-primary">Retour</a>
         <a href="{{path('files_new', {'id': customer_id})}}" class="btn btn-primary">Ajouter des fichiers</a>
     </div>
-{% endblock %}
-{% set datatable = true %}
-{% block body %}
-    <table id="filesTable" class="table w-100 dt-table responsive display nowrap">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Aperçu</th>
-                <th>Client</th>
-                <th>Document</th>
-                <th>Nom</th>
-                <th>Créer le :</th>
-                <th>Modifier le :</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for file in files %}
-            <tr>
-                <td>{{ file.id }}</td>
-                <td><embed src="/uploads/files/{{file.file}}" width="200px"></td>
-                <td><a href="{{path('customer_files_show', {'id': customer_id})}}">{{ file.customerFiles }}</a></td>
-                <td>{{ file.document ?? 'Image libre' }}</td>
-                <td>{{ file.file }}</td>
-                <td>{{ file.createdAt ? file.createdAt|date('d-m-Y H:i:s') : '' }}</td>
-                <td>{{ file.updatedAt ? file.updatedAt|date('d-m-Y H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('files_show', {'id': customer_id, 'file': file.id}) }}" class="btn btn-primary">Regarder</a>
-                    <a href="{{ path('files_edit', {'id': customer_id, 'file': file.id}) }}" class="btn btn-primary">Modifier</a>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
 {% endblock %}

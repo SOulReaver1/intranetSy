@@ -1,11 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}CustomerFiles index{% endblock %}
 {% set title = "Les fiches clients" %}
-{# {% set datatable = true %} #}
 {% block header %}
     <div class="row justify-content-end">
-        <div class="ui right pointing dropdown icon button" id="test" style="max-height: 100px">
+        <div class="ui right pointing dropdown icon button" id="filter" style="max-height: 100px">
             <span><i class="settings icon"></i>Filtrer par statut</span>
             <div class="menu">
                 <div class="ui left search icon input">
@@ -33,50 +31,6 @@
         {% endif %}
     </div>
 {% endblock %}
-{% block body %}
-    <div id="customers">Chargement...</div>
-{% endblock %}
-{% block stylesheets %}
-    <link href="{{asset('assets/js/plugins/semantic/semantic.css')}}" rel="stylesheet">
-{% endblock %}
 {% block javascripts %}
-    <script type="text/javascript" src="{{asset('assets/js/plugins/datatables.min.js')}}"></script>
-    <script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
-    <script src="{{asset('assets/js/plugins/semantic/semantic.js')}}"></script>
-    <script>$('#test').dropdown()</script>
-    <script>
-        $(function() {
-            $('#customers').initDataTables({{ datatable_settings(datatable) }}, {
-                responsive: true,
-                searching: true,
-                processing: true,
-                dom: 'lBfrtip',
-                buttons: [
-                {
-                    extend: 'copy',
-                    text: 'Copier le tableau',
-                },
-                {
-                    extend: 'pdf',
-                    exportOptions:{
-                        columns:':visible',
-                    },
-                },
-                {
-                    extend: 'excel',
-                    exportOptions:{
-                        columns:':visible',
-                    },
-                },
-                {
-                    extend: 'colvis',
-                    text: 'Filter le tableau',
-                },
-                {
-                    extend: 'print',
-                    text: 'Imprimer le tableau',
-                }]
-            });
-        });
-    </script>
+    <script>$('#filter').dropdown()</script>
 {% endblock %}

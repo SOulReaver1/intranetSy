@@ -66,7 +66,7 @@
         <div class="col form-group">
             <label class="form-control-label" for="providers">Choisir un fournisseur :</label>
             <select class="form-control" id="providers">
-                <option value="">Aucun fournisseur</option>
+                <option value="0">Aucun fournisseur</option>
                 {% for provider in providers %}
                     <option value="{{provider.id}}">{{provider.name}}</option>
                 {% endfor %}

@@ -1,34 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}CustomerSource index{% endblock %}
 {% set title = "Gérer les sources" %}
-{% set datatable = true %}
 {% block header %}
     <a href="{{ path('customer_source_new') }}" class="btn btn-primary">Ajouter une source</a>
-{% endblock %}
-{% block body %}
-    <table id="usersTable" class="table w-100 dt-table responsive display nowrap">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Nom</th>
-                <th>Créer le</th>
-                <th width=10%>actions</th>
-            </tr>
-        </thead>
-        <tbody class="list">
-        {% for customer_source in customer_sources %}
-            <tr>
-                <td>{{ customer_source.id }}</td>
-                <td>{{ customer_source.name }}</td>
-                <td>{{ customer_source.createdAt ? customer_source.createdAt|date('d-m-Y H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('customer_source_show', {'id': customer_source.id}) }}" class="btn btn-primary">Voir</a>
-                    <a href="{{ path('customer_source_edit', {'id': customer_source.id}) }}" class="btn btn-primary">Modifier</a>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
 {% endblock %}

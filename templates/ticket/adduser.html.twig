@@ -6,10 +6,6 @@
 {% block body %}
     {{ include('ticket/_form.html.twig', {'button_label': 'Modifier'}) }}
 {% endblock %}
-{% block stylesheets %}
-    <link href="{{asset('assets/js/plugins/semantic/semantic.min.css')}}" rel="stylesheet">
-{% endblock %}
 {% block javascripts %} 
-    <script src="{{asset('assets/js/plugins/semantic/semantic.js')}}"></script>
     <script>$('#add_user_to_ticket_users').dropdown()</script>
 {% endblock %}

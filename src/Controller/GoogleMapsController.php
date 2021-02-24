@@ -15,19 +15,19 @@ class GoogleMapsController extends AbstractController
      */
     public function index(CustomerFilesStatutRepository $statut, CustomerFilesRepository $repository)
     {
-        if(in_array('ROLE_INSTALLATEUR', $this->getUser()->getRoles())){
-            return $this->render('google_maps/index.html.twig', [
-                'statuts' => $statut->googleMaps(),
-                'nullCount' => $repository->countNullFileStatut()['count']
-            ]);
-        }
+        // if(in_array('ROLE_INSTALLATEUR', $this->getUser()->getRoles())){
+        //     return $this->render('google_maps/index.html.twig', [
+        //         'statuts' => $statut->googleMaps(),
+        //         'nullCount' => $repository->countNullFileStatut()['count']
+        //     ]);
+        // }
     
         return $this->render('google_maps/index.html.twig', [
             'statuts' => $statut->googleMaps(),
             'nullCount' => $repository->countNullFileStatut()['count']
         ]);
     }
-
+    
     /**
      * @Route("/maps/addresses", name="google_maps_addresses", methods={"POST"})
     */

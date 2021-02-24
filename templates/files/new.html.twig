@@ -1,6 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Files{% endblock %}
 {% set title = "["~client_statut~"] Créer des nouveaux fichiers :" %}
 {% set require = true %}
 {% block header %}
@@ -9,8 +8,7 @@
 {% block body %}
     {{ include('files/_form.html.twig') }}
 {% endblock %}
-{% block javascripts %}*
-    <script src="{{asset('assets/js/plugins/semantic/semantic.js')}}"></script>
+{% block javascripts %}
     <script>
         $('#statuts').dropdown({
             onChange: (changes, a, v, x) => {

@@ -1,12 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}CustomerSource{% endblock %}
 {% set title = customer_source.name  %}
 {% block header %}
     <a href="{{ path('customer_source_index') }}" class="btn btn-primary">Retour</a>
 {% endblock %}
 {% block body %}
-
     <table class="table">
         <tbody>
             <tr>

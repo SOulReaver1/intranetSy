@@ -1,6 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Files{% endblock %}
 {% set title = "["~file.document ?? 'Image libre' ~"] "~file.customerFiles%}
 {% block header %}
     <a href="{{ path('files_index', {'id': customer_id}) }}" class="btn btn-primary">Retour</a>

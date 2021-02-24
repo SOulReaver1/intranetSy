@@ -76,47 +76,52 @@ if (navigator.geolocation) {
 }
 
 const provider = document.getElementById('providers');
+const providerParams = $('#providerParams');
+const providerParamsParent = document.getElementById('providerParamsParent')
 
 provider.addEventListener('change', evt => {
-    fetch(`/getProviderParams/${evt.target.value}`, {
-        method: 'POST'
-    }).then(response => response.json())
-    .then(data => {
-        console.log(data)
-        const providerParams = document.getElementById('providerParams');
-        document.getElementById('providerParamsParent').style.display = "block";
-        for(const [key, value] of Object.entries(data)){
-            const option = document.createElement('option');
-            option.value = key;
-            option.append(value);
-            providerParams.append(option);
-        }
-    })
+    if(evt.target.value != 0){
+        return fetch(`/getProviderParams/${evt.target.value}`, {
+                method: 'POST'
+        }).then(response => response.json())
+        .then(data => {
+            providerParamsParent.style.display = "block";
+            providerParams.empty();
+            for(const [key, value] of Object.entries(data)){
+                const option = document.createElement('option');
+                option.value = key;
+                option.append(value);
+                providerParams.append(option);
+            }
+        })
+    }
+    providerParams.empty();
+    providerParamsParent.style.display = "none";
+    return;
 });
+
+const providerProducts = document.getElementById('providerProducts')
+const providerProductsParent = document.getElementById('providerProductsParent')
 $('#providerParams').dropdown({
     onChange: (array, id, val) => {
-        if(array){
-            fetch(`/getProviderProducts/${provider.value}`, {
-            method: 'POST',
-            "Content-Type": "application/json",
-            body: JSON.stringify({data: array})
-            }).then(response => response.json())
-            .then(data => {
-                console.log(data)
-                if(document.getElementById('alreadyProduct')){
-                    document.getElementById('alreadyProduct').style.display = "none"
-                }
-                document.getElementById('providerProductsParent').style.display = "block";
-                const providerProducts = document.getElementById('providerProducts')
-                providerProducts.innerHTML = '';
-                for(const [key, value] of Object.entries(data)){
-                    const option = document.createElement('option');
-                    option.value = key;
-                    option.append(value);
-                    providerProducts.append(option);
-                }
-            })
-        }
+        fetch(`/getProviderProducts/${provider.value}`, {
+        method: 'POST',
+        "Content-Type": "application/json",
+        body: JSON.stringify({data: array})
+        }).then(response => response.json())
+        .then(data => {
+            if(document.getElementById('alreadyProduct')){
+                document.getElementById('alreadyProduct').style.display = "none"
+            }
+            providerProductsParent.style.display = "block";
+            providerProducts.innerHTML = '';
+            for(const value of data){
+                const option = document.createElement('option');
+                option.value = value.id;
+                option.append(value.name);
+                providerProducts.append(option);
+            }
+        })
     }
 });
 </script>

@@ -1,6 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier un statut{% endblock %}
 {% set title = "Modifier le statut" %}
 {% block header %}
     <div class="row justify-content-end">
@@ -9,7 +8,5 @@
     </div>
 {% endblock %}
 {% block body %}
-
     {{ include('customer_files_statut/_form.html.twig', {'button_label': 'Modifier'}) }}
-    
 {% endblock %}

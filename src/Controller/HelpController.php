@@ -3,40 +3,56 @@
 namespace App\Controller;
 
 use App\Entity\Help;
-use App\Entity\Notification;
 use App\Form\HelpType;
-use App\Repository\HelpRepository;
-use App\Repository\UserRepository;
 use App\Service\FindByRoles;
 use App\Service\Mailer;
 use App\Service\NotificationService;
 use DateTime;
+use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
+use Omines\DataTablesBundle\Column\DateTimeColumn;
+use Omines\DataTablesBundle\Column\NumberColumn;
+use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\DataTable;
+use Omines\DataTablesBundle\DataTableFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Address;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 
 class HelpController extends AbstractController
 {
 
-    private $roleHierarchy;
-
-    public function __construct(RoleHierarchyInterface $roleHierarchy){
-        $this->roleHierarchy = $roleHierarchy;
-    }
-
     /**
-     * @Route("/dev/help/index", name="help_index", methods={"GET"})
+     * @Route("/dev/help/index", name="help_index", methods={"GET", "POST"})
      */
-    public function index(HelpRepository $helpRepository): Response
+    public function index(Request $request, DataTableFactory $dataTableFactory): Response
     {
+        $table = $dataTableFactory->create()
+        ->add('id', NumberColumn::class, ['label' => '#'])
+        ->add('statut', TextColumn::class, ['label' => 'Statut', 'field' => 'statut.name'])
+        ->add('title', TextColumn::class, ['label' => 'Titre'])
+        ->add('description', TextColumn::class, ['label' => 'Description'])
+        ->add('created_at', DateTimeColumn::class, ['label' => 'Date de création', 'format' => 'd-m-Y H:i:s'])
+        ->addOrderBy('created_at',  DataTable::SORT_DESCENDING)
+        ->add('actions', TextColumn::class, [
+            'data' => function($context) {
+                return $context->getId();
+            }, 
+            'render' => function($value, $context){
+                $show = sprintf('<a href="%s" class="btn btn-primary">Regarder</a>', $this->generateUrl('help_show', ['id' => $value]));
+                $edit = sprintf('<a href="%s" class="btn btn-primary">Modifier</a>', $this->generateUrl('help_edit', ['id' => $value]));
+                return $show.$edit;
+            }, 
+            'label' => 'Actions'
+        ])->createAdapter(ORMAdapter::class, [
+            'entity' => Help::class
+        ])->handleRequest($request);
+
+        if ($table->isCallback()) {
+            return $table->getResponse();
+        }
         return $this->render('help/index.html.twig', [
-            'helps' => $helpRepository->findAll(),
+            'datatable' => $table
         ]);
     }
 

@@ -1,6 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit CustomerFiles{% endblock %}
 {% set title = "Modifier une fiche client :" %}
 {% set require = true %}
 {% block header %}
@@ -14,13 +13,11 @@
     {{ include('customer_files/_update_password.html.twig') }}
     {{ include('customer_files/_update_mail.html.twig') }}
 {% endblock %}
-{% block stylesheets %}
-    <link href="{{asset('assets/js/plugins/semantic/semantic.min.css')}}" rel="stylesheet">
-{% endblock %}
 {% block javascripts %}
     {{ include('customer_files/javascripts.html.twig') }}
     <script>
         if(sessionStorage.getItem('datatable') !== null){
             document.getElementById('back').href = `${document.getElementById('back').href}${sessionStorage.getItem('datatable')}`
-        }    </script>
+        }    
+    </script>
 {% endblock %}
