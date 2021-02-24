@@ -91,8 +91,7 @@
         <script>
             document.querySelectorAll('.autosize').forEach(element => autosize(element))
         </script>
-        <script src="{{asset('assets/js/plugins/semantic/semantic.js')}}"></script>
-        {% if datatable is defined %}
+        {% if datatable is defined%} 
                 <script type="text/javascript" src="{{asset('assets/js/plugins/datatables.min.js')}}"></script>
                 <script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
                 <script>
@@ -135,6 +134,7 @@
                     });
                 </script>
         {% endif %}
+        <script src="{{asset('assets/js/plugins/semantic/semantic.js')}}"></script>
         {% block javascripts %}{% endblock %}
     </body>
 </html>
