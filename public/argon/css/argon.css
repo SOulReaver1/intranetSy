@@ -6045,7 +6045,7 @@ input[type='button'].btn-block
 .pagination
 {
     display: flex;
-
+    flex-wrap: wrap;
     padding-left: 0;
 
     list-style: none;
@@ -20215,7 +20215,7 @@ textarea[resize='horizontal']
 
     display: flex;
 
-    margin: 0 3px;
+    margin: 3px;
 
     align-items: center;
     justify-content: center;
