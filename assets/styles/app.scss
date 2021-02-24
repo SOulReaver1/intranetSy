@@ -14,3 +14,7 @@ body{
     opacity: .9;
     background: linear-gradient(87deg, #434b58 0, #1a174d 100%) !important
 }
+
+::-webkit-scrollbar {
+    display: none;
+}
