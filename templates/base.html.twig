@@ -84,14 +84,7 @@
 
         {{ encore_entry_script_tags('app') }}
         <script src="{{ asset('argon') }}/vendor/jquery/dist/jquery.min.js"></script>
-
-        <!-- Argon JS -->
-        <script src="{{ asset('argon') }}/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
-        <script>
-            document.querySelectorAll('.autosize').forEach(element => autosize(element))
-        </script>
-        {% if datatable is defined%} 
+            {% if datatable is defined%} 
                 <script type="text/javascript" src="{{asset('assets/js/plugins/datatables.min.js')}}"></script>
                 <script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
                 <script>
@@ -134,6 +127,13 @@
                     });
                 </script>
         {% endif %}
+        <!-- Argon JS -->
+        <script src="{{ asset('argon') }}/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+        <script>
+            document.querySelectorAll('.autosize').forEach(element => autosize(element))
+        </script>
+        
         <script src="{{asset('assets/js/plugins/semantic/semantic.js')}}"></script>
         {% block javascripts %}{% endblock %}
     </body>
