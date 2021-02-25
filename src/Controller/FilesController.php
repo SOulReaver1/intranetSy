@@ -50,6 +50,7 @@ class FilesController extends AbstractController
         ])
         ->add('document', TextColumn::class, [
             'label' => 'Document', 
+            'field' => 'document.name',
             'data' => function($context, $data){
                 return $data ?? 'Image libre';
             }
@@ -75,6 +76,7 @@ class FilesController extends AbstractController
                 ->select('f')
                 ->from(Files::class, 'f')
                 ->leftJoin('f.customerFiles', 'customerFiles')
+                ->leftJoin('f.document', 'document')
                 ->where('customerFiles = :i')
                 ->setParameter('i', $this->customer);
             }
