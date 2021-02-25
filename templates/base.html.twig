@@ -9,18 +9,18 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         {# <title>{{title is defined or app.user.getUsername() is defined ? title ~ " - Intranet Lergon'Home": "Bienvenue sur l'intranet" ~ app.user.getUsername()}}</title> #}
         {{ encore_entry_link_tags('app') }}
-        <link rel="stylesheet" type="text/css" href="{{asset('assets/css/datatables.min.css')}}"/>
+        <link rel="stylesheet" type="text/css" href="{{asset('assets/css/datatables.min.css' ~ app_version)}}"/>
 
         <link href="{{ asset('argon') }}/img/brand/logo-copie.jpg" rel="icon" type="image/png">
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
         <!-- Icons -->
-        <link href="{{ asset('argon/vendor/nucleo/css/nucleo.css') }}" rel="stylesheet">
-        <link href="{{ asset('argon/vendor/@fortawesome/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('argon/vendor/nucleo/css/nucleo.css?ver=' ~ app_version) }}" rel="stylesheet">
+        <link href="{{ asset('argon/vendor/@fortawesome/fontawesome-free/css/all.min.css?ver=' ~ app_version) }}" rel="stylesheet">
         <!-- Argon CSS -->
-        <link type="text/css" href="{{ asset('argon/css/argon.css?v=1.1.0') }}" rel="stylesheet">
-        <link href="{{asset('font-awesome/css/all.min.css')}}" rel="stylesheet">
-        <link href="{{asset('assets/js/plugins/semantic/semantic.css')}}"
+        <link type="text/css" href="{{ asset('argon/css/argon.css?ver=' ~ app_version) }}" rel="stylesheet">
+        <link href="{{asset('font-awesome/css/all.min.css?ver=' ~ app_version)}}" rel="stylesheet">
+        <link href="{{asset('assets/js/plugins/semantic/semantic.css?ver=' ~ app_version)}}"
          rel="stylesheet">
         {% block stylesheets %}{% endblock %}
     </head>
@@ -80,13 +80,13 @@
         {% else %}
             {% block content %}{% endblock %}
         {% endif %}
-        
+
 
         {{ encore_entry_script_tags('app') }}
-        <script src="{{ asset('argon') }}/vendor/jquery/dist/jquery.min.js"></script>
+        <script src="{{ asset('argon') }}/vendor/jquery/dist/jquery.min.js?ver={{app_version}}"></script>
             {% if datatable is defined%} 
-                <script type="text/javascript" src="{{asset('assets/js/plugins/datatables.min.js')}}"></script>
-                <script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
+                <script type="text/javascript" src="{{asset('assets/js/plugins/datatables.min.js?ver=' ~ app_version)}}"></script>
+                <script src="{{ asset('bundles/datatables/js/datatables.js?ver=' ~ app_version)}}"></script>
                 <script>
                     $(function() {
                         $('#table').initDataTables({{ datatable_settings(datatable) }}, {
@@ -128,13 +128,12 @@
                 </script>
         {% endif %}
         <!-- Argon JS -->
-        <script src="{{ asset('argon') }}/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+        <script src="{{ asset('argon') }}/vendor/bootstrap/dist/js/bootstrap.bundle.min.js?ver="{{app_version}}></script>
+        <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js?ver={{app_version}}"></script>
         <script>
             document.querySelectorAll('.autosize').forEach(element => autosize(element))
         </script>
-        
-        <script src="{{asset('assets/js/plugins/semantic/semantic.js')}}"></script>
+        <script src="{{asset('assets/js/plugins/semantic/semantic.js?ver=' ~ app_version)}}"></script>
         {% block javascripts %}{% endblock %}
     </body>
 </html>
