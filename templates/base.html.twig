@@ -9,7 +9,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         {# <title>{{title is defined or app.user.getUsername() is defined ? title ~ " - Intranet Lergon'Home": "Bienvenue sur l'intranet" ~ app.user.getUsername()}}</title> #}
         {{ encore_entry_link_tags('app') }}
-        <link rel="stylesheet" type="text/css" href="{{asset('assets/css/datatables.min.css' ~ app_version)}}"/>
+        <link rel="stylesheet" type="text/css" href="{{asset('assets/css/datatables.min.css?ver=' ~ app_version)}}"/>
 
         <link href="{{ asset('argon') }}/img/brand/logo-copie.jpg" rel="icon" type="image/png">
         <!-- Fonts -->
