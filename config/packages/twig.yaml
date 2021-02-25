@@ -3,4 +3,4 @@ twig:
     form_themes: ['bootstrap_4_layout.html.twig']
     globals:
         google_maps_api_key: '%env(GOOGLE_MAPS_API_KEY)%'
-        app_version: '2.0.1'
+        app_version: '2.0.2'

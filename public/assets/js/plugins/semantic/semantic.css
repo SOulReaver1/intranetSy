@@ -31957,7 +31957,7 @@ body.dimmable > .dimmer {
 }
 
 .ui.dropdown .menu > * {
-  white-space: nowrap;
+  white-space: inherit;
 }
 
 /*--------------
@@ -32242,6 +32242,7 @@ body.dimmable > .dimmer {
 }
 
 .ui.button.dropdown .menu {
+  width: 430px;
   min-width: 100%;
 }
 
