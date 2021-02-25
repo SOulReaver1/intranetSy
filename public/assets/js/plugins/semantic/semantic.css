@@ -32244,6 +32244,7 @@ body.dimmable > .dimmer {
 .ui.button.dropdown .menu {
   width: 430px;
   min-width: 100%;
+  max-width: 90vw;
 }
 
 /*******************************
