@@ -221,8 +221,9 @@ class CustomerFilesType extends AbstractType
             ->add('customer_source', EntityType::class, [
                 'class' => CustomerSource::class,
                 'placeholder' => 'Aucune source',
-                'required' => false,
-                'label' => 'La source : ',
+                'required' => true,
+                'label' => 'La source : <span class="text-danger">*</span>',
+                'label_html' => true,
                 'row_attr' => ['class' => 'col'],
                 'attr' => ['class' => 'ui fluid dropdown']
             ])
