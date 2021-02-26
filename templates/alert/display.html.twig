@@ -9,7 +9,7 @@
     <script>
         const alert = document.getElementById('alert');
         if(localStorage.getItem('alert') && JSON.parse(localStorage.getItem('alert')).id === alert.dataset.id){
-            alert.classList.remove('show');
+            alert.style.display = 'none';
         }else{
             localStorage.removeItem('alert');
         }
