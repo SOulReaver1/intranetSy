@@ -28,6 +28,14 @@ class AlertController extends AbstractController
         $table = $dataTableFactory->create()
         ->add('id', NumberColumn::class, ['label' => '#'])
         ->add('name', TextColumn::class, ['label' => 'Nom'])
+        ->add('visible', TextColumn::class, [
+            'render' => function($value){
+                $class = $value ? 'badge-success' : 'badge-danger';
+                $value = $value ? 'Oui' : 'Non';
+                return sprintf("<span class='badge $class'>$value</span>");
+            },
+            'label' => 'Visible'
+        ])
         ->add('created_at', DateTimeColumn::class, ['label' => 'Créer le', 'format' => 'd-m-Y'])
         ->add('updated_at', DateTimeColumn::class, ['label' => 'Modifier le', 'format' => 'd-m-Y'])
         ->add('actions', TextColumn::class, [
