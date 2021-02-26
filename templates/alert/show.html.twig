@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% set title = alert.name %}
+{% set title = "Alert N° " ~ alert.id %}
 {% block header %}
        <a href="{{ path('alert_index') }}" class="btn btn-primary">Retour</a>
 {% endblock %}
