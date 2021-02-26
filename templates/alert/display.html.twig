@@ -1,17 +1,20 @@
 {% if alert %}
-    <div class="alert alert-success alert-dismissible fade show" role="alert" id='alert'>
-        <strong>{{alert.getName}}</strong>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close" onClick="dismissAlert()">
+    <div class="alert alert-success alert-dismissible fade show" role="alert"
+    data-id="{{alert.id}}" id='alert'>
+        <span>{{alert.getName|raw}}</<span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close" id="clearAlert">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
     <script>
-        if(localStorage.getItem('alert') === "false"){
-            const alert = document.getElementById('alert');
+        const alert = document.getElementById('alert');
+        if(localStorage.getItem('alert') && JSON.parse(localStorage.getItem('alert')).id === alert.dataset.id){
             alert.classList.remove('show');
+        }else{
+            localStorage.removeItem('alert');
         }
-        const dismissAlert = () => {
-            localStorage.setItem('alert', false);
-        }
+        document.getElementById('clearAlert').addEventListener('click', evt => {
+            localStorage.setItem('alert', JSON.stringify({id: alert.dataset.id, display: 'false'}));
+        })
     </script>
 {% endif %}
