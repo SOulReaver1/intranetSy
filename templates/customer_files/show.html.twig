@@ -13,6 +13,10 @@
             <label class="form-control-label">Date de création :</label>
             <p class="form-control">{{customer_file.createdAt ? customer_file.createdAt|date('d-m-Y H:i:s') : '' }}</p>
         </div>
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Créer par :</label>
+            <p class="form-control">{{customer_file.createdBy }}</p>
+        </div>
     </div>
     <div class="row">
         <div class="col-md-6 form-group">

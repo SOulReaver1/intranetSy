@@ -238,6 +238,16 @@ class CustomerFiles
     private $date_footage;
 
     /**
+     * @ORM\Column(type="boolean")
+     */
+    private $messageSend = false;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="customerFileCreated")
+     */
+    private $created_by;
+
+    /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
@@ -782,6 +792,30 @@ class CustomerFiles
     public function setDateFootage(?\DateTimeInterface $date_footage): self
     {
         $this->date_footage = $date_footage;
+
+        return $this;
+    }
+
+    public function getMessageSend(): ?bool
+    {
+        return $this->messageSend;
+    }
+
+    public function setMessageSend(bool $messageSend): self
+    {
+        $this->messageSend = $messageSend;
+
+        return $this;
+    }
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->created_by;
+    }
+
+    public function setCreatedBy(?User $created_by): self
+    {
+        $this->created_by = $created_by;
 
         return $this;
     }

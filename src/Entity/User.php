@@ -80,6 +80,11 @@ class User implements UserInterface
      */
     private $ticket_inside;
 
+    /**
+     * @ORM\OneToMany(targetEntity=CustomerFiles::class, mappedBy="created_by")
+     */
+    private $customerFileCreated;
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
@@ -88,6 +93,7 @@ class User implements UserInterface
         $this->helps = new ArrayCollection();
         $this->ticketMessages = new ArrayCollection();
         $this->ticket_inside = new ArrayCollection();
+        $this->customerFileCreated = new ArrayCollection();
     }
 
     public function __toString()
@@ -365,6 +371,37 @@ class User implements UserInterface
         if ($this->ticket_inside->contains($ticketInside)) {
             $this->ticket_inside->removeElement($ticketInside);
             $ticketInside->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CustomerFiles[]
+     */
+    public function getCustomerFileCreated(): Collection
+    {
+        return $this->customerFileCreated;
+    }
+
+    public function addCustomerFileCreated(CustomerFiles $customerFileCreated): self
+    {
+        if (!$this->customerFileCreated->contains($customerFileCreated)) {
+            $this->customerFileCreated[] = $customerFileCreated;
+            $customerFileCreated->setCreatedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCustomerFileCreated(CustomerFiles $customerFileCreated): self
+    {
+        if ($this->customerFileCreated->contains($customerFileCreated)) {
+            $this->customerFileCreated->removeElement($customerFileCreated);
+            // set the owning side to null (unless already changed)
+            if ($customerFileCreated->getCreatedBy() === $this) {
+                $customerFileCreated->setCreatedBy(null);
+            }
         }
 
         return $this;

@@ -8,13 +8,13 @@ use App\Form\CustomerFilesType;
 use App\Form\UpdateCustomerFileType;
 use App\Form\UpdateCustomerMailType;
 use App\Form\UpdateCustomerPasswordType;
+use App\Repository\ClientStatutDocumentRepository;
 use App\Repository\CustomerFilesRepository;
 use App\Repository\CustomerFilesStatutRepository;
 use App\Repository\ProviderProductRepository;
 use App\Repository\ProviderRepository;
 use App\Service\Mailer;
 use App\Service\NotificationService;
-use App\Service\SendSms;
 use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
@@ -136,13 +136,14 @@ class CustomerFilesController extends AbstractController
      * @IsGranted("ROLE_ALLOW_CREATE")
      * @Route("/new", name="customer_files_new", methods={"GET","POST"})
      */
-    public function new(Request $request, ProviderRepository $provider, NotificationService $notificationService, Mailer $mailer): Response
+    public function new(Request $request, ProviderRepository $provider, NotificationService $notificationService, Mailer $mailer, ClientStatutDocumentRepository $clientStatutDocumentRepository): Response
     {
         $customerFile = new CustomerFiles();
         $form = $this->createForm(CustomerFilesType::class, $customerFile);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $customerFile->setCreatedBy($this->getUser());
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($customerFile);
             $entityManager->flush();
@@ -152,7 +153,18 @@ class CustomerFilesController extends AbstractController
                 // // Send mail
                 $mailer->sendMail([$customerFile->getInstaller()], 'Nouveau ticket Lergon\'Home', 'customer_files/email_template/installer.html.twig', ['customer' => $customerFile]);
             }
-            // $sms->send();
+            // if($_ENV['APP_ENV'] === 'prod'){
+            //     $step1Content = $smsAutoRepository->findOneBy(['step' => 1])->getContent();
+            //     $pattern = ['/{documents}/', '/{name}/'];
+            //     $documents = [];
+            //     foreach($clientStatutDocumentRepository->findDocumentsByRequired($customerFile->getClientStatutId(), true) as $value){
+            //         $documents[] = $value['name'];
+            //     }
+            //     $remplacement = [implode(', ', $documents), $customerFile->getName()];
+            //     $step1Content = preg_replace($pattern, $remplacement, $step1Content);
+            //     $sendSms->send($step1Content, [$customerFile->getCellphone()]);
+            // }
+            
             $this->addFlash('success', 'La fiche a bien été enregistrée !');
             return $this->redirectToRoute('customer_files_show', ['id' => $customerFile->getId()]);
 
@@ -200,7 +212,7 @@ class CustomerFilesController extends AbstractController
     */
     public function getCustomers(Request $request, CustomerFilesRepository $repository): object {
         
-        return new JsonResponse($repository->getCustomers());
+        return new JsonResponse($repository->getPhones());
     }
 
     /**
@@ -240,11 +252,19 @@ class CustomerFilesController extends AbstractController
         return $this->redirectToRoute('default');
     }
 
+    public function getDocuments($docs){
+        $documents = [];
+        foreach($docs as $value){
+            $documents[] = $value['name'];
+        }
+        return $documents;
+    }
+
     /**
      * @IsGranted("ROLE_USER")
      * @Route("/{id}/edit", name="customer_files_edit", methods={"GET","POST"})
      */
-    public function edit(Request $request, CustomerFiles $customerFile, ProviderRepository $provider, CustomerFilesRepository $repository): Response
+    public function edit(Request $request, CustomerFiles $customerFile, ProviderRepository $provider, CustomerFilesRepository $repository,ClientStatutDocumentRepository $clientStatutDocumentRepository): Response
     {
         $form = $this->createForm(UpdateCustomerFileType::class, $customerFile);
         $form->handleRequest($request);
@@ -256,6 +276,26 @@ class CustomerFilesController extends AbstractController
         $mail->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // if($customerFile->getDateFootage() && new DateTime('now') < $customerFile->getDateFootage() && $customerFile->getMessageSend() === false){
+            //     $pattern = ['/{documents}/', '/{name}/', '/{dateMetrage}/'];
+            //     $documents = [];
+            //     foreach($clientStatutDocumentRepository->findDocumentsByRequired($customerFile->getClientStatutId(), true) as $value){
+            //         $documents[] = $value['name'];
+            //     }
+            //     $dateToString = $customerFile->getDateFootage()->format('d/m/Y');
+          
+            //     $remplacement = [implode(', ', $documents), $customerFile->getName(), $dateToString];
+            //     // Send step 2
+            //     $step2Content = preg_replace($pattern, $remplacement,$smsAutoRepository->findOneBy(['step' => 2])->getContent());
+            //     $sendSms->send($step2Content, [$customerFile->getCellphone()]);
+            //     // Program step 3, 1 day before footage
+            //     $step3Content = preg_replace($pattern, $remplacement, $smsAutoRepository->findOneBy(['step' => 3])->getContent());
+            //     $sendSms->send($step3Content, [$customerFile->getCellphone()], $customerFile->getDateFootage(), 1440);
+            //     // Program step 4, 1 hour before footage
+            //     $step4Content = preg_replace($pattern, $remplacement,$smsAutoRepository->findOneBy(['step' => 4])->getContent());
+            //     $sendSms->send($step4Content, [$customerFile->getCellphone()], $customerFile->getDateFootage(), 60);
+            //     $customerFile->setMessageSend(true);
+            // }
             $this->getDoctrine()->getManager()->flush();
 
             $this->addFlash('success', 'La fiche à bien été modifiée !');
