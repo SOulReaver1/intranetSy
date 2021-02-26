@@ -128,9 +128,11 @@ class UpdateCustomerFileType extends AbstractType
             'row_attr' => ['class' => 'col-md-6'],
         ])
         ->add('cellphone', TelType::class, [
-            'required' => false,
-            'label' => 'Téléphone portable :',
+            'required' => true,
+            'label' => 'Téléphone portable : <span class="text-danger">*</span>',
+            'label_html' => true,
             'row_attr' => ['class' => 'col-md-6'],
+            'attr' => ['placeholder' => '+33'],
         ])
         ->add('referent_name', TextType::class, [
             'required' => false,
@@ -168,6 +170,15 @@ class UpdateCustomerFileType extends AbstractType
             'label' => 'Acompte :',
             'widget' => 'single_text',
             'row_attr' => ['class' => 'col-md-6'],
+        ])
+        ->add('metreur', EntityType::class, [
+            'label' => 'Le métreur :',
+            'row_attr' => ['class' => 'col-md-6'],
+            'required' => false,
+            'class' => User::class,
+            'query_builder' => function(UserRepository $userRepository){
+                return $userRepository->findByRole('ROLE_METREUR', false);
+            },
         ])
         ->add('solde', DateType::class, [
             'required' => false,
@@ -240,7 +251,8 @@ class UpdateCustomerFileType extends AbstractType
                     'message' => 'Le statut du client ne doit pas être vide !',
                 ]),
             ],
-            'label' => 'Statut du dossier : ',
+            'label' => 'Statut du dossier : <span class="text-danger">*</span>',
+            'label_html' => true,
             'row_attr' => ['class' => 'col'],
         ])
         ->add('customer_source', EntityType::class, [

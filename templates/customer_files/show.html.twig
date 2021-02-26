@@ -44,8 +44,14 @@
             <p class="form-control">{{customer_file.invoiceNumber ?? 'Aucun numéro de facture'}}</p>
         </div>
         <div class="col-md-6 form-group">
-            <label class="form-control-label">Date de métrage</label>
+            <label class="form-control-label">Date de métrage :</label>
             <p class="form-control">{{customer_file.dateFootage ? customer_file.dateFootage|date('d-m-Y H:i:s'): 'Aucune date'}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Métreur :</label>
+            <p class="form-control">{{customer_file.metreur ?? 'Aucun métreur'}}</p>
         </div>
     </div>
     <hr class="mt-2">

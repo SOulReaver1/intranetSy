@@ -127,9 +127,11 @@ class CustomerFilesType extends AbstractType
                 'row_attr' => ['class' => 'col-md-6'],
             ])
             ->add('cellphone', TelType::class, [
-                'required' => false,
-                'label' => 'Téléphone portable :',
+                'required' => true,
+                'label' => 'Téléphone portable : <span class="text-danger">*</span>',
+                'label_html' => true,
                 'row_attr' => ['class' => 'col-md-6'],
+                'attr' => ['placeholder' => '+33'],
             ])
             ->add('referent_name', TextType::class, [
                 'required' => false,
@@ -145,6 +147,15 @@ class CustomerFilesType extends AbstractType
                 'required' => false,
                 'label' => 'Etat matrimonial :',
                 'row_attr' => ['class' => 'col'],
+            ])
+            ->add('metreur', EntityType::class, [
+                'class' => User::class,
+                'query_builder' => function(UserRepository $userRepository){
+                    return $userRepository->findByRole('ROLE_METREUR', false);
+                },
+                'label' => 'Le métreur :',
+                'required' => false,
+                'row_attr' => ['class' => 'col-md-6']
             ])
             ->add('stairs', CheckboxType::class, [
                 'required' => false,
@@ -203,7 +214,8 @@ class CustomerFilesType extends AbstractType
                         'message' => 'Le statut du client ne doit pas être vide !',
                     ]),
                 ],
-                'label' => 'Statut du dossier : ',
+                'label' => 'Statut du dossier : <span class="text-danger">*</span>',
+                'label_html' => true,
                 'row_attr' => ['class' => 'col'],
             ])
             ->add('customer_source', EntityType::class, [

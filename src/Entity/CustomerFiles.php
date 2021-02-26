@@ -248,6 +248,11 @@ class CustomerFiles
     private $created_by;
 
     /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="customerFileMetreur")
+     */
+    private $metreur;
+
+    /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
@@ -816,6 +821,18 @@ class CustomerFiles
     public function setCreatedBy(?User $created_by): self
     {
         $this->created_by = $created_by;
+
+        return $this;
+    }
+
+    public function getMetreur(): ?User
+    {
+        return $this->metreur;
+    }
+
+    public function setMetreur(?User $metreur): self
+    {
+        $this->metreur = $metreur;
 
         return $this;
     }

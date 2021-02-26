@@ -85,6 +85,11 @@ class User implements UserInterface
      */
     private $customerFileCreated;
 
+    /**
+     * @ORM\OneToMany(targetEntity=CustomerFiles::class, mappedBy="metreur")
+     */
+    private $customerFileMetreur;
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
@@ -94,6 +99,7 @@ class User implements UserInterface
         $this->ticketMessages = new ArrayCollection();
         $this->ticket_inside = new ArrayCollection();
         $this->customerFileCreated = new ArrayCollection();
+        $this->customerFileMetreur = new ArrayCollection();
     }
 
     public function __toString()
@@ -401,6 +407,37 @@ class User implements UserInterface
             // set the owning side to null (unless already changed)
             if ($customerFileCreated->getCreatedBy() === $this) {
                 $customerFileCreated->setCreatedBy(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CustomerFiles[]
+     */
+    public function getCustomerFileMetreur(): Collection
+    {
+        return $this->customerFileMetreur;
+    }
+
+    public function addCustomerFileMetreur(CustomerFiles $customerFileMetreur): self
+    {
+        if (!$this->customerFileMetreur->contains($customerFileMetreur)) {
+            $this->customerFileMetreur[] = $customerFileMetreur;
+            $customerFileMetreur->setMetreur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCustomerFileMetreur(CustomerFiles $customerFileMetreur): self
+    {
+        if ($this->customerFileMetreur->contains($customerFileMetreur)) {
+            $this->customerFileMetreur->removeElement($customerFileMetreur);
+            // set the owning side to null (unless already changed)
+            if ($customerFileMetreur->getMetreur() === $this) {
+                $customerFileMetreur->setMetreur(null);
             }
         }
 
