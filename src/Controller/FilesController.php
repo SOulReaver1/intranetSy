@@ -99,19 +99,27 @@ class FilesController extends AbstractController
     {
         if ($request->isMethod('post')) {
             if($request->files->get('files') !== null){
+                $errors = [];
                 $files = $request->files->get('files')['file'];
                 foreach ($files as $documentId => $value) {
                     $product = new Files(); 
                     $product->setFile($value);
                     $file = $product->getFile();
-                    $fileName = $fileUploader->upload($file);
-                    $product->setFile($fileName);
-                    $product->setCustomerFiles($customer);
                     $document = $clientStatutDocumentRepository->find($documentId);
-                    $product->setDocument($document);
-                    $entityManager = $this->getDoctrine()->getManager();
-                    $entityManager->persist($product);
-                    $entityManager->flush();
+                    if($file == null){
+                        $errors[] = $document;
+                    }else{
+                        $fileName = $fileUploader->upload($file);
+                        $product->setFile($fileName);
+                        $product->setCustomerFiles($customer);
+                        $product->setDocument($document);
+                        $entityManager = $this->getDoctrine()->getManager();
+                        $entityManager->persist($product);
+                        $entityManager->flush();
+                    }
+                }
+                if(!empty($errors)){
+                    $this->addFlash('error', 'Les documents suivants n\'ont pas pu être enregistrés : '.implode(', ', $errors));
                 }
                 return $this->redirectToRoute('files_index', ['id' => $customer->getId()]);
             }
