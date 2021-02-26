@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% set title = "Modifier une alerte" %}
+{% set require = true %}
+{% block header %}
+    <div class="row justify-content-end">
+        <a href="{{ path('alert_index') }}" class="btn btn-primary">Retour</a>
+
+        {{ include('alert/_delete_form.html.twig') }}
+    </div>
+{% endblock %}
+{% block body %}
+    {{ include('alert/_form.html.twig', {'button_label': 'Modifier'}) }}
+{% endblock %}

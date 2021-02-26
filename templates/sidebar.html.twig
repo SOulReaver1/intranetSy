@@ -81,6 +81,11 @@
                                         Voir les bugs signalés
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{url("alert_index")}}">
+                                        Gérer les alertes
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </li>
@@ -88,20 +93,35 @@
                 {% if is_granted('ROLE_SUPERADMIN') %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{url("user_index")}}">
-                            <i class="ni ni-circle-08 text-success"></i>
+                            <i class="fas fa-user text-success"></i>
                             Gérer les utilisateurs
                         </a>
                     </li>
                     {# <li class="nav-item">
-                        <a class="nav-link" href="{{url("sms_index")}}">
+                        <a class="nav-link" href="#navbar-sms" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-sms">
                             <i class="fas fa-sms text-primary"></i>
-                            Gérer les sms
+                            <span class="nav-link-text">Gérer les sms</span>
                         </a>
+
+                        <div class="collapse" id="navbar-sms">
+                            <ul class="nav nav-sm flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{url("sms_index")}}">
+                                        Voir l'historique
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{url("sms_auto_index")}}">
+                                        Gérer les sms automatiques
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </li> #}
                 {% endif %}
                 {% if is_granted('ROLE_ADMIN') %}
                     <li class="nav-item">
-                        <a class="nav-link" href="#navbar-provider" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-fais">
+                        <a class="nav-link" href="#navbar-provider" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-provider">
                             <i class="fas fa-shower text-info"></i>
                             <span class="nav-link-text">Gérer les produits</span>
                         </a>
