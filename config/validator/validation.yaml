@@ -1,0 +1,23 @@
+# App\Entity\Sms:
+#   properties:
+#     phone_number:
+#       - NotBlank: ~
+#     content: 
+#       - NotBlank: ~
+
+App\Entity\CustomerFiles:
+  properties:
+    customer_source:
+      - NotBlank: ~
+    name: 
+      - NotBlank: ~
+    cellphone:
+      - NotBlank: ~
+      - Regex:
+          pattern: /(?:(?:\+|00)33)\s*[67](?:[\s.-]*\d{2}){4}/
+          message: Le numéro de téléphone n'est pas valide !
+
+App\Entity\Alert:
+  properties:
+    name:
+      - NotBlank: ~
