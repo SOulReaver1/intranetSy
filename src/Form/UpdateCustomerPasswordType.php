@@ -16,7 +16,7 @@ class UpdateCustomerPasswordType extends AbstractType
         ->add('password_al', TextType::class, [
             'required' => false,
             'label' => 'Mot de passe AL',
-            'row_attr' => ['class' => 'col-md-6'],
+            'row_attr' => ['class' => 'col-md-6', 'autocomplete' => 'off'],
         ]);
     }
 

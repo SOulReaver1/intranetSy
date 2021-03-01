@@ -16,7 +16,7 @@ class UpdateCustomerMailType extends AbstractType
         ->add('mail_al', EmailType::class, [
             'required' => false,
             'label' => 'Mail AL',
-            'row_attr' => ['class' => 'col-md-6'],
+            'row_attr' => ['class' => 'col-md-6', 'autocomplete' => 'off'],
         ]);
     }
 
