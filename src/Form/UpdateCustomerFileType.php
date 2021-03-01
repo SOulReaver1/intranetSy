@@ -128,8 +128,8 @@ class UpdateCustomerFileType extends AbstractType
             'row_attr' => ['class' => 'col-md-6'],
         ])
         ->add('cellphone', TelType::class, [
-            'required' => true,
-            'label' => 'Téléphone portable : <span class="text-danger">*</span>',
+            'required' => false,
+            'label' => 'Téléphone portable :',
             'label_html' => true,
             'row_attr' => ['class' => 'col-md-6'],
             'attr' => ['placeholder' => '+33'],
