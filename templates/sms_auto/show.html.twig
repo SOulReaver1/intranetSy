@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% set title = "Etape numero " ~ sms_auto.step %}
+{% block header %}
+    <a href="{{ path('sms_auto_index') }}" class="btn btn-primary">Retour</a>
+{% endblock %}
+{% block body %}
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th># :</th>
+                <td>{{ sms_auto.id }}</td>
+            </tr>
+            <tr>
+                <th>Etape :</th>
+                <td>{{ sms_auto.step }}</td>
+            </tr>
+            <tr>
+                <th>Message :</th>
+                <td>{{ sms_auto.content }}</td>
+            </tr>
+            <tr>
+                <th>Créer le :</th>
+                <td>{{ sms_auto.createdAt ? sms_auto.createdAt|date('d-m-Y H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Modifier le :</th>
+                <td>{{ sms_auto.updatedAt ? sms_auto.updatedAt|date('d-m-Y H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="col mt-4">
+        <div class="row">
+            <a href="{{ path('sms_auto_edit', {'id': sms_auto.id}) }}" class="btn btn-primary">Modifier</a>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Sms{% endblock %}
+
+{% block body %}
+    <h1>Edit Sms</h1>
+
+    {{ include('sms/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('sms_index') }}">back to list</a>
+
+    {{ include('sms/_delete_form.html.twig') }}
+{% endblock %}

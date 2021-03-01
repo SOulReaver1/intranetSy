@@ -49,6 +49,11 @@ class ClientStatutDocument
      */
     private $files;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $required = 0;
+
     public function __construct()
     {
         $this->client_statut = new ArrayCollection();
@@ -170,6 +175,18 @@ class ClientStatutDocument
                 $file->setDocument(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getRequired(): ?bool
+    {
+        return $this->required;
+    }
+
+    public function setRequired(bool $required): self
+    {
+        $this->required = $required;
 
         return $this;
     }

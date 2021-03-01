@@ -59,6 +59,13 @@ class CustomerFilesRepository extends ServiceEntityRepository
         ->getResult();
     }
 
+    public function getPhones(){
+        return $this->createQueryBuilder('c')
+        ->select('c.name as title, c.cellphone')
+        ->getQuery()
+        ->getResult();
+    }
+
     public function getInstaller($installer){
         return $this->createQueryBuilder('c')
         ->leftJoin('c.installer', 'user')

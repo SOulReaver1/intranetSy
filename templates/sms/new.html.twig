@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% set title = "Envoyer un SMS" %}
+{% set require = true %}
+{% block header %}
+    <a href="{{ path('sms_index') }}" class="btn btn-primary">Retour</a>
+{% endblock %}
+{% block body %}
+    {{ include('sms/_form.html.twig') }}
+{% endblock %}
+{% block javascripts %}
+    <script>
+        fetch('/api/customers', {
+            method: 'POST'
+        }).then(res => res.json())
+        .then(res => {
+            var phone = "";
+            $("#customerFiles").search({
+                source: res,
+                onSelect(result, response){
+                    phone = result.cellphone;
+                }
+            })
+            document.getElementById('addPhoneByCustomer').addEventListener('click', evt => {
+                if(phone){
+                    const sms = document.getElementById('sms_phone_number');
+                    const a = document.createElement('a');
+                     a.classList.add(...['ui', 'label', 'transition', 'visible']);
+                    a.setAttribute('data-value', phone)
+                    a.style.display = 'inline-block !important';
+                    const i = document.createElement('i');
+                    i.classList.add(...['delete', 'icon']);
+                    a.innerHTML = phone;
+                    a.append(i);
+                    document.getElementById('phones').append(a);
+                    sms.after(a)
+                    if(sms.value !== ""){
+                        sms.value = sms.value + "," + phone;
+                    }else{
+                        sms.value = phone;
+                    }
+                    phone = "";
+                }
+            })
+        })
+        $("#phones").dropdown({
+            allowAdditions: true
+        })
+    </script>
+{% endblock %}

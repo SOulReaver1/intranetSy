@@ -12,7 +12,6 @@ App\Entity\CustomerFiles:
     name: 
       - NotBlank: ~
     cellphone:
-      - NotBlank: ~
       - Regex:
           pattern: /(?:(?:\+|00)33)\s*[67](?:[\s.-]*\d{2}){4}/
           message: Le numéro de téléphone n'est pas valide !

@@ -13,8 +13,12 @@ use App\Repository\CustomerFilesRepository;
 use App\Repository\CustomerFilesStatutRepository;
 use App\Repository\ProviderProductRepository;
 use App\Repository\ProviderRepository;
+use App\Repository\SmsAutoRepository;
 use App\Service\Mailer;
 use App\Service\NotificationService;
+use App\Service\SendSms;
+use DateInterval;
+use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
@@ -136,7 +140,7 @@ class CustomerFilesController extends AbstractController
      * @IsGranted("ROLE_ALLOW_CREATE")
      * @Route("/new", name="customer_files_new", methods={"GET","POST"})
      */
-    public function new(Request $request, ProviderRepository $provider, NotificationService $notificationService, Mailer $mailer, ClientStatutDocumentRepository $clientStatutDocumentRepository): Response
+    public function new(Request $request, ProviderRepository $provider, NotificationService $notificationService, Mailer $mailer, SmsAutoRepository $smsAutoRepository, ClientStatutDocumentRepository $clientStatutDocumentRepository, SendSms $sendSms): Response
     {
         $customerFile = new CustomerFiles();
         $form = $this->createForm(CustomerFilesType::class, $customerFile);
@@ -153,7 +157,7 @@ class CustomerFilesController extends AbstractController
                 // // Send mail
                 $mailer->sendMail([$customerFile->getInstaller()], 'Nouveau ticket Lergon\'Home', 'customer_files/email_template/installer.html.twig', ['customer' => $customerFile]);
             }
-            // if($_ENV['APP_ENV'] === 'prod'){
+            // if($customerFile->getCellphone()){
             //     $step1Content = $smsAutoRepository->findOneBy(['step' => 1])->getContent();
             //     $pattern = ['/{documents}/', '/{name}/'];
             //     $documents = [];
@@ -264,7 +268,7 @@ class CustomerFilesController extends AbstractController
      * @IsGranted("ROLE_USER")
      * @Route("/{id}/edit", name="customer_files_edit", methods={"GET","POST"})
      */
-    public function edit(Request $request, CustomerFiles $customerFile, ProviderRepository $provider, CustomerFilesRepository $repository,ClientStatutDocumentRepository $clientStatutDocumentRepository): Response
+    public function edit(Request $request, CustomerFiles $customerFile, ProviderRepository $provider, CustomerFilesRepository $repository, SmsAutoRepository $smsAutoRepository,  SendSms $sendSms, ClientStatutDocumentRepository $clientStatutDocumentRepository): Response
     {
         $form = $this->createForm(UpdateCustomerFileType::class, $customerFile);
         $form->handleRequest($request);
@@ -276,7 +280,7 @@ class CustomerFilesController extends AbstractController
         $mail->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // if($customerFile->getDateFootage() && new DateTime('now') < $customerFile->getDateFootage() && $customerFile->getMessageSend() === false){
+            // if($customerFile->getCellphone() && $customerFile->getDateFootage() && new DateTime('now') < $customerFile->getDateFootage() && $customerFile->getMessageSend() === false){
             //     $pattern = ['/{documents}/', '/{name}/', '/{dateMetrage}/'];
             //     $documents = [];
             //     foreach($clientStatutDocumentRepository->findDocumentsByRequired($customerFile->getClientStatutId(), true) as $value){

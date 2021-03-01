@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% set title = "Modifier un message automatique" %}
+{% set require = true %}
+{% block header %}
+    <a href="{{ path('sms_auto_index') }}" class="btn btn-primary">Retour</a>
+{% endblock %}
+{% block body %}
+    {{ include('sms_auto/_form.html.twig', {'button_label': 'Modifier'}) }}
+{% endblock %}
+{% block javascripts %}
+    <script>
+        const content = document.getElementById('sms_auto_content');
+        const documents = document.getElementById('documents');
+        const dateMetrage = document.getElementById('dateMetrage');
+        const name = document.getElementById('name');
+        content.addEventListener('keyup', evt => {
+            const value = evt.target.value;
+            if(documents){
+                if(value.match(/{documents}/g)){
+                    documents.classList.remove('text-warning');
+                    documents.classList.add('text-success');
+                }else{
+                    documents.classList.remove('text-success');
+                    documents.classList.add('text-warning');
+                }
+            }
+            if(dateMetrage){
+                if(value.match(/{dateMetrage}/g) && dateMetrage){
+                    dateMetrage.classList.remove('text-warning');
+                    dateMetrage.classList.add('text-success');
+                }else{
+                    dateMetrage.classList.remove('text-success');
+                    dateMetrage.classList.add('text-warning');
+                }
+            }
+            if(name){
+                if(value.match(/{name}/g)){
+                    name.classList.remove('text-warning');
+                    name.classList.add('text-success');
+                }else{
+                    name.classList.remove('text-success');
+                    name.classList.add('text-warning');
+                }
+            }
+            
+        })
+    </script>
+{% endblock %}

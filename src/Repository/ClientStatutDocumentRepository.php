@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\ClientStatut;
 use App\Entity\ClientStatutDocument;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -25,6 +26,17 @@ class ClientStatutDocumentRepository extends ServiceEntityRepository
         ->where('client.id = :id')
         ->setParameter('id', $customer->getClientStatutId())
         ->getQuery()->getResult();
+    }
+
+    public function findDocumentsByRequired(ClientStatut $clientStatut, bool $required){
+        return $this->createQueryBuilder('c')
+        ->select('c.name')
+        ->leftJoin('c.client_statut', 'client_statut')
+        ->where('client_statut = :client')
+        ->andWhere('c.required = :required')
+        ->setParameter('client', $clientStatut)
+        ->setParameter('required', $required)
+        ->getQuery()->getresult();
     }
 
     // /**

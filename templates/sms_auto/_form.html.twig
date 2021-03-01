@@ -1,0 +1,15 @@
+{{ form_start(form) }}
+    {{ form_row(form.content) }}
+    <div class="form-group">
+        <small class="text-primary">Vous pouvez ajouter :
+            {% for data in documents %}
+                {% if form.content.vars.value matches '/{' ~ data ~ '}/' %}
+                    <span class="text-success" id="{{data}}">{{'{' ~ data ~ '}'}}</span>
+                {% else %}
+                    <span class="text-warning" id="{{data}}">{{'{' ~ data ~ '}'}}</span>
+                {% endif %}
+            {% endfor %}
+        </small>
+    </div>
+    <button class="btn btn-success">{{ button_label|default('Ajouter') }}</button>
+{{ form_end(form) }}

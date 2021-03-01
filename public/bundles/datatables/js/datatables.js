@@ -25,7 +25,6 @@
         // Load page state if needed
         switch (config.state) {
             case 'fragment':
-                sessionStorage.removeItem('datatable');
                 state = window.location.hash;
                 break;
             case 'query':
@@ -51,6 +50,7 @@
                 }
             }).done(function(data) {
                 var baseState;
+
                 // Merge all options from different sources together and add the Ajax loader
                 var dtOpts = $.extend({}, data.options, typeof config.options === 'function' ? {} : config.options, options, persistOptions, {
                     ajax: function (request, drawCallback, settings) {
@@ -98,7 +98,6 @@
                             var diff = data.filter(el => { return baseState.indexOf(el) === -1 && el.indexOf('time=') !== 0; });
                             switch (config.state) {
                                 case 'fragment':
-                                    sessionStorage.setItem('datatable', '#' + decodeURIComponent(diff.join('&')));
                                     history.replaceState(null, null, window.location.origin + window.location.pathname + window.location.search
                                         + '#' + decodeURIComponent(diff.join('&')));
                                     break;
