@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New SmsAuto{% endblock %}
-
+{% set title = "Ajouter un sms automatique" %}
+{% set require = true %}
+{% block header %}
+    <a href="{{ path('sms_auto_index') }}" class="btn btn-primary">Retour</a>
+{% endblock %}
 {% block body %}
-    <h1>Create new SmsAuto</h1>
 
     {{ include('sms_auto/_form.html.twig') }}
-
-    <a href="{{ path('sms_auto_index') }}">back to list</a>
 {% endblock %}

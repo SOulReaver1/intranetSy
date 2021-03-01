@@ -59,7 +59,7 @@ class CustomerFiles
     private $home_phone;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=false)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"show"})
      */
     private $cellphone;
@@ -132,7 +132,6 @@ class CustomerFiles
 
     /**
      * @ORM\ManyToOne(targetEntity=CustomerSource::class, inversedBy="customerFiles")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $customer_source;
 

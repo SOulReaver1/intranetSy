@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Form\UpdateSmsAutoType;
 
 /**
  * @Route("/admin/sms/auto")
@@ -54,28 +55,28 @@ class SmsAutoController extends AbstractController
         ]);
     }
 
-    // /**
-    //  * @Route("/new", name="sms_auto_new", methods={"GET","POST"})
-    //  */
-    // public function new(Request $request): Response
-    // {
-    //     $smsAuto = new SmsAuto();
-    //     $form = $this->createForm(SmsAutoType::class, $smsAuto);
-    //     $form->handleRequest($request);
+    /**
+     * @Route("/new", name="sms_auto_new", methods={"GET","POST"})
+     */
+    public function new(Request $request): Response
+    {
+        $smsAuto = new SmsAuto();
+        $form = $this->createForm(SmsAutoType::class, $smsAuto);
+        $form->handleRequest($request);
 
-    //     if ($form->isSubmitted() && $form->isValid()) {
-    //         $entityManager = $this->getDoctrine()->getManager();
-    //         $entityManager->persist($smsAuto);
-    //         $entityManager->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($smsAuto);
+            $entityManager->flush();
 
-    //         return $this->redirectToRoute('sms_auto_index');
-    //     }
+            return $this->redirectToRoute('sms_auto_index');
+        }
 
-    //     return $this->render('sms_auto/new.html.twig', [
-    //         'sms_auto' => $smsAuto,
-    //         'form' => $form->createView(),
-    //     ]);
-    // }
+        return $this->render('sms_auto/new.html.twig', [
+            'sms_auto' => $smsAuto,
+            'form' => $form->createView(),
+        ]);
+    }
 
     /**
      * @Route("/{id}", name="sms_auto_show", methods={"GET"})
@@ -93,7 +94,7 @@ class SmsAutoController extends AbstractController
      */
     public function edit(Request $request, SmsAuto $smsAuto): Response
     {
-        $form = $this->createForm(SmsAutoType::class, $smsAuto);
+        $form = $this->createForm(UpdateSmsAutoType::class, $smsAuto);
         $form->handleRequest($request);
 
         $step = $smsAuto->getStep();

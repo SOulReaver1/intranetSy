@@ -3,10 +3,15 @@
 {% set title = "Modifier un message automatique" %}
 {% set require = true %}
 {% block header %}
+<div class="row justify-content-end">
+    {% if is_granted('ROLE_DEVELOPER') %}
+        {{ include('sms_auto/_delete_form.html.twig') }}
+    {% endif %}
     <a href="{{ path('sms_auto_index') }}" class="btn btn-primary">Retour</a>
+</div>
 {% endblock %}
 {% block body %}
-    {{ include('sms_auto/_form.html.twig', {'button_label': 'Modifier'}) }}
+    {{ include('sms_auto/_update.html.twig', {'button_label': 'Modifier'}) }}
 {% endblock %}
 {% block javascripts %}
     <script>

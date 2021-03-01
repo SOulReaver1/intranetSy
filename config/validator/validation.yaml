@@ -1,9 +1,9 @@
-# App\Entity\Sms:
-#   properties:
-#     phone_number:
-#       - NotBlank: ~
-#     content: 
-#       - NotBlank: ~
+App\Entity\SmsAuto:
+  constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: step
+  properties:
+    step:
+      - NotBlank: ~
 
 App\Entity\CustomerFiles:
   properties:

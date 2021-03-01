@@ -3,12 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\SmsAutoRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=SmsAutoRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class SmsAuto
 {
@@ -20,7 +22,7 @@ class SmsAuto
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $content;
 
@@ -44,6 +46,21 @@ class SmsAuto
      */
     private $sms;
 
+      /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updatedTimestamps(): void
+    {
+        $dateTimeNow = new DateTime('now');
+
+        $this->setUpdatedAt($dateTimeNow);
+
+        if ($this->getCreatedAt() === null) {
+            $this->setCreatedAt($dateTimeNow);
+        }
+    }
+
     public function __construct()
     {
         $this->sms = new ArrayCollection();
@@ -59,7 +76,7 @@ class SmsAuto
         return $this->content;
     }
 
-    public function setContent(string $content): self
+    public function setContent(?string $content): self
     {
         $this->content = $content;
 
