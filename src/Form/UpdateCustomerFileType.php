@@ -127,6 +127,16 @@ class UpdateCustomerFileType extends AbstractType
             'label' => 'Téléphone fixe :',
             'row_attr' => ['class' => 'col-md-6'],
         ])
+        ->add('message', ChoiceType::class, [
+            'required' => true,
+            'choices' => [
+                'Non' => false,
+                'Oui' => true
+            ],
+            'label' => 'Envoyer un message : <span class="text-danger">*</span>',
+            'label_html' => true,
+            'row_attr' => ['class' => 'col-md-6'],
+        ])
         ->add('cellphone', TelType::class, [
             'required' => false,
             'label' => 'Téléphone portable :',

@@ -252,6 +252,11 @@ class CustomerFiles
     private $metreur;
 
     /**
+     * @ORM\Column(type="boolean")
+     */
+    private $message;
+
+    /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
@@ -832,6 +837,18 @@ class CustomerFiles
     public function setMetreur(?User $metreur): self
     {
         $this->metreur = $metreur;
+
+        return $this;
+    }
+
+    public function getMessage(): ?bool
+    {
+        return $this->message;
+    }
+
+    public function setMessage(bool $message): self
+    {
+        $this->message = $message;
 
         return $this;
     }
