@@ -157,7 +157,7 @@ class CustomerFilesController extends AbstractController
                 // // Send mail
                 $mailer->sendMail([$customerFile->getInstaller()], 'Nouveau ticket Lergon\'Home', 'customer_files/email_template/installer.html.twig', ['customer' => $customerFile]);
             }
-            if($customerFile->getCellphone()){
+            if($customerFile->getCellphone() && $customerFile->getMessage()){
                 $step1Content = $smsAutoRepository->findOneBy(['step' => 1])->getContent();
                 $pattern = ['/{documents}/', '/{name}/'];
                 $documents = [];
