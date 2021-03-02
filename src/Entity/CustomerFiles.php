@@ -132,6 +132,7 @@ class CustomerFiles
 
     /**
      * @ORM\ManyToOne(targetEntity=CustomerSource::class, inversedBy="customerFiles")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $customer_source;
 

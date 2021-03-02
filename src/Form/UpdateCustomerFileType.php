@@ -269,8 +269,7 @@ class UpdateCustomerFileType extends AbstractType
             'class' => CustomerSource::class,
             'placeholder' => 'Aucune source',
             'required' => true,
-            'label' => 'La source : <span class="text-danger">*</span>',
-            'label_html' => true,
+            'label' => 'La source :',
             'row_attr' => ['class' => 'col'],
             'attr' => ['class' => 'ui fluid dropdown']
         ])

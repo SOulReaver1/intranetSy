@@ -80,8 +80,7 @@ class SendSms {
             "message"=> $content,
             "noStopClause"=> false,
             "priority"=> "high",
-            "receivers"=> ["
-            +33652846684"],
+            "receivers"=> $phoneNumber,
             "differedPeriod" => $intervalInMinutes ?? 0,
             "senderForResponse"=> true,
             "validityPeriod"=> 2880
