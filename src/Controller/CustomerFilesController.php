@@ -157,17 +157,17 @@ class CustomerFilesController extends AbstractController
                 // // Send mail
                 $mailer->sendMail([$customerFile->getInstaller()], 'Nouveau ticket Lergon\'Home', 'customer_files/email_template/installer.html.twig', ['customer' => $customerFile]);
             }
-            // if($customerFile->getCellphone()){
-            //     $step1Content = $smsAutoRepository->findOneBy(['step' => 1])->getContent();
-            //     $pattern = ['/{documents}/', '/{name}/'];
-            //     $documents = [];
-            //     foreach($clientStatutDocumentRepository->findDocumentsByRequired($customerFile->getClientStatutId(), true) as $value){
-            //         $documents[] = $value['name'];
-            //     }
-            //     $remplacement = [implode(', ', $documents), $customerFile->getName()];
-            //     $step1Content = preg_replace($pattern, $remplacement, $step1Content);
-            //     $sendSms->send($step1Content, [$customerFile->getCellphone()]);
-            // }
+            if($customerFile->getCellphone()){
+                $step1Content = $smsAutoRepository->findOneBy(['step' => 1])->getContent();
+                $pattern = ['/{documents}/', '/{name}/'];
+                $documents = [];
+                foreach($clientStatutDocumentRepository->findDocumentsByRequired($customerFile->getClientStatutId(), true) as $value){
+                    $documents[] = $value['name'];
+                }
+                $remplacement = [implode(', ', $documents), $customerFile->getName()];
+                $step1Content = preg_replace($pattern, $remplacement, $step1Content);
+                $sendSms->send($step1Content, [$customerFile->getCellphone()]);
+            }
             
             $this->addFlash('success', 'La fiche a bien été enregistrée !');
             return $this->redirectToRoute('customer_files_show', ['id' => $customerFile->getId()]);
