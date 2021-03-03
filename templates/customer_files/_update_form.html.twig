@@ -1,4 +1,17 @@
 {{ form_start(form) }}
+    {% if not form.vars.valid %}
+            {# Loop through every form item #}
+            {% for child in form.children %}
+                {# Display the errors of the form item #}
+                {% for error in child.vars.errors %}
+                    <div class="row col-md-6">
+                        <div class="alert alert-danger">
+                            {{error.message}}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+    {% endif %}
     <div class="row">
         {{form_row(form.customer_source)}}
         {{form_row(form.installer)}}
