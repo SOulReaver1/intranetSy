@@ -45,6 +45,11 @@ class Sms
     private $step;
 
     /**
+     * @ORM\Column(type="datetime")
+     */
+    private $send_at;
+
+    /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
@@ -120,6 +125,18 @@ class Sms
     public function setStep(?SmsAuto $step): self
     {
         $this->step = $step;
+
+        return $this;
+    }
+
+    public function getSendAt(): ?\DateTimeInterface
+    {
+        return $this->send_at;
+    }
+
+    public function setSendAt(\DateTimeInterface $send_at): self
+    {
+        $this->send_at = $send_at;
 
         return $this;
     }

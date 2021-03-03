@@ -7,8 +7,6 @@ App\Entity\SmsAuto:
 
 App\Entity\CustomerFiles:
   properties:
-    customer_source:
-      - NotBlank: ~
     name: 
       - NotBlank: ~
     cellphone:

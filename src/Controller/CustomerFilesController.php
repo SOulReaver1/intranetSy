@@ -40,10 +40,16 @@ class CustomerFilesController extends AbstractController
 {
 
     private $session;
+    private $smsAutoRepository;
+    private $sendSms;
+    private $clientStatutDocumentRepository;
 
-    public function __construct(SessionInterface $sessionInterface)
+    public function __construct(SessionInterface $sessionInterface, SmsAutoRepository $smsAutoRepository, SendSms $sendSms, ClientStatutDocumentRepository $clientStatutDocumentRepository)
     {
         $this->session = $sessionInterface;
+        $this->smsAutoRepository = $smsAutoRepository;
+        $this->sendSms = $sendSms;
+        $this->clientStatutDocumentRepository = $clientStatutDocumentRepository;
     }
     /**
      * @Route("/", name="default", methods={"GET", "POST"})
@@ -136,11 +142,59 @@ class CustomerFilesController extends AbstractController
         ]);
     }
 
+    public function sendSmsToCustomerFile(CustomerFiles $customerFile, bool $new){
+        if($customerFile->getCellphone() && $customerFile->getMessage()){
+            if($new) $this->sendStep1($customerFile);
+            if($customerFile->getDateFootage() && new DateTime('now') < $customerFile->getDateFootage() && $customerFile->getMessageSend() === false){
+                $this->sendLastSteps($customerFile);
+            }
+        }
+    }
+
+    private function sendStep1(CustomerFiles $customerFile){
+        $step1 = $this->smsAutoRepository->findOneBy(['step' => 1]);
+        $pattern = ['/{documents}/', '/{name}/'];
+        $documents = [];
+        foreach($this->clientStatutDocumentRepository->findDocumentsByRequired($customerFile->getClientStatutId(), true) as $value){
+            $documents[] = $value['name'];
+        }
+        $remplacement = [implode(', ', $documents), $customerFile->getName()];
+        $step1Content = preg_replace($pattern, $remplacement, $step1->getContent());
+        $this->sendSms->send($step1Content, [$customerFile->getCellphone()], $step1);
+    }
+
+    private function sendLastSteps(CustomerFiles $customerFile){
+        // Get informations
+        $pattern = ['/{documents}/', '/{name}/', '/{dateMetrage}/'];
+        $documents = [];
+        foreach($this->clientStatutDocumentRepository->findDocumentsByRequired($customerFile->getClientStatutId(), true) as $value){
+            $documents[] = $value['name'];
+        }
+        $dateToString = $customerFile->getDateFootage()->format('d/m/Y H:i:s');
+        $remplacement = [implode(', ', $documents), $customerFile->getName(), $dateToString];
+        // -------------------------------------------
+        // Send step 2
+        $step2 = $this->smsAutoRepository->findOneBy(['step' => 2]);
+        $step2Content = preg_replace($pattern, $remplacement, $step2->getContent());
+        $this->sendSms->send($step2Content, [$customerFile->getCellphone()], $step2);
+        // ------------------------
+        // Program step 3, one day before footage
+        $step3 = $this->smsAutoRepository->findOneBy(['step' => 3]);
+        $step3Content = preg_replace($pattern, $remplacement, $step3->getContent());
+        $this->sendSms->send($step3Content, [$customerFile->getCellphone()], $step3, $customerFile->getDateFootage(), 1440);
+        // -------------------
+        // Program step 4, one hour before footage
+        $step4 = $this->smsAutoRepository->findOneBy(['step' => 4]);
+        $step4Content = preg_replace($pattern, $remplacement, $step4->getContent());
+        $this->sendSms->send($step4Content, [$customerFile->getCellphone()], $step4,  $customerFile->getDateFootage(), 60);
+        $customerFile->setMessageSend(true);
+    }
+
     /**
      * @IsGranted("ROLE_ALLOW_CREATE")
      * @Route("/new", name="customer_files_new", methods={"GET","POST"})
      */
-    public function new(Request $request, ProviderRepository $provider, NotificationService $notificationService, Mailer $mailer, SmsAutoRepository $smsAutoRepository, ClientStatutDocumentRepository $clientStatutDocumentRepository, SendSms $sendSms): Response
+    public function new(Request $request, ProviderRepository $provider, NotificationService $notificationService, Mailer $mailer): Response
     {
         $customerFile = new CustomerFiles();
         $form = $this->createForm(CustomerFilesType::class, $customerFile);
@@ -148,27 +202,16 @@ class CustomerFilesController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $customerFile->setCreatedBy($this->getUser());
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($customerFile);
-            $entityManager->flush();
             if($customerFile->getInstaller()){
                 // Send notification
                 $notificationService->sendNotification([$customerFile->getInstaller()], 'Une nouvelle fiche vous à été attribuer !', "/".$customerFile->getId());
                 // // Send mail
                 $mailer->sendMail([$customerFile->getInstaller()], 'Nouveau ticket Lergon\'Home', 'customer_files/email_template/installer.html.twig', ['customer' => $customerFile]);
             }
-            if($customerFile->getCellphone() && $customerFile->getMessage()){
-                $step1Content = $smsAutoRepository->findOneBy(['step' => 1])->getContent();
-                $pattern = ['/{documents}/', '/{name}/'];
-                $documents = [];
-                foreach($clientStatutDocumentRepository->findDocumentsByRequired($customerFile->getClientStatutId(), true) as $value){
-                    $documents[] = $value['name'];
-                }
-                $remplacement = [implode(', ', $documents), $customerFile->getName()];
-                $step1Content = preg_replace($pattern, $remplacement, $step1Content);
-                $sendSms->send($step1Content, [$customerFile->getCellphone()]);
-            }
-            
+            $this->sendSmsToCustomerFile($customerFile, true);
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($customerFile);
+            $entityManager->flush();
             $this->addFlash('success', 'La fiche a bien été enregistrée !');
             return $this->redirectToRoute('customer_files_show', ['id' => $customerFile->getId()]);
 
@@ -268,7 +311,7 @@ class CustomerFilesController extends AbstractController
      * @IsGranted("ROLE_USER")
      * @Route("/{id}/edit", name="customer_files_edit", methods={"GET","POST"})
      */
-    public function edit(Request $request, CustomerFiles $customerFile, ProviderRepository $provider, CustomerFilesRepository $repository, SmsAutoRepository $smsAutoRepository,  SendSms $sendSms, ClientStatutDocumentRepository $clientStatutDocumentRepository): Response
+    public function edit(Request $request, CustomerFiles $customerFile, ProviderRepository $provider, CustomerFilesRepository $repository): Response
     {
         $form = $this->createForm(UpdateCustomerFileType::class, $customerFile);
         $form->handleRequest($request);
@@ -280,28 +323,8 @@ class CustomerFilesController extends AbstractController
         $mail->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if($customerFile->getCellphone() && $customerFile->getDateFootage() && new DateTime('now') < $customerFile->getDateFootage() && $customerFile->getMessageSend() === false){
-                $pattern = ['/{documents}/', '/{name}/', '/{dateMetrage}/'];
-                $documents = [];
-                foreach($clientStatutDocumentRepository->findDocumentsByRequired($customerFile->getClientStatutId(), true) as $value){
-                    $documents[] = $value['name'];
-                }
-                $dateToString = $customerFile->getDateFootage()->format('d/m/Y');
-          
-                $remplacement = [implode(', ', $documents), $customerFile->getName(), $dateToString];
-                // Send step 2
-                $step2Content = preg_replace($pattern, $remplacement,$smsAutoRepository->findOneBy(['step' => 2])->getContent());
-                $sendSms->send($step2Content, [$customerFile->getCellphone()]);
-                // Program step 3, 1 day before footage
-                $step3Content = preg_replace($pattern, $remplacement, $smsAutoRepository->findOneBy(['step' => 3])->getContent());
-                $sendSms->send($step3Content, [$customerFile->getCellphone()], $customerFile->getDateFootage(), 1440);
-                // Program step 4, 1 hour before footage
-                $step4Content = preg_replace($pattern, $remplacement,$smsAutoRepository->findOneBy(['step' => 4])->getContent());
-                $sendSms->send($step4Content, [$customerFile->getCellphone()], $customerFile->getDateFootage(), 60);
-                $customerFile->setMessageSend(true);
-            }
+            $this->sendSmsToCustomerFile($customerFile, false);
             $this->getDoctrine()->getManager()->flush();
-
             $this->addFlash('success', 'La fiche a bien été modifiée !');
             return $this->redirectToRoute('customer_files_show', ['id' => $customerFile->getId()]);
 

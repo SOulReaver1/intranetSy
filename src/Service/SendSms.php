@@ -2,8 +2,12 @@
 
 namespace App\Service;
 
+use App\Entity\Sms;
+use App\Entity\SmsAuto;
 use DateInterval;
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectManager;
 use Ovh\Api;
 
 class SendSms {
@@ -13,9 +17,10 @@ class SendSms {
     private $consumerKey;
     private $endpoint;
     private $sms;
+    private $em;
     private $services;
 
-    public function __construct()
+    public function __construct(EntityManagerInterface $manager)
     {
         $this->applicationKey = $_ENV["OVH_APPLICATION_KEY"];
         $this->applicationSecret =  $_ENV["OVH_APPLICATION_SECRET"];
@@ -23,6 +28,7 @@ class SendSms {
         $this->endpoint = 'ovh-eu';
         $this->sms = new Api($this->applicationKey, $this->applicationSecret, $this->endpoint, $this->consumerKey);
         $this->services = $this->sms->get('/sms');
+        $this->em = $manager;
     }
 
     public function getOutgoings(){
@@ -65,9 +71,10 @@ class SendSms {
         return $this->sms->delete('/sms/'.$this->services[0].'/jobs/'.$id);
     }
 
-    public function send(string $content, array $phoneNumber, Datetime $metrage = null, int $interval = null){ 
+    public function send(string $message, array $phoneNumber, SmsAuto $step, Datetime $metrage = null, int $interval = null){ 
+        $now = new DateTime('now');
         if($metrage && $interval){
-            $now = new DateTime('now');
+            $dateInterval = new DateInterval("PT$interval"."M");
             $diff = ($metrage)->getTimestamp() - ($now)->getTimestamp();
             $minutes = intval($diff/60);
             $intervalInMinutes = $minutes - $interval;
@@ -77,7 +84,7 @@ class SendSms {
             "charset"=> "UTF-8",
             "class"=> "phoneDisplay",
             "coding"=> "7bit",
-            "message"=> $content,
+            "message"=> $message,
             "noStopClause"=> false,
             "priority"=> "high",
             "receivers"=> $phoneNumber,
@@ -85,7 +92,15 @@ class SendSms {
             "senderForResponse"=> true,
             "validityPeriod"=> 2880
         );
-        $resultPostJob = $this->sms->post('/sms/'. $this->services[0] . '/jobs', $content);
-        $smsJobs = $this->sms->get('/sms/'. $this->services[0] . '/jobs');
+        foreach ($phoneNumber as $value) {
+            $sms = new Sms();
+            $sms->setContent($message);
+            $sms->setPhoneNumber($value);
+            $sms->setStep($step);
+            $sms->setSendAt(isset($intervalInMinutes) ? $metrage->sub($dateInterval) : $now);
+            $this->em->persist($sms);
+            $this->em->flush();
+        }
+        $this->sms->post('/sms/'. $this->services[0] . '/jobs', $content);
     }
 }

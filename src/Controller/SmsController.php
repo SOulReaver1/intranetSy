@@ -7,12 +7,14 @@ use App\Entity\SmsAuto;
 use App\Form\SmsType;
 use App\Repository\SmsRepository;
 use App\Service\SendSms;
+use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Adapter\ArrayAdapter;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\NumberColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\DataTable;
 use Omines\DataTablesBundle\DataTableFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,13 +41,24 @@ class SmsController extends AbstractController
     {
         $table = $dataTableFactory->create()
         ->add('id', NumberColumn::class, ['label' => '#'])
-        ->add('receiver', TextColumn::class, ['label' => 'Numéro de téléphone'])
-        ->add('message', TextColumn::class, ['label' => 'Message'])
-        ->add('creationDatetime', DateTimeColumn::class, ['label' => 'Créer le', 'format' => 'd-m-Y H:i:s'])
-        ->add('sentAt', DateTimeColumn::class, ['label' => 'Envoyer le', 'format' => 'd-m-Y H:i:s'])
+        ->add('phone_number', TextColumn::class, ['label' => 'Numéro de téléphone'])
+        ->add('content', TextColumn::class, ['label' => 'Message'])
+        ->add('send', TextColumn::class, [
+            'label' => 'Envoyer',
+            'data' => function($context){
+                return $context->getSendAt() <= new DateTime('now') ? true : false;
+            },
+            'render' => function($value, $context){
+                $text = $value ? 'Oui' : 'Non';
+                $class = $value ? 'badge-success' : 'badge-danger';
+                return sprintf("<span class='badge $class'>$text</span>");
+            }
+        ])
+        ->add('created_at', DateTimeColumn::class, ['label' => 'Programmer le', 'format' => 'd-m-Y H:i:s'])
+        ->add('send_at', DateTimeColumn::class, ['label' => 'Date d\'envoie', 'format' => 'd-m-Y H:i:s'])
         ->add('actions', TextColumn::class, [
             'data' => function($context) {
-                return $context['id'];
+                return $context->getId();
             }, 
             'render' => function($value, $context){
                 $show = sprintf('<a href="%s" class="btn btn-primary">Regarder</a>', $this->generateUrl('sms_show', ['id' => $value]));
@@ -53,7 +66,10 @@ class SmsController extends AbstractController
             }, 
             'label' => 'Actions'
         ])
-        ->createAdapter(ArrayAdapter::class, $this->sms->getOutGoinsAsArray())
+        ->addOrderBy('id', DataTable::SORT_DESCENDING)
+        ->createAdapter(ORMAdapter::class, [
+            'entity' => Sms::class,
+        ])
         ->handleRequest($request);
 
         if ($table->isCallback()) {

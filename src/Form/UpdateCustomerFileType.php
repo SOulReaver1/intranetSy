@@ -268,7 +268,7 @@ class UpdateCustomerFileType extends AbstractType
         ->add('customer_source', EntityType::class, [
             'class' => CustomerSource::class,
             'placeholder' => 'Aucune source',
-            'required' => true,
+            'required' => false,
             'label' => 'La source :',
             'row_attr' => ['class' => 'col'],
             'attr' => ['class' => 'ui fluid dropdown']
