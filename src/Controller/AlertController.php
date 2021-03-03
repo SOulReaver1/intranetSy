@@ -9,6 +9,7 @@ use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\NumberColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\DataTable;
 use Omines\DataTablesBundle\DataTableFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,6 +50,7 @@ class AlertController extends AbstractController
             }, 
             'label' => 'Actions'
         ])
+        ->addOrderBy('id', DataTable::SORT_DESCENDING)
         ->createAdapter(ORMAdapter::class, [
             'entity' => Alert::class,
         ])->handleRequest($request);
