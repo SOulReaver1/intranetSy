@@ -41,6 +41,10 @@ class SmsController extends AbstractController
     {
         $table = $dataTableFactory->create()
         ->add('id', NumberColumn::class, ['label' => '#'])
+        ->add('step', TextColumn::class, [
+            'label' => 'Etape',
+            'field' => 'sms_auto.step'
+        ])
         ->add('phone_number', TextColumn::class, ['label' => 'Numéro de téléphone'])
         ->add('content', TextColumn::class, ['label' => 'Message'])
         ->add('send', TextColumn::class, [
@@ -69,6 +73,12 @@ class SmsController extends AbstractController
         ->addOrderBy('id', DataTable::SORT_DESCENDING)
         ->createAdapter(ORMAdapter::class, [
             'entity' => Sms::class,
+            'query' => function(QueryBuilder $builder){
+                return $builder
+                ->select('s, sms_auto')
+                ->from(Sms::class, 's')
+                ->leftJoin('s.step', 'sms_auto');
+            }
         ])
         ->handleRequest($request);
 
