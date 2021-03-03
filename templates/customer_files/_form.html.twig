@@ -1,4 +1,4 @@
-{{ form_start(form) }} 
+{{ form_start(form, {"attr": {"autocomplete": "off"}}) }} 
     {% if not form.vars.valid %}
             {# Loop through every form item #}
             {% for child in form.children %}
