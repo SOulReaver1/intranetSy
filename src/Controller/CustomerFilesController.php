@@ -88,7 +88,7 @@ class CustomerFilesController extends AbstractController
                 }, 
                 'label' => 'Actions'
             ])
-            ->addOrderBy('id', DataTable::SORT_ASCENDING)
+            ->addOrderBy('id', DataTable::SORT_DESCENDING)
             ->createAdapter(ORMAdapter::class, [
                 'entity' => CustomerFiles::class,
                 'query' => function (QueryBuilder $builder) {
