@@ -13,7 +13,7 @@
     <div class="row px-lg-2 px-2">
         <div class="col pl-md-3 px-lg-auto px-0">
             <div class="chat-message">
-                <ul class="list-unstyled chat">
+                <ul class="list-unstyled chat" id="listChat" data-username="{{app.user.username}}">
                     {% for message in messages %}
                         <li class="d-flex mb-4 {{message.fromUser == app.user ? 'justify-content-end text-right' : 'justify-content-start text-left'}}">
                             <div class="col-md-6 chat-body white p-3 ml-2 z-depth-1">
@@ -22,7 +22,7 @@
                                 <strong class="primary-font">
                                     {{message.fromUser == app.user ? 'Moi' : message.fromUser}}
                                 </strong>
-                                <small class="pull-right text-muted"><i class="far fa-clock"></i> {{message.createdAt ? message.createdAt|date('d-m-Y H:i:s') : ''}}</small>
+                                <small class="pull-right text-muted"><i class="far fa-clock"></i> <small class="ml-2">{{message.createdAt ? message.createdAt|date('d-m-Y H:i:s') : ''}}</small></small>
                             </div>
                             <p class="mb-0">
                                 {{message.content}}
@@ -30,11 +30,64 @@
                             </div>
                         </li>
                     {% endfor %}
-                    {{ include('ticket/messages/_form.html.twig') }}
                 </ul>
+                {{ include('ticket/messages/_form.html.twig') }}
             </div>
         </div>  
     </div>
     {{ include('ticket/participants.html.twig', {'method': 'read'}) }}
 {% endblock %}
-
+{% block javascripts %}
+    <script type="text/javascript">
+        document.querySelector('form').addEventListener('submit', evt => {
+            evt.preventDefault();
+            formData = new FormData(document.querySelector('form'))
+            fetch(window.location.href, {
+                method: 'POST',
+                body: formData
+            });
+        })
+        const url = new URL('http://localhost:3000/.well-known/mercure');
+        url.searchParams.append('topic', 'http://localhost:8000/ticket/message/{id}');
+        const eventSource = new EventSource(url);
+        eventSource.onmessage = e => {
+            const data = JSON.parse(e.data)
+            const listChat = document.getElementById('listChat')
+            const currentUsername = listChat.dataset.username
+            const isCurrentUser = data.username === currentUsername
+            const li = document.createElement('li')
+            li.classList.add(...['d-flex', 'mb-4', `${isCurrentUser ? 'justify-content-end' : 'justify-content-start'}`, `${isCurrentUser ? 'text-right': 'text-left'}`])
+            const div1 = document.createElement('div')
+            div1.classList.add(...['col-md-6', 'chat-body', 'white', 'p-3', 'ml-2', 'z-depth-1'])
+            const div2 = document.createElement('div')
+            div2.classList.add('header')
+            const img = document.createElement('img')
+            img.src = "https://mdbootstrap.com/img/Photos/Avatars/avatar-6.jpg";
+            img.setAttribute('alt', 'avatar')
+            img.classList.add(...['avatar', 'rounded-circle', 'mr-2', 'z-depth-1'])
+            const strong = document.createElement('strong')
+            strong.classList.add('primary-front')
+            strong.innerHTML = `${data.username === currentUsername ? 'Moi': data.username}`
+            const small = document.createElement('small')
+            small.classList.add(...['pull-right', 'text-muted'])
+            const i = document.createElement('i')
+            i.classList.add(...['far', 'fa-clock'])
+            const small2 = document.createElement('small')
+            small2.classList.add('ml-2')
+            small2.innerHTML = data.createdAt
+            const p = document.createElement('p')
+            p.classList.add('mb-0')
+            p.innerHTML = data.message
+            listChat.append(li)
+            li.append(div1)
+            div1.append(div2)
+            div1.append(p)
+            div2.append(img)
+            div2.append(strong)
+            div2.append(img)
+            div2.append(small)
+            small.append(i)
+            small.append(small2)
+        }
+    </script>
+{% endblock %}
