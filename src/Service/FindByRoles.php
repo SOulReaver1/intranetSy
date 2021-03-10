@@ -37,7 +37,7 @@ class FindByRoles {
             }
         }
 
-        return $users ? $users : [null];
+        return $users ? $users : [];
     }
 
     public function findByRoles(array $roles, ?User $user = null, ?bool $me = true){
@@ -59,7 +59,7 @@ class FindByRoles {
             }
         }
 
-        return $users ? $users : [null];
+        return $users ? $users : [];
     }
 
 }

@@ -15,6 +15,7 @@
 .phpunit
 .phpunit.result.cache
 /phpunit.xml
+mercure.db
 ###< symfony/phpunit-bridge ###
 
 ###> symfony/webpack-encore-bundle ###
