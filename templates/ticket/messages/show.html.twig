@@ -54,6 +54,7 @@
         const eventSource = new EventSource(url);
         eventSource.onmessage = e => {
             const data = JSON.parse(e.data)
+            console.log(data);
             const isCurrentUser = data.username === currentUsername
             const li = document.createElement('li')
             li.classList.add(...['d-flex', 'mb-4', `${isCurrentUser ? 'justify-content-end' : 'justify-content-start'}`, `${isCurrentUser ? 'text-right': 'text-left'}`])
