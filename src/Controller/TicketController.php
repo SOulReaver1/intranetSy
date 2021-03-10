@@ -46,7 +46,8 @@ class TicketController extends AbstractController
             'label' => 'Fiche client', 
             'field' => 'customerFile.name',
             'render' => function($data, $context){
-                return sprintf("<a href='%s'>$data</a>", $this->generateUrl('customer_files_show', ['id' => $context->getCustomerFile()->getId()]));
+                
+                return $data ? sprintf("<a href='%s'>$data</a>", $this->generateUrl('customer_files_show', ['id' => $context->getCustomerFile()->getId()])) : 'Aucune fiche';
             }
         ])
         ->add('title', TextColumn::class, ['label' => 'Titre'])
@@ -106,9 +107,8 @@ class TicketController extends AbstractController
        
         if ($form->isSubmitted() && $form->isValid()) {
             // Add all admin users
-            if(!empty($this->findByRoles->findByRole('ROLE_ADMIN', null, false))){
-                $ticket->addUser(...$this->findByRoles->findByRole('ROLE_ADMIN', null, false));
-            }
+            
+            $ticket->addUser(...$this->findByRoles->findByRole('ROLE_ADMIN', null, false));
             
             // Add the creator
             $ticket->addUser($this->getUser());

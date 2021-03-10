@@ -68,7 +68,7 @@ class Ticket
 
     /**
      * @ORM\ManyToMany(targetEntity=User::class, inversedBy="ticket_inside")
-     * @ORM\JoinColumn(nullable=True)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $users;
 
