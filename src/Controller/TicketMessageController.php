@@ -48,7 +48,8 @@ class TicketMessageController extends AbstractController
                 // Send notification
                 $notificationService->sendNotification($ticket->getUsers()->toArray(), "Nouveau message dans le ticket numero $ticket_id", "/ticket/message/$ticket_id", $message->getContent());
                 $update = new Update(
-                    "http://localhost:8000/ticket/message/{$ticket->getId()}",
+                    $this->generateUrl('ticket_message_index', 
+                    ['id' => $ticket->getId()]),
                     json_encode(['createdAt' => $message->getCreatedAt()->format('d-m-Y H:i:s'),'username' => $this->getUser()->getUsername(), 'message' => $message->getContent()])
                 );
                 $bus->dispatch($update);
