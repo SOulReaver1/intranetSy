@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Notification;
 use App\Entity\Ticket;
 use App\Entity\TicketMessage;
 use App\Form\TicketMessageType;
@@ -15,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGenerator;
 
 /**
  * @Route("/ticket/message")
@@ -48,8 +48,7 @@ class TicketMessageController extends AbstractController
                 // Send notification
                 $notificationService->sendNotification($ticket->getUsers()->toArray(), "Nouveau message dans le ticket numero $ticket_id", "/ticket/message/$ticket_id", $message->getContent());
                 $update = new Update(
-                    $this->generateUrl('ticket_message_index', 
-                    ['id' => $ticket->getId()]),
+                    $this->generateUrl('ticket_message_index', ['id' => $ticket->getId()], UrlGenerator::ABSOLUTE_URL),
                     json_encode(['createdAt' => $message->getCreatedAt()->format('d-m-Y H:i:s'),'username' => $this->getUser()->getUsername(), 'message' => $message->getContent()])
                 );
                 $bus->dispatch($update);
