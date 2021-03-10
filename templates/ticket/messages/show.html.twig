@@ -45,13 +45,14 @@
             fetch(window.location.href, {
                 method: 'POST',
                 body: formData
+                credentials: 'include'
             });
         })
         const listChat = document.getElementById('listChat')
         const currentUsername = listChat.dataset.username
         const url = new URL(listChat.dataset.mercure);
         url.searchParams.append('topic', window.location.href);
-        const eventSource = new EventSource(url);
+        const eventSource = new EventSource(url, {withCredentials: true});
         eventSource.onmessage = e => {
             const data = JSON.parse(e.data)
             console.log(data);
