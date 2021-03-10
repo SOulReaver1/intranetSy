@@ -11,10 +11,7 @@ use App\Service\NotificationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mercure\Update;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGenerator;
 
 /**
  * @Route("/ticket/message")
@@ -30,7 +27,7 @@ class TicketMessageController extends AbstractController
     /**
      * @Route("/{id}", name="ticket_message_index", methods={"GET","POST"}, requirements={"id":"\d+"})
      */
-    public function index(Request $request, Ticket $ticket, TicketMessageRepository $messages, NotificationService $notificationService, MessageBusInterface $bus): Response
+    public function index(Request $request, Ticket $ticket, TicketMessageRepository $messages, NotificationService $notificationService): Response
     {
         
         if(in_array($this->getUser(), $ticket->getUsers()->toArray())|| $this->findByRoles->findByRole('ROLE_ADMIN', $this->getUser())){
@@ -46,12 +43,7 @@ class TicketMessageController extends AbstractController
                 $entityManager->flush();
                 $ticket_id = $ticket->getId();
                 // Send notification
-                // $notificationService->sendNotification($ticket->getUsers()->toArray(), "Nouveau message dans le ticket numero $ticket_id", "/ticket/message/$ticket_id", $message->getContent());
-                $update = new Update(
-                    $this->generateUrl('ticket_message_index', ['id' => $ticket->getId()], UrlGenerator::ABSOLUTE_URL),
-                    json_encode(['createdAt' => $message->getCreatedAt()->format('d-m-Y H:i:s'),'username' => $this->getUser()->getUsername(), 'message' => $message->getContent()])
-                );
-                $bus->dispatch($update);
+                $notificationService->sendNotification($ticket->getUsers()->toArray(), "Nouveau message dans le ticket numero $ticket_id", "/ticket/message/$ticket_id", $message->getContent());
                 return $this->redirectToRoute('ticket_message_index', [
                     'id' => $ticket->getId()
                 ]);
