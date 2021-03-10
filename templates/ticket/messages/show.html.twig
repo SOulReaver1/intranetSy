@@ -44,7 +44,7 @@
             formData = new FormData(document.querySelector('form'))
             fetch(window.location.href, {
                 method: 'POST',
-                body: formData
+                body: formData,
                 credentials: 'include'
             });
         })
