@@ -77,6 +77,7 @@ class CustomerFilesController extends AbstractController
             ->add('home_phone', TextColumn::class, ['label' => 'Téléphone fixe'])
             ->add('mail_al', TextColumn::class, ['label' => 'Mail AL'])
             ->add('password_al', TextColumn::class, ['label' => 'Mot de passe AL'])
+            ->add('commentary', TextColumn::class, ['label' => 'Commantaire'])
             ->add('actions', TextColumn::class, [
                 'data' => function($context) {
                     return $context->getId();
