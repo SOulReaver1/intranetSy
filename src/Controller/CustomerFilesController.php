@@ -71,6 +71,7 @@ class CustomerFilesController extends AbstractController
             ->add('name', TextColumn::class, ['label' => 'Nom complet'])
             ->add('date_expertise', DateTimeColumn::class, ['label' => 'Date d\'expertise'])
             ->add('address', TextColumn::class, ['label' => 'Adresse'])
+            ->add('address_complement', TextColumn::class, ['label' => 'Complément d\'adresse'])
             ->add('city', TextColumn::class, ['label' => 'Ville'])
             ->add('zip_code', TextColumn::class, ['label' => 'Code postal'])
             ->add('cellphone', TextColumn::class, ['label' => 'Téléphone portable'])
