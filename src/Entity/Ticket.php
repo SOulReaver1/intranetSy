@@ -75,7 +75,6 @@ class Ticket
 
     public function __construct()
     {
-        $this->users_id = new ArrayCollection();
         $this->ticketMessages = new ArrayCollection();
         $this->users = new ArrayCollection();
     }
