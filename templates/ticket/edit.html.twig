@@ -11,3 +11,8 @@
 {% block body %}
     {{ include('ticket/_form.html.twig', {'button_label': 'Modifier'}) }}
 {% endblock %}
+{% block javascripts %}
+    <script>
+        $("#ticket_users").dropdown()
+    </script>
+{% endblock %}
