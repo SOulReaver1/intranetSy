@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\CustomerFiles;
+use App\Entity\GlobalStatut;
 use App\Entity\Ticket;
 use App\Form\AddUserToTicketType;
 use App\Form\TicketType;
@@ -24,21 +25,29 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
+/**
+ * @Route("/customers/{global}/tickets", requirements={"global":"\d+"})
+ */
 class TicketController extends AbstractController
 {
 
     private $findByRoles;
+    private $global;
+    private $session;
 
-    public function __construct(FindByRoles $findByRoles){
+    public function __construct(FindByRoles $findByRoles, SessionInterface $session){
         $this->findByRoles = $findByRoles;
+        $this->session = $session;
     }
     
     /**
-     * @Route("/tickets", name="ticket_index", methods={"GET", "POST"})
+     * @Route("/", name="ticket_index", methods={"GET", "POST"})
      */
-    public function index(Request $request, DataTableFactory $dataTableFactory): Response
+    public function index(Request $request, GlobalStatut $global, DataTableFactory $dataTableFactory): Response
     {
+        $this->global = $global;
 
         $table = $dataTableFactory->create()
         ->add('id', NumberColumn::class, ['label' => '#'])
@@ -46,8 +55,12 @@ class TicketController extends AbstractController
             'label' => 'Fiche client', 
             'field' => 'customerFile.name',
             'render' => function($data, $context){
-                
-                return $data ? sprintf("<a href='%s'>$data</a>", $this->generateUrl('customer_files_show', ['id' => $context->getCustomerFile()->getId()])) : 'Aucune fiche';
+                return $data ? sprintf("<a href='%s'>$data</a>", 
+                $this->generateUrl('customer_files_show', 
+                [
+                    'id' => $context->getCustomerFile()->getId(),
+                    'global' => $this->session->get('global')
+                ])) : 'Aucune fiche';
             }
         ])
         ->add('title', TextColumn::class, ['label' => 'Titre'])
@@ -59,8 +72,18 @@ class TicketController extends AbstractController
                 return $context->getId();
             }, 
             'render' => function($value, $context){
-                $show = sprintf('<a href="%s" class="btn btn-primary">Regarder</a>', $this->generateUrl('ticket_show', ['id' => $value]));
-                $edit = sprintf('<a href="%s" class="btn btn-primary">Modifier</a>', $this->generateUrl('ticket_edit', ['id' => $value]));
+                $show = sprintf('<a href="%s" class="btn btn-primary">Regarder</a>', $this->generateUrl('ticket_show', 
+                    [
+                        'global' => $this->session->get('global'),
+                        'id' => $value
+                    ]
+                ));
+                $edit = sprintf('<a href="%s" class="btn btn-primary">Modifier</a>', $this->generateUrl('ticket_show', 
+                    [
+                        'global' => $this->session->get('global'),
+                        'id' => $value
+                    ]
+                ));
                 return $show.$edit;
             }, 
             'label' => 'Actions'
@@ -73,6 +96,8 @@ class TicketController extends AbstractController
                     return $builder
                     ->select('t, customerFile')
                     ->from(Ticket::class, 't')
+                    ->where('customerFile.global_statut = :g')
+                    ->setParameter('g', $this->global)
                     ->leftJoin('t.customer_file', 'customerFile');
                 }else{
                     return $builder
@@ -80,7 +105,9 @@ class TicketController extends AbstractController
                     ->from(Ticket::class, 't')
                     ->leftJoin('t.users', 'users')
                     ->leftJoin('t.customer_file', 'customerFile')
-                    ->where('users = :val')
+                    ->andWhere('users = :val')
+                    ->andWhere('customerFile.global_statut = :g')
+                    ->setParameter('g', $this->global)
                     ->setParameter('val', $this->getUser());
                 }
             }
@@ -97,7 +124,7 @@ class TicketController extends AbstractController
 
     /**
      * @IsGranted("ROLE_USER")
-     * @Route("/ticket/new", name="ticket_new", methods={"GET","POST"})
+     * @Route("/new", name="ticket_new", methods={"GET","POST"})
      */
     public function new(Request $request, Mailer $mailer, NotificationService $notificationService): Response
     {
@@ -123,7 +150,9 @@ class TicketController extends AbstractController
             // Send mail
             $mailer->sendMail($ticket->getUsers()->toArray(), 'Nouveau ticket Lergon\'Home', 'ticket/_email.html.twig', ['ticket' => $ticket]);
             $this->addFlash('success', 'Le ticket à bien été créer !');  
-            return $this->redirectToRoute('ticket_index');
+            return $this->redirectToRoute('ticket_index', [
+                'global' => $this->session->get('global')
+            ]);
         }
 
         return $this->render('ticket/new.html.twig', [
@@ -134,86 +163,118 @@ class TicketController extends AbstractController
     }
 
     /**
-     * @Route("/ticket/{id}", name="ticket_show", methods={"GET"}, requirements={"id":"\d+"})
+     * @Route("/{id}", name="ticket_show", methods={"GET"}, requirements={"id":"\d+"})
      */
-    public function show(Ticket $ticket): Response
+    public function show(Request $request, GlobalStatut $global, Ticket $ticket): Response
     {
-        if(in_array($this->getUser(), $ticket->getUsers()->toArray()) || $this->findByRoles->findByRole('ROLE_ADMIN', $this->getUser())){
-            return $this->render('ticket/show.html.twig', [
-                'ticket' => $ticket,
-            ]);
-        }
-        
-        $this->addFlash('error', 'Vous n\'avez pas accès à cette fiche !');
-        return $this->redirectToRoute('ticket_index');
-    }
-
-    /**
-     * @IsGranted("ROLE_ADMIN")
-     * @Route("/admin/ticket/{id}/users", name="ticket_users", methods={"GET", "POST"}, requirements={"id":"\d+"})
-     */
-    public function addUser(Request $request, Ticket $ticket): Response
-    {
-        $form = $this->createForm(AddUserToTicketType::class, $ticket);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Add all admin users to update changes
-            $ticket->addUser(...$this->findByRoles->findByRole('ROLE_ADMIN'));
-
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($ticket);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('ticket_show', [
-                'id' => $ticket->getId()
-            ]);
-        }
-
-        return $this->render('ticket/adduser.html.twig', [
-            'ticket' => $ticket,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @IsGranted("ROLE_USER")
-     * @Route("/ticket/{id}/edit", name="ticket_edit", methods={"GET","POST"})
-    */
-    public function edit(Request $request, Ticket $ticket): Response
-    {
-        // If I am the creator or an administrator, i can edit the ticket
-        if($this->getUser() === $ticket->getCreator() || $this->findByRoles->findByRole('ROLE_ADMIN', $this->getUser())){
-            $form = $this->createForm(TicketType::class, $ticket);
-            $form->handleRequest($request);
-    
-            if ($form->isSubmitted() && $form->isValid()) {
-                $this->getDoctrine()->getManager()->flush();
-    
-                return $this->redirectToRoute('ticket_index');
+        if($ticket->getCustomerFile()->getGlobalStatut() === $global){
+            if(in_array($this->getUser(), $ticket->getUsers()->toArray()) || $this->findByRoles->findByRole('ROLE_ADMIN', $this->getUser())){
+                return $this->render('ticket/show.html.twig', [
+                    'ticket' => $ticket,
+                ]);
             }
-    
-            return $this->render('ticket/edit.html.twig', [
-                'ticket' => $ticket,
-                'form' => $form->createView(),
+            
+            $this->addFlash('error', 'Vous n\'avez pas accès à cette fiche !');
+            return $this->redirectToRoute('ticket_index', [
+                'global' => $this->session->get('global')
             ]);
         }
 
-        return $this->redirectToRoute('ticket_show', ['id' => $ticket->getId()]);
+        $this->addFlash('error', 'La fiche du ticket '.$ticket->getId().' n\'a pas pour statut global '.$global->getName());
+        return $this->redirectToRoute('ticket_index', [
+            'global' => $this->session->get('global')
+        ]);
+        
+    }
+
+    // /**
+    //  * @IsGranted("ROLE_ADMIN")
+    //  * @Route("/admin/ticket/{id}/users", name="ticket_users", methods={"GET", "POST"}, requirements={"id":"\d+"})
+    //  */
+    // public function addUser(Request $request, Ticket $ticket): Response
+    // {
+    //     $form = $this->createForm(AddUserToTicketType::class, $ticket);
+    //     $form->handleRequest($request);
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         // Add all admin users to update changes
+    //         $ticket->addUser(...$this->findByRoles->findByRole('ROLE_ADMIN'));
+
+    //         $entityManager = $this->getDoctrine()->getManager();
+    //         $entityManager->persist($ticket);
+    //         $entityManager->flush();
+
+    //         return $this->redirectToRoute('ticket_show', [
+    //             'id' => $ticket->getId()
+    //         ]);
+    //     }
+
+    //     return $this->render('ticket/adduser.html.twig', [
+    //         'ticket' => $ticket,
+    //         'form' => $form->createView(),
+    //     ]);
+    // }
+
+    /**
+     * @IsGranted("ROLE_USER")
+     * @Route("/{id}/edit", name="ticket_edit", methods={"GET","POST"}, requirements={"id":"\d+"})
+    */
+    public function edit(Request $request, GlobalStatut $global, Ticket $ticket): Response
+    {
+        if($ticket->getCustomerFile()->getGlobalStatut() === $global){
+            // If I am the creator or an administrator, i can edit the ticket
+            if($this->getUser() === $ticket->getCreator() || $this->findByRoles->findByRole('ROLE_ADMIN', $this->getUser())){
+                $form = $this->createForm(TicketType::class, $ticket);
+                $form->handleRequest($request);
+        
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $this->getDoctrine()->getManager()->flush();
+                    
+                    $this->addFlash('success', 'Le ticket à bien été modifier !');
+                    return $this->redirectToRoute('ticket_index', [
+                        'global' => $this->session->get('global')
+                    ]);
+                }
+        
+                return $this->render('ticket/edit.html.twig', [
+                    'ticket' => $ticket,
+                    'form' => $form->createView(),
+                ]);
+            }
+            $this->addFlash('error', 'Vous ne pouvez pas modifier ce ticket');
+            return $this->redirectToRoute('ticket_show', [
+                'id' => $ticket->getId(),
+                'global' => $this->session->get('global')
+            ]);
+        }
+
+        $this->addFlash('error', 'La fiche du ticket '.$ticket->getId().' n\'a pas pour statut global '.$global->getName());
+        return $this->redirectToRoute('ticket_index', [
+            'global' => $this->session->get('global')
+        ]);
         
     }
 
     /**
-     * @IsGranted("ROLE_USER")
-     * @Route("/admin/ticket/{id}", name="ticket_delete", methods={"DELETE"})
-     */
-    public function delete(Request $request, Ticket $ticket): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$ticket->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($ticket);
-            $entityManager->flush();
+      * @IsGranted("ROLE_USER")
+      * @Route("/{id}", name="ticket_delete", methods={"DELETE"})
+    */
+    public function delete(Request $request, GlobalStatut $global, Ticket $ticket): Response
+    {   
+        if($ticket->getCustomerFile()->getGlobalStatut() === $global){
+            if ($this->isCsrfTokenValid('delete'.$ticket->getId(), $request->request->get('_token'))) {
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->remove($ticket);
+                $entityManager->flush();
+            }
+            $this->addFlash('success', 'Le ticket à bien été supprimer !');
+            return $this->redirectToRoute('ticket_index', [
+                'global' => $this->session->get('global')
+            ]);
         }
-
-        return $this->redirectToRoute('ticket_index');
+        
+        $this->addFlash('error', 'La fiche du ticket '.$ticket->getId().' n\'a pas pour statut global '.$global->getName());
+        return $this->redirectToRoute('ticket_index', [
+            'global' => $this->session->get('global')
+        ]);
     }
 }

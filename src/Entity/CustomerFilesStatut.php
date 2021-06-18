@@ -54,6 +54,11 @@ class CustomerFilesStatut
      */
     private $ordered;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=GlobalStatut::class, inversedBy="customerFilesStatuts")
+     */
+    private $global_statut;
+
     public function __construct()
     {
         $this->customerFiles = new ArrayCollection();
@@ -172,6 +177,18 @@ class CustomerFilesStatut
     public function setOrdered(int $ordered): self
     {
         $this->ordered = $ordered;
+
+        return $this;
+    }
+
+    public function getGlobalStatut(): ?GlobalStatut
+    {
+        return $this->global_statut;
+    }
+
+    public function setGlobalStatut(?GlobalStatut $global_statut): self
+    {
+        $this->global_statut = $global_statut;
 
         return $this;
     }

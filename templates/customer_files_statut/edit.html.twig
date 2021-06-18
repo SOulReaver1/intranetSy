@@ -3,7 +3,7 @@
 {% set title = "Modifier le statut" %}
 {% block header %}
     <div class="row justify-content-end">
-        <a href="{{ path('customer_files_statut_index') }}" class="btn btn-primary mx-2">Retour</a>
+        <a href="{{ path('customer_files_statut_index', {'global': app.session.get('global')}) }}" class="btn btn-primary mx-2">Retour</a>
         {{ include('customer_files_statut/_delete_form.html.twig') }}
     </div>
 {% endblock %}

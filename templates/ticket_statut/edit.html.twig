@@ -1,13 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit TicketStatut{% endblock %}
 {% set title = "Modifier le statut" %}
 {% block header %}
     <div class="row justify-content-end">
-        <a href="{{ path('ticket_statut_index') }}" class="btn btn-primary">Retour</a>
+        <a href="{{ path('ticket_statut_index', {'global': app.session.get('global')}) }}" class="btn btn-primary">Retour</a>
         {{ include('ticket_statut/_delete_form.html.twig') }}
     </div>
 {% endblock %}
 {% block body %}
     {{ include('ticket_statut/_form.html.twig', {'button_label': 'Modifier'}) }}
+{% endblock %}
+{% block javascripts %}
+    <script>$('#ticket_statut_users').dropdown();</script>
 {% endblock %}

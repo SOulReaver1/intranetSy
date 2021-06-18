@@ -3,7 +3,7 @@
 {% block title %}TicketStatut{% endblock %}
 {% set title = ticket_statut.name %}
 {% block header %}
-    <a href="{{ path('ticket_statut_index') }}" class="btn btn-primary">Retour</a>
+    <a href="{{ path('ticket_statut_index', {'global': app.session.get('global')}) }}" class="btn btn-primary">Retour</a>
 {% endblock %}
 {% block body %}
 
@@ -17,12 +17,17 @@
                 <th>Nom :</th>
                 <td>{{ ticket_statut.name }}</td>
             </tr>
+            <tr>
+                <th>Utilisateurs :</th>
+                <td>{{ticket_statut.users ? ticket_statut.users|join(' -- ')}}</td>
+            </tr>
+            </tr>
         </tbody>
     </table>
 
     <div class="col mt-4">
         <div class="row">
-            <a href="{{ path('ticket_statut_edit', {'id': ticket_statut.id}) }}" class="btn btn-primary">Modifier</a>
+            <a href="{{ path('ticket_statut_edit', {'global': app.session.get('global'), 'id': ticket_statut.id}) }}" class="btn btn-primary">Modifier</a>
 
             {{ include('ticket_statut/_delete_form.html.twig') }}
         </div>

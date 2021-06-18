@@ -4,7 +4,7 @@
 {% set title = "Créer un ticket" %}
 {% set require = true %}
 {% block header %}
-    <a href="{{ path('ticket_index') }}" class="btn btn-primary">Retour</a>
+    <a href="{{ path('ticket_index', {'global': app.session.get('global')}) }}" class="btn btn-primary">Retour</a>
 {% endblock %}
 {% block body %}
     {{ include('ticket/_form.html.twig') }}

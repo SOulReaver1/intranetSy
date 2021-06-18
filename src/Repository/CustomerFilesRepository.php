@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\CustomerFiles;
+use App\Entity\GlobalStatut;
 use App\Entity\Provider;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -35,13 +36,15 @@ class CustomerFilesRepository extends ServiceEntityRepository
         return array_unique($parameters);
     }
 
-    public function getAddresses(?User $user = null){
+    public function getAddresses(GlobalStatut $global, ?User $user = null){
         if($user){
             return $this->createQueryBuilder('c')
             ->leftJoin('c.customer_statut', 'statut')
             ->select('c.id, c.name as title, c.address, c.route_number, c.zip_code, c.city, c.cellphone, c.home_phone, c.commentary, c.address_complement, c.lat, c.lng, statut.color, statut.id as statutId')
             ->leftJoin('c.installer', 'user')
-            ->where('user = :user')
+            ->andWhere('user = :user')
+            ->andWhere('c.global_statut = :g')
+            ->setParameter('g', $global)
             ->setParameter('user', $user)
             ->orderBy('c.ordred')
             ->andWhere('c.lat is not null')
@@ -55,6 +58,8 @@ class CustomerFilesRepository extends ServiceEntityRepository
         ->select('c.id, c.name as title, c.address, c.route_number, c.zip_code, c.city, c.address_complement, c.cellphone, c.home_phone, c.commentary, c.lat, c.lng, statut.color, statut.id as statutId')
         ->andWhere('c.lat is not null')
         ->andWhere('c.lng is not null')
+        ->andWhere('c.global_statut = :g')
+        ->setParameter('g', $global)
         ->getQuery()
         ->getResult();
     }
@@ -84,11 +89,13 @@ class CustomerFilesRepository extends ServiceEntityRepository
         ->getResult();
     }
 
-    public function countNullFileStatut(){
+    public function countNullFileStatut(GlobalStatut $global){
         return $this->createQueryBuilder('c')
         ->leftJoin('c.customer_statut', 'statut')
         ->andWhere('c.address IS NOT NULL')
         ->andWhere('statut.id IS NULL')
+        ->andWhere('c.global_statut = :g')
+        ->setParameter('g', $global)
         ->select('count(c.id) as count')
         ->getQuery()->getResult()[0];
     }

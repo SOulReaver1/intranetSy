@@ -62,7 +62,7 @@
                         {{statut.count}}
                     </td>
                     <td>
-                        <span class="badge" style="background-color: {{statut.color}}">
+                        <span class="badge text-white" style="background-color: {{statut.color}}">
                         {{statut.color}}
                         </span>
                     </td>
@@ -124,7 +124,7 @@
                 "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m",
                 maxZoom: 20
             })
-            await fetch('/maps/addresses', {
+            await fetch('addresses', {
                 method: 'POST'
             }).then(response => response.json())
             .then(res => {

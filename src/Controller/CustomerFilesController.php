@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\CustomerFiles;
+use App\Entity\GlobalStatut;
 use App\Entity\Provider;
 use App\Form\CustomerFilesType;
 use App\Form\UpdateCustomerFileType;
@@ -31,9 +32,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Omines\DataTablesBundle\DataTableFactory;
+use Symfony\Component\Finder\Glob;
 
 /**
- * @Route("/")
+ * @Route("/customers/{global}", requirements={"global":"\d+"})
  */
 class CustomerFilesController extends AbstractController
 {
@@ -42,6 +44,7 @@ class CustomerFilesController extends AbstractController
     private $smsAutoRepository;
     private $sendSms;
     private $clientStatutDocumentRepository;
+    private $globalStatut;
 
     public function __construct(SessionInterface $sessionInterface, SmsAutoRepository $smsAutoRepository, SendSms $sendSms, ClientStatutDocumentRepository $clientStatutDocumentRepository)
     {
@@ -50,16 +53,20 @@ class CustomerFilesController extends AbstractController
         $this->sendSms = $sendSms;
         $this->clientStatutDocumentRepository = $clientStatutDocumentRepository;
     }
+
     /**
-     * @Route("/", name="default", methods={"GET", "POST"})
+     * @Route("/", name="customer_files_index", methods={"GET", "POST"})
      */
-    public function index(Request $request, CustomerFilesStatutRepository $customerFilesStatutRepository, DataTableFactory $dataTableFactory)
+    public function index(Request $request, GlobalStatut $global, CustomerFilesStatutRepository $customerFilesStatutRepository, DataTableFactory $dataTableFactory)
     {        
+        $this->globalStatut = $global;
+
         if($request->isMethod('get')){
             $this->session->remove('statut');
             if($request->query->get('statut')){
                 $this->session->set('statut', $request->query->get('statut'));
             }
+            $this->session->set('global', $this->globalStatut->getId());
         }
 
         $table = $dataTableFactory->create()
@@ -84,8 +91,8 @@ class CustomerFilesController extends AbstractController
                     return $context->getId();
                 }, 
                 'render' => function($value, $context){
-                    $show = sprintf('<a href="%s" class="btn btn-primary">Regarder</a>', $this->generateUrl('customer_files_show', ['id' => $value]));
-                    $edit = sprintf('<a href="%s" class="btn btn-primary">Modifier</a>', $this->generateUrl('customer_files_edit', ['id' => $value]));
+                    $show = sprintf('<a href="%s" class="btn btn-primary">Regarder</a>', $this->generateUrl('customer_files_show', ['global' => $this->globalStatut->getId(), 'id' => $value]));
+                    $edit = sprintf('<a href="%s" class="btn btn-primary">Modifier</a>', $this->generateUrl('customer_files_edit', ['global' => $this->globalStatut->getId(), 'id' => $value]));
                     return $show.$edit;
                 }, 
                 'label' => 'Actions'
@@ -98,34 +105,40 @@ class CustomerFilesController extends AbstractController
                         if($this->session->get('statut')){
                             return $builder
                             ->select('c, customer_statut')
-                            ->where('i = :i')
-                            ->where('customer_statut.id = :statut')
+                            ->andWhere('i = :i')
+                            ->andWhere('customer_statut.id = :statut')
                             ->setParameter("statut", $this->session->get('statut'))
                             ->setParameter('i', $this->getUser())
+                            ->andWhere('c.global_statut = :g')
+                            ->setParameter("g", $this->globalStatut)
                             ->from(CustomerFiles::class, 'c')
                             ->leftJoin('c.installer', 'i')
-                            ->leftJoin('c.customer_statut', 'customer_statut');
+                            ->leftJoin('c.customer_statut', 'customer_statut');                        
                         }
                         return $builder
                         ->select('c, customer_statut')
-                        ->where('i = :i')
+                        ->andWhere('i = :i')
                         ->setParameter('i', $this->getUser())
+                        ->andWhere('c.global_statut = :g')
+                        ->setParameter("g", $this->globalStatut)
                         ->from(CustomerFiles::class, 'c')
                         ->leftJoin('c.installer', 'i')
                         ->leftJoin('c.customer_statut', 'customer_statut');
-
                     }
                     if($this->session->get('statut')){
                         return $builder
                         ->select('e, customer_statut')
-                        ->where('customer_statut.id = :statut')
+                        ->andWhere('e.global_statut = :g')
+                        ->andWhere('customer_statut.id = :statut')
+                        ->setParameter("g", $this->globalStatut)
                         ->setParameter("statut", $this->session->get('statut'))
                         ->from(CustomerFiles::class, 'e')
-                        ->leftJoin('e.customer_statut', 'customer_statut')
-                        ;
+                        ->leftJoin('e.customer_statut', 'customer_statut');
                     }
                     return $builder
                         ->select('e, customer_statut')
+                        ->where('e.global_statut = :g')
+                        ->setParameter("g", $this->globalStatut)
                         ->from(CustomerFiles::class, 'e')
                         ->leftJoin('e.customer_statut', 'customer_statut')
                     ;
@@ -138,7 +151,7 @@ class CustomerFilesController extends AbstractController
         }
 
         return $this->render('customer_files/index.html.twig', [
-            'statuts' => $customerFilesStatutRepository->findAllByOrder(),
+            'statuts' => $customerFilesStatutRepository->findAllByOrder($global),
             'datatable' => $table
         ]);
     }
@@ -195,14 +208,15 @@ class CustomerFilesController extends AbstractController
      * @IsGranted("ROLE_ALLOW_CREATE")
      * @Route("/new", name="customer_files_new", methods={"GET","POST"})
      */
-    public function new(Request $request, ProviderRepository $provider, NotificationService $notificationService, Mailer $mailer): Response
+    public function new(Request $request, GlobalStatut $global,ProviderRepository $provider, NotificationService $notificationService, Mailer $mailer): Response
     {
         $customerFile = new CustomerFiles();
-        $form = $this->createForm(CustomerFilesType::class, $customerFile);
+        $form = $this->createForm(CustomerFilesType::class, $customerFile, array('global' => $global));
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $customerFile->setCreatedBy($this->getUser());
+            $customerFile->setGlobalStatut($global);
             if($customerFile->getInstaller()){
                 // Send notification
                 $notificationService->sendNotification([$customerFile->getInstaller()], 'Une nouvelle fiche vous à été attribuer !', "/".$customerFile->getId());
@@ -214,7 +228,10 @@ class CustomerFilesController extends AbstractController
             $entityManager->persist($customerFile);
             $entityManager->flush();
             $this->addFlash('success', 'La fiche a bien été enregistrée !');
-            return $this->redirectToRoute('customer_files_show', ['id' => $customerFile->getId()]);
+            return $this->redirectToRoute('customer_files_show', [
+                'id' => $customerFile->getId(),
+                'global' => $this->session->get('global')
+            ]);
 
         }
 
@@ -289,15 +306,24 @@ class CustomerFilesController extends AbstractController
     /**
      * @Route("/{id}", name="customer_files_show", methods={"GET"}, requirements={"id":"\d+"})
      */
-    public function show(Request $request, CustomerFiles $customerFile): Response
+    public function show(Request $request, GlobalStatut $global,CustomerFiles $customerFile): Response
     {
-        if(!in_array('ROLE_INSTALLATEUR', $this->getUser()->getRoles()) || $customerFile->getInstaller() === $this->getUser()){
-            return $this->render('customer_files/show.html.twig', [
-                'customer_file' => $customerFile,
+        if($customerFile->getGlobalStatut() === $global){
+            if(!in_array('ROLE_INSTALLATEUR', $this->getUser()->getRoles()) || $customerFile->getInstaller() === $this->getUser()){
+                return $this->render('customer_files/show.html.twig', [
+                    'customer_file' => $customerFile,
+                ]);
+            }
+            $this->addFlash('error', 'Vous n\'avez pas accès à cette fiche ');
+            return $this->redirectToRoute('customer_files_index', [
+                'global' => $this->session->get('global')
             ]);
         }
-        $this->addFlash('error', 'Vous n\'avez pas accès à cette fiche ');
-        return $this->redirectToRoute('default');
+
+        $this->addFlash('error', "La fiche ".$customerFile->getId()." n'a pas le statut global : ".$global->getName());
+        return $this->redirectToRoute('customer_files_index', [
+            'global' => $this->session->get('global')
+        ]);
     }
 
     public function getDocuments($docs){
@@ -312,43 +338,59 @@ class CustomerFilesController extends AbstractController
      * @IsGranted("ROLE_USER")
      * @Route("/{id}/edit", name="customer_files_edit", methods={"GET","POST"})
      */
-    public function edit(Request $request, CustomerFiles $customerFile, ProviderRepository $provider, CustomerFilesRepository $repository): Response
+    public function edit(Request $request, GlobalStatut $global,CustomerFiles $customerFile, ProviderRepository $provider, CustomerFilesRepository $repository): Response
     {
-        $form = $this->createForm(UpdateCustomerFileType::class, $customerFile);
-        $form->handleRequest($request);
-
-        $password = $this->createForm(UpdateCustomerPasswordType::class, $customerFile);
-        $password->handleRequest($request);
-
-        $mail = $this->createForm(UpdateCustomerMailType::class, $customerFile);
-        $mail->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->sendSmsToCustomerFile($customerFile, false);
-            $this->getDoctrine()->getManager()->flush();
-            $this->addFlash('success', 'La fiche a bien été modifiée !');
-            return $this->redirectToRoute('customer_files_show', ['id' => $customerFile->getId()]);
-
-        }else if($password->isSubmitted() && $password->isValid()){
-            $this->getDoctrine()->getManager()->flush();
-
-            $this->addFlash('success', 'Le mot de passe de la fiche a bien été modifié !');
-            return $this->redirectToRoute('customer_files_show', ['id' => $customerFile->getId()]);
-
-        }else if($mail->isSubmitted() && $mail->isValid()){
-            $this->getDoctrine()->getManager()->flush();
-
-            $this->addFlash('success', 'L\'email de la fiche a bien été modifié !');
-            return $this->redirectToRoute('customer_files_show', ['id' => $customerFile->getId()]);
+        if($customerFile->getGlobalStatut() === $global){
+            $form = $this->createForm(UpdateCustomerFileType::class, $customerFile, array('global' => $global));
+            $form->handleRequest($request);
+    
+            $password = $this->createForm(UpdateCustomerPasswordType::class, $customerFile);
+            $password->handleRequest($request);
+    
+            $mail = $this->createForm(UpdateCustomerMailType::class, $customerFile);
+            $mail->handleRequest($request);
+    
+            if ($form->isSubmitted() && $form->isValid()) {
+                $this->sendSmsToCustomerFile($customerFile, false);
+                $this->getDoctrine()->getManager()->flush();
+                $this->addFlash('success', 'La fiche a bien été modifiée !');
+                return $this->redirectToRoute('customer_files_show', [
+                    'id' => $customerFile->getId(),
+                    'global' => $this->session->get('global')
+                ]);
+    
+            }else if($password->isSubmitted() && $password->isValid()){
+                $this->getDoctrine()->getManager()->flush();
+    
+                $this->addFlash('success', 'Le mot de passe de la fiche a bien été modifié !');
+                return $this->redirectToRoute('customer_files_show', [
+                    'id' => $customerFile->getId(),
+                    'global' => $this->session->get('global')
+                ]);
+    
+            }else if($mail->isSubmitted() && $mail->isValid()){
+                $this->getDoctrine()->getManager()->flush();
+    
+                $this->addFlash('success', 'L\'email de la fiche a bien été modifié !');
+                return $this->redirectToRoute('customer_files_show', [
+                    'id' => $customerFile->getId(),
+                    'global' => $this->session->get('global')
+                ]);
+            }
+    
+            return $this->render('customer_files/edit.html.twig', [
+                'customer_file' => $customerFile,
+                'form' => $form->createView(),
+                'mailForm' => $mail->createView(),
+                'pwdForm' => $password->createView(),
+                'providers' => $provider->findAll(),
+                'params' => $repository->getProviderParams($customerFile->getProduct() ? $customerFile->getProduct()->getProvider() : null)
+            ]);
         }
 
-        return $this->render('customer_files/edit.html.twig', [
-            'customer_file' => $customerFile,
-            'form' => $form->createView(),
-            'mailForm' => $mail->createView(),
-            'pwdForm' => $password->createView(),
-            'providers' => $provider->findAll(),
-            'params' => $repository->getProviderParams($customerFile->getProduct() ? $customerFile->getProduct()->getProvider() : null)
+        $this->addFlash('error', "La fiche ".$customerFile->getId()." n'a pas le statut global : ".$global->getName());
+        return $this->redirectToRoute('customer_files_index', [
+            'global' => $this->session->get('global')
         ]);
     }
 
@@ -356,14 +398,22 @@ class CustomerFilesController extends AbstractController
      * @IsGranted("ROLE_USER")
      * @Route("/{id}", name="customer_files_delete", methods={"DELETE"})
      */
-    public function delete(Request $request, CustomerFiles $customerFile): Response
+    public function delete(Request $request, GlobalStatut $global, CustomerFiles $customerFile): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$customerFile->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($customerFile);
-            $entityManager->flush();
+        if($customerFile->getGlobalStatut() === $global){
+            if ($this->isCsrfTokenValid('delete'.$customerFile->getId(), $request->request->get('_token'))) {
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->remove($customerFile);
+                $entityManager->flush();
+            }
+    
+            return $this->redirectToRoute('customer_files_index', [
+                'global' => $this->session->get('global')
+            ]);
         }
-
-        return $this->redirectToRoute('default');
+        $this->addFlash('error', "La fiche ".$customerFile->getId()." n'a pas le statut global : ".$global->getName());
+        return $this->redirectToRoute('customer_files_index', [
+            'global' => $this->session->get('global')
+        ]);
     }
 }

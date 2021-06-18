@@ -6,6 +6,7 @@ use App\Entity\ClientStatut;
 use App\Entity\CustomerFiles;
 use App\Entity\CustomerFilesStatut;
 use App\Entity\CustomerSource;
+use App\Entity\GlobalStatut;
 use App\Entity\ProviderProduct;
 use App\Entity\User;
 use App\Repository\CustomerFilesStatutRepository;
@@ -29,8 +30,13 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class CustomerFilesType extends AbstractType
 {
+    private $global;
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+
+        $this->global = $options['global'];
+
         $builder
             ->add('sexe', ChoiceType::class, 
             [
@@ -219,6 +225,8 @@ class CustomerFilesType extends AbstractType
                 'class' => CustomerFilesStatut::class,
                 'query_builder' => function(CustomerFilesStatutRepository $repository) {
                     return $repository->createQueryBuilder('c')
+                    ->where('c.global_statut = :g')
+                    ->setParameter('g', $this->global)
                     ->orderBy('c.ordered');
                 },
                 'constraints' => [
@@ -313,6 +321,7 @@ class CustomerFilesType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => CustomerFiles::class,
+            'global' => null
         ]);
     }
 }

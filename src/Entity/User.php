@@ -90,6 +90,11 @@ class User implements UserInterface
      */
     private $customerFileMetreur;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=TicketStatut::class, mappedBy="users")
+     */
+    private $ticketStatuts;
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
@@ -100,6 +105,7 @@ class User implements UserInterface
         $this->ticket_inside = new ArrayCollection();
         $this->customerFileCreated = new ArrayCollection();
         $this->customerFileMetreur = new ArrayCollection();
+        $this->ticketStatuts = new ArrayCollection();
     }
 
     public function __toString()
@@ -439,6 +445,33 @@ class User implements UserInterface
             if ($customerFileMetreur->getMetreur() === $this) {
                 $customerFileMetreur->setMetreur(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TicketStatut[]
+     */
+    public function getTicketStatuts(): Collection
+    {
+        return $this->ticketStatuts;
+    }
+
+    public function addTicketStatut(TicketStatut $ticketStatut): self
+    {
+        if (!$this->ticketStatuts->contains($ticketStatut)) {
+            $this->ticketStatuts[] = $ticketStatut;
+            $ticketStatut->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTicketStatut(TicketStatut $ticketStatut): self
+    {
+        if ($this->ticketStatuts->removeElement($ticketStatut)) {
+            $ticketStatut->removeUser($this);
         }
 
         return $this;

@@ -4,8 +4,8 @@
 {% set title = ticket.title %}
 {% block header %}
     <div class="row justify-content-end">        
-        <a href="{{ path('ticket_message_index', {'id': ticket.id}) }}" class="btn btn-primary">Lire les messages</a>
-        <a href="{{ path('ticket_index') }}" class="btn btn-primary">Retour</a>
+        <a href="{{ path('ticket_message_index', {'global': app.session.get('global'), 'id': ticket.id}) }}" class="btn btn-primary">Lire les messages</a>
+        <a href="{{ path('ticket_index', {'global': app.session.get('global')})}}" class="btn btn-primary">Retour</a>
     </div>
 {% endblock %}
 {% block body %}
@@ -50,11 +50,11 @@
     <div class="col mt-4">
         <div class="row">
             {% if is_granted('ROLE_ADMIN') or app.user == ticket.creator %}
-                <a href="{{ path('ticket_edit', {'id': ticket.id}) }}" class="btn btn-primary">Modifier</a>
+                <a href="{{ path('ticket_edit', {'global': app.session.get('global'), 'id': ticket.id}) }}" class="btn btn-primary">Modifier</a>
             {% endif %}
         
             {% if is_granted('ROLE_ADMIN') %}
-                <a href="{{ path('ticket_users', {'id': ticket.id}) }}" class="btn btn-primary">Modifier les participants</a>
+                {# <a href="{{ path('ticket_users', {'global': app.session.get('global'), 'id': ticket.id}) }}" class="btn btn-primary">Modifier les participants</a> #}
 
                 {{ include('ticket/_delete_form.html.twig') }}
             {% endif %}

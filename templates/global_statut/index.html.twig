@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% set title = "Veuillez choisir un statut global" %}
+
+{% block header %}
+    {% if is_granted("ROLE_ADMIN") %}
+        <a href="{{ path('global_statut_new') }}" class="btn btn-primary">Créer un nouveau</a>
+    {% endif %}
+{% endblock %}

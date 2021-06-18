@@ -258,6 +258,11 @@ class CustomerFiles
     private $message;
 
     /**
+     * @ORM\ManyToOne(targetEntity=GlobalStatut::class, inversedBy="customerFiles")
+     */
+    private $global_statut;
+
+    /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
@@ -850,6 +855,18 @@ class CustomerFiles
     public function setMessage(bool $message): self
     {
         $this->message = $message;
+
+        return $this;
+    }
+
+    public function getGlobalStatut(): ?GlobalStatut
+    {
+        return $this->global_statut;
+    }
+
+    public function setGlobalStatut(?GlobalStatut $global_statut): self
+    {
+        $this->global_statut = $global_statut;
 
         return $this;
     }

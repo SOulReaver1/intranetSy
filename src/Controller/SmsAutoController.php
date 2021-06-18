@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Form\UpdateSmsAutoType;
 
 /**
- * @Route("/admin/sms/auto")
+ * @Route("/customers/admin/{global}/sms/auto", requirements={"global":"\d+"})
  */
 class SmsAutoController extends AbstractController
 {

@@ -4,6 +4,6 @@
 
 {% block header %}
     {% if is_granted('ROLE_USER') %}
-        <a href="{{ path('ticket_new') }}" class="btn btn-primary">Créer un ticket</a>
+        <a href="{{ path('ticket_new', {'global': app.session.get('global')}) }}" class="btn btn-primary">Créer un ticket</a>
     {% endif %}
 {% endblock %}

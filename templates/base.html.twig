@@ -31,8 +31,9 @@
                 <div class="main-panel d-flex flex-column" style="min-height:100vh;">
                     {% include 'navbar.html.twig' %}                 
                     {% include "header.html.twig" %}
-                    <div class="container-fluid mt--7">
+                    <div class="container-fluid mt--7" style="z-index: 9999">
                         {{ render(controller('App\\Controller\\AlertController::getLastAlert')) }}  
+                        {{ render(controller('App\\Controller\\GlobalStatutController::displayStatut')) }}  
                         <div class="row">
                             <div class="col order-xl-1">
                                 <div class="card">

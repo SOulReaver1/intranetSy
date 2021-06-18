@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\TicketMessageRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=TicketMessageRepository::class)
@@ -16,6 +17,7 @@ class TicketMessage
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * 
      */
     private $id;
 
@@ -27,11 +29,13 @@ class TicketMessage
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="ticketMessages")
+     * @Groups({"public"})
      */
     private $from_user;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"public"})
      */
     private $content;
 
