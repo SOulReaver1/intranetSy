@@ -132,6 +132,7 @@ class TicketController extends AbstractController
         $form = $this->createForm(TicketType::class, $ticket);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            
             // // Add all admin users
             // if(!empty($this->findByRoles->findByRole('ROLE_ADMIN', null, false))){
             //     $ticket->addUser(...$this->findByRoles->findByRole('ROLE_ADMIN', null, false));
@@ -158,7 +159,7 @@ class TicketController extends AbstractController
         return $this->render('ticket/new.html.twig', [
             'ticket' => $ticket,
             'form' => $form->createView(),
-            'admins' => $ticket->addUser(...$this->findByRoles->findByRole('ROLE_ADMIN', null, false))
+            // 'admins' => $ticket->addUser(...$this->findByRoles->findByRole('ROLE_ADMIN', null, false))
         ]);
     }
 

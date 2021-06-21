@@ -7,6 +7,7 @@ use App\Entity\GlobalStatut;
 use App\Entity\Provider;
 use App\Form\CustomerFilesType;
 use App\Form\UpdateCustomerFileType;
+use App\Form\UpdateCustomerGlobalStatutType;
 use App\Form\UpdateCustomerMailType;
 use App\Form\UpdateCustomerPasswordType;
 use App\Repository\ClientStatutDocumentRepository;
@@ -71,6 +72,10 @@ class CustomerFilesController extends AbstractController
 
         $table = $dataTableFactory->create()
             ->add('id', TextColumn::class, ['label' => '#'])
+            ->add('global_statut', TextColumn::class, [
+                'field' => 'c.global_statut.name',
+                'label' => 'Statut global'
+            ])
             ->add('customer_statut', TextColumn::class, [
                 'field' => 'customer_statut.name', 
                 'label' => 'Statut dossier'
@@ -244,18 +249,6 @@ class CustomerFilesController extends AbstractController
 
     /**
      * @IsGranted("ROLE_USER")
-     * @Route("/getProviderParams/{id}", name="customer_files_get_provider_params", methods={"POST"}, requirements={"id":"\d+"})
-    */
-    public function getProviderParams(Request $request, Provider $provider, CustomerFilesRepository $repository): object {
-        $result = [];
-        foreach ($repository->getProviderParams($provider) as $key => $value) {
-            $result[$value->getId()] = $value->getName();
-        }
-        return new JsonResponse($result);
-    }
-
-    /**
-     * @IsGranted("ROLE_USER")
      * @Route("/{id}/commentary", name="customer_file_change_commentary", methods={"POST"}, requirements={"id":"\d+"})
     */
     public function changeCommentary(Request $request, CustomerFiles $customerFile): object {
@@ -278,28 +271,6 @@ class CustomerFilesController extends AbstractController
     public function getCustomers(Request $request, CustomerFilesRepository $repository): object {
         
         return new JsonResponse($repository->getPhones());
-    }
-
-    /**
-     * @IsGranted("ROLE_USER")
-     * @Route("/getProviderProducts/{id}", name="customer_files_products", methods={"POST"}, requirements={"id":"\d+"})
-    */
-    public function getProductsProvider(Request $request, Provider $provider, ProviderProductRepository $productsRepository) {
-        $params = json_decode($request->getContent(), true)['data'];
-        $products = $provider->getProviderProducts();
-        $productParams = [];
-        $result = [];
-        foreach($products as $product){
-            foreach($product->getParams() as $param){
-                $productParams[$product->getId()][] = $param->getId();
-            }
-            if(isset($productParams[$product->getId()])){
-                if(array_diff($productParams[$product->getId()], $params) === array_diff($params, $productParams[$product->getId()])){
-                    $result[] = ['id' => $product->getId(), "name" => $product->getName()];
-                }
-            }
-        }
-        return new JsonResponse($result);
     }
 
 
@@ -332,6 +303,39 @@ class CustomerFilesController extends AbstractController
             $documents[] = $value['name'];
         }
         return $documents;
+    }
+
+    /**
+     * @IsGranted("ROLE_USER")
+     * @Route("/{id}/edit/global_πstatut", name="customer_files_edit_global_statut", methods={"GET","POST"})
+     */
+    public function editGlobalStatut(Request $request, GlobalStatut $global, CustomerFiles $customerFile)
+    {
+        if($customerFile->getGlobalStatut() === $global)
+        {
+            $form = $this->createForm(UpdateCustomerGlobalStatutType::class, $customerFile);
+            $form->handleRequest($request);
+
+            if($form->isSubmitted() && $form->isValid())
+            {
+                $customerFile->setCustomerStatut(null);
+                $this->getDoctrine()->getManager()->flush();
+                $this->addFlash('success', 'Le statut global de la fiche à bien été modifier !');
+                return $this->redirectToRoute('customer_files_index', [
+                    'global' => $this->session->get('global')
+                ]);
+            }
+
+            return $this->render('customer_files/edit_global_statut.html.twig', [
+                'customer_file' => $customerFile,
+                'form' => $form->createView()
+            ]);
+        }
+
+        $this->addFlash('error', "La fiche ".$customerFile->getId()." n'a pas le statut global : ".$global->getName());
+        return $this->redirectToRoute('customer_files_index', [
+            'global' => $this->session->get('global')
+        ]);
     }
 
     /**

@@ -90,7 +90,11 @@ class TicketMessageController extends AbstractController
             return new Response(json_encode([
                 'status' => 200, 
                 'data' => [
-                    'from_user' => $message->getFromUser()->getUsername(), 'created_at' => $message->getCreatedAt()->format('d-m-Y H:m:i'), 
+                    'from_user' => [
+                        'username' => $message->getFromUser()->getUsername(),
+                        'id' => $message->getFromUser()->getId()
+                    ], 
+                    'created_at' => $message->getCreatedAt()->format('d-m-Y H:m:i'), 
                     'message' => $message->getContent()
                     ]
                 ]), Response::HTTP_OK, [

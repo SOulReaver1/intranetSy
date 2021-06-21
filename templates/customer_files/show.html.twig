@@ -3,11 +3,18 @@
 {% set title = customer_file.name %}
 {% block header %}
     <div class="row justify-content-end">
+        <a class="btn btn-warning" href="{{url('customer_files_edit_global_statut', {'global': app.session.get('global'), 'id': customer_file.id})}}">Modifier le statut global<a>
         <a href="{{ path('files_index', {'id': customer_file.id}) }}" class="btn btn-primary">Les documents</a>
         <a href="/{{app.session.get('statut') ? "?statut=" ~ app.session.get('statut') : ''}}" class="btn btn-primary" id="back">Retour</a>
     </div>
 {% endblock %}
 {% block body %}
+    <div class="row">
+        <div class="col-md-6 form-group">
+            <label class="form-control-label">Statut global :</label>
+            <p class="form-control">{{customer_file.globalStatut ? customer_file.globalStatut.name : '' }}</p>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-6 form-group">
             <label class="form-control-label">Date de création :</label>

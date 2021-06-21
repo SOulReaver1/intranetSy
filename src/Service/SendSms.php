@@ -12,24 +12,24 @@ use Ovh\Api;
 
 class SendSms {
 
-    private $applicationKey;
-    private $applicationSecret;
-    private $consumerKey;
-    private $endpoint;
-    private $sms;
-    private $em;
-    private $services;
+    // private $applicationKey;
+    // private $applicationSecret;
+    // private $consumerKey;
+    // private $endpoint;
+    // private $sms;
+    // private $em;
+    // private $services;
 
-    public function __construct(EntityManagerInterface $manager)
-    {
-        $this->applicationKey = $_ENV["OVH_APPLICATION_KEY"];
-        $this->applicationSecret =  $_ENV["OVH_APPLICATION_SECRET"];
-        $this->consumerKey =  $_ENV["OVH_CUSTOMER_KEY"];
-        $this->endpoint = 'ovh-eu';
-        $this->sms = new Api($this->applicationKey, $this->applicationSecret, $this->endpoint, $this->consumerKey);
-        $this->services = $this->sms->get('/sms');
-        $this->em = $manager;
-    }
+    // public function __construct(EntityManagerInterface $manager)
+    // {
+    //     $this->applicationKey = $_ENV["OVH_APPLICATION_KEY"];
+    //     $this->applicationSecret =  $_ENV["OVH_APPLICATION_SECRET"];
+    //     $this->consumerKey =  $_ENV["OVH_CUSTOMER_KEY"];
+    //     $this->endpoint = 'ovh-eu';
+    //     $this->sms = new Api($this->applicationKey, $this->applicationSecret, $this->endpoint, $this->consumerKey);
+    //     $this->services = $this->sms->get('/sms');
+    //     $this->em = $manager;
+    // }
 
     public function getOutgoings(){
         return $this->sms->get('/sms/'.$this->services[0].'/outgoing');

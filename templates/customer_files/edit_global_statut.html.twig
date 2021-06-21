@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% set title = "Modifier le statut d'une fiche client :" %}
+{% set require = true %}
+{% block header %}
+    <div class="row justify-content-end">
+        <a id="back" href="{{app.session.get('statut') ? "/?statut=" ~ app.session.get('statut') : path('customer_files_show', {'id': customer_file.id, 'global': app.session.get('global')})}}" class="btn btn-primary">Retour</a>
+    </div>
+{% endblock %}
+{% block body %}
+    {{ include('customer_files/_normal_form.html.twig', {'button_label': 'Modifier'}) }}
+{% endblock %}
+{% block javascripts %}
+{% endblock %}
