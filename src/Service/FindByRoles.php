@@ -26,6 +26,8 @@ class FindByRoles {
             if(in_array($role, $rolesH)){
                 return true;
             }
+
+            return false;
         }
         $users = [];
         for ($i=0; $i < count($this->users) ; $i++) {

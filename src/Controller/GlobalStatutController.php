@@ -15,20 +15,23 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Service\FindByRoles;
+use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * @Route("/")
  */
 class GlobalStatutController extends AbstractController
 {
-    /**
-     * @Route("/test", methods={"GET", "POST"})
-     */
-    public function test(){
-        return new Response(json_encode(['hello' => 'ilan']), Response::HTTP_OK, [
-            'Content-Type' => 'application/json'
-        ]);
+
+    private $findByRoles;
+
+    public function __construct(SessionInterface $session, FindByRoles $findByRoles)
+    {
+        $this->findByRoles = $findByRoles;
     }
+
     /**
      * @Route("/", name="default", methods={"GET", "POST"})
      */
@@ -50,7 +53,23 @@ class GlobalStatutController extends AbstractController
             }, 
             'label' => 'Actions'
         ])->createAdapter(ORMAdapter::class, [
-            'entity' => GlobalStatut::class
+            'entity' => GlobalStatut::class,
+            'query' => function(QueryBuilder $builder) {
+                if(!$this->findByRoles->findByRole('ROLE_ADMIN', $this->getUser())){
+                    $user_global_statuts = $this->getUser()->getGlobalStatut();
+                    if(count($user_global_statuts) > 0){
+                        return $builder
+                        ->select('c')
+                        ->where('c IN(:g)')
+                        ->setParameter('g', $user_global_statuts)
+                        ->from(GlobalStatut::class, 'c');
+                    }
+                }
+
+                return $builder
+                ->select('c')
+                ->from(GlobalStatut::class, 'c');
+            }
         ])->handleRequest($request);
 
         if ($table->isCallback()) {
@@ -62,7 +81,7 @@ class GlobalStatutController extends AbstractController
     }
 
     /**
-     * @Route("/global_statut/new", name="global_statut_new", methods={"GET","POST"})
+     * @Route("/admin/global_statut/new", name="global_statut_new", methods={"GET","POST"})
      */
     public function new(Request $request): Response
     {
@@ -115,7 +134,7 @@ class GlobalStatutController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="global_statut_delete", methods={"DELETE"})
+     * @Route("/admin/global_statut/{id}", name="global_statut_delete", methods={"DELETE"})
      */
     public function delete(Request $request, GlobalStatut $globalStatut): Response
     {

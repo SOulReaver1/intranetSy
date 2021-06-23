@@ -155,18 +155,18 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{url("client_statut_document_index")}}">
-                            <i class="far fa-file-image text-warning"></i>
-                            Gérer les documents
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="{{url("customer_source_index")}}">
                             <i class="fas fa-user-tag text-warning"></i>
                             Gérer les sources
                         </a>
                     </li>
                     {% if app.session.get('global')  %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{url("client_statut_document_index", {'global': app.session.get('global')})}}">
+                                <i class="far fa-file-image text-warning"></i>
+                                Gérer les documents
+                            </a>
+                        </li> 
                         <li class="nav-item">
                             <a class="nav-link" href="{{url("customer_files_statut_index", {'global': app.session.get('global') })}}">
                                 <i class="fas fa-folder-open"></i>

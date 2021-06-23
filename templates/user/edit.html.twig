@@ -6,8 +6,8 @@
     <a href="{{ path('user_index') }}" class="btn btn-primary">Retour</a>
 {% endblock %}
 {% block body %}
-
-
     {{ include('user/_form.html.twig', {'button_label': 'Modifier'}) }}
-
+{% endblock %}
+{% block javascripts %}
+    <script>$('#user_edit_global_statut').dropdown();</script>
 {% endblock %}

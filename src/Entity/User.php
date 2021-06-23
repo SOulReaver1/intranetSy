@@ -95,6 +95,11 @@ class User implements UserInterface
      */
     private $ticketStatuts;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=GlobalStatut::class, inversedBy="users")
+     */
+    private $global_statut;
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
@@ -106,6 +111,7 @@ class User implements UserInterface
         $this->customerFileCreated = new ArrayCollection();
         $this->customerFileMetreur = new ArrayCollection();
         $this->ticketStatuts = new ArrayCollection();
+        $this->global_statut = new ArrayCollection();
     }
 
     public function __toString()
@@ -473,6 +479,30 @@ class User implements UserInterface
         if ($this->ticketStatuts->removeElement($ticketStatut)) {
             $ticketStatut->removeUser($this);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|GlobalStatut[]
+     */
+    public function getGlobalStatut(): Collection
+    {
+        return $this->global_statut;
+    }
+
+    public function addGlobalStatut(GlobalStatut $globalStatut): self
+    {
+        if (!$this->global_statut->contains($globalStatut)) {
+            $this->global_statut[] = $globalStatut;
+        }
+
+        return $this;
+    }
+
+    public function removeGlobalStatut(GlobalStatut $globalStatut): self
+    {
+        $this->global_statut->removeElement($globalStatut);
 
         return $this;
     }

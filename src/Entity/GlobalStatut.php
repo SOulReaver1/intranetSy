@@ -51,11 +51,23 @@ class GlobalStatut
      */
     private $ticketStatuts;
 
+    /**
+     * @ORM\OneToMany(targetEntity=ClientStatutDocument::class, mappedBy="global_statut")
+     */
+    private $clientStatutDocuments;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="global_statut")
+     */
+    private $users;
+
     public function __construct()
     {
         $this->customerFiles = new ArrayCollection();
         $this->customerFilesStatuts = new ArrayCollection();
         $this->ticketStatuts = new ArrayCollection();
+        $this->clientStatutDocuments = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function __toString()
@@ -204,6 +216,63 @@ class GlobalStatut
             if ($ticketStatut->getGlobalStatut() === $this) {
                 $ticketStatut->setGlobalStatut(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ClientStatutDocument[]
+     */
+    public function getClientStatutDocuments(): Collection
+    {
+        return $this->clientStatutDocuments;
+    }
+
+    public function addClientStatutDocument(ClientStatutDocument $clientStatutDocument): self
+    {
+        if (!$this->clientStatutDocuments->contains($clientStatutDocument)) {
+            $this->clientStatutDocuments[] = $clientStatutDocument;
+            $clientStatutDocument->setGlobalStatut($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClientStatutDocument(ClientStatutDocument $clientStatutDocument): self
+    {
+        if ($this->clientStatutDocuments->removeElement($clientStatutDocument)) {
+            // set the owning side to null (unless already changed)
+            if ($clientStatutDocument->getGlobalStatut() === $this) {
+                $clientStatutDocument->setGlobalStatut(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->addGlobalStatut($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeGlobalStatut($this);
         }
 
         return $this;

@@ -16,6 +16,7 @@ use App\Repository\CustomerFilesStatutRepository;
 use App\Repository\ProviderProductRepository;
 use App\Repository\ProviderRepository;
 use App\Repository\SmsAutoRepository;
+use App\Service\FindByRoles;
 use App\Service\Mailer;
 use App\Service\NotificationService;
 use App\Service\SendSms;
@@ -46,13 +47,15 @@ class CustomerFilesController extends AbstractController
     private $sendSms;
     private $clientStatutDocumentRepository;
     private $globalStatut;
+    private $findByRoles;
 
-    public function __construct(SessionInterface $sessionInterface, SmsAutoRepository $smsAutoRepository, SendSms $sendSms, ClientStatutDocumentRepository $clientStatutDocumentRepository)
+    public function __construct(FindByRoles $findByRoles,SessionInterface $sessionInterface, SmsAutoRepository $smsAutoRepository, SendSms $sendSms, ClientStatutDocumentRepository $clientStatutDocumentRepository)
     {
         $this->session = $sessionInterface;
         $this->smsAutoRepository = $smsAutoRepository;
         $this->sendSms = $sendSms;
         $this->clientStatutDocumentRepository = $clientStatutDocumentRepository;
+        $this->findByRoles = $findByRoles;
     }
 
     /**
@@ -67,7 +70,22 @@ class CustomerFilesController extends AbstractController
             if($request->query->get('statut')){
                 $this->session->set('statut', $request->query->get('statut'));
             }
-            $this->session->set('global', $this->globalStatut->getId());
+
+            if(!$this->findByRoles->findByRole('ROLE_ADMIN', $this->getUser())){
+                $user_global_statuts = $this->getUser()->getGlobalStatut();
+                if(count($user_global_statuts) > 0){
+                    if(in_array($this->globalStatut, $user_global_statuts->toArray())){
+                        $this->session->set('global', $this->globalStatut->getId());
+                    } else {
+                        $this->addFlash('error', "Vous n'avez pas accès au statut global : ".$this->globalStatut->getName());
+                        return $this->redirectToRoute('default');
+                    }
+                } else {
+                    $this->session->set('global', $this->globalStatut->getId());
+                }
+            } else {
+                $this->session->set('global', $this->globalStatut->getId());
+            }
         }
 
         $table = $dataTableFactory->create()

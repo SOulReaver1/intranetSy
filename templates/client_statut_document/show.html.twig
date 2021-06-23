@@ -2,7 +2,7 @@
 
 {% set title = client_statut_document.name %}
 {% block header %}
-    <a href="{{ path('client_statut_document_index') }}" class="btn btn-primary">Retour</a>
+    <a href="{{ path('client_statut_document_index', {'global': app.session.get('global')}) }}" class="btn btn-primary">Retour</a>
 {% endblock %}
 {% block body %}
     <table class="table">
