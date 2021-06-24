@@ -244,6 +244,7 @@ class CustomerFiles
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="customerFileCreated")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private $created_by;
 
