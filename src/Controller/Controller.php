@@ -15,6 +15,14 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class Controller extends AbstractController
 {
+    /**
+     * @Route("/api/customers", name="api_customers", methods={"POST"})
+    */
+    public function getCustomers(Request $request, CustomerFilesRepository $repository): object {
+        
+        return new JsonResponse($repository->getPhones());
+    }
+
    /**
      * @Route("/getProviderParams/{id}", name="customer_files_get_provider_params", methods={"POST"}, requirements={"id":"\d+"})
     */

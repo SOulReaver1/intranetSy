@@ -36,6 +36,66 @@ class CustomerFilesRepository extends ServiceEntityRepository
         return array_unique($parameters);
     }
 
+    public function getAllReplaceFields(): array {
+        return array_merge($this->getComplementFields(), $this->getStepFields());
+    }
+
+    public function checkStepIsOk(CustomerFiles $customerFiles, array $fields){
+        $result = $this->createQueryBuilder('c')
+            ->andWhere('c = :c')
+            ->setParameter('c', $customerFiles)
+        ;
+        foreach ($fields as $field) {
+            $result->addSelect("c.$field")->andWhere("c.$field IS NOT NULL");
+        }
+
+        return $result
+        ->getQuery()
+        ->getOneOrNullResult();
+    }
+
+    public function getComplementFields(): array {
+        $array = [
+            "sexe" => "Sexe",
+            "name" => "Nom",
+            "global_statut" => "Statut global",
+            "client_statut" => "Statut client",
+            "documents" => "Documents récquis :"
+        ];
+
+        return $array;
+    }
+
+    public function getStepFields(): array {
+        $array = [
+            "address" => "Adresse",
+            "home_phone" => "Téléphone fixe",
+            "cellphone" => "Téléphone portable",
+            "referent_name" => "Nom du référent",
+            "referent_phone" => "Téléphone du référent",
+            "referent_statut" => "Statut du référent",
+            "customer_statut" => "Statut du dossier",
+            "client_statut" => 'Statut du client',
+            "mail_al" => "Mail AL",
+            "password_al" => "Mot de passe AL",
+            "address_complement" => "Complément d'adresse",
+            "installer" => "Installateur",
+            "product" => "Produit",
+            "acompte" => "Acompte",
+            "solde" => "Solde",
+            "invoice_number" => "Numéro de facture",
+            "dossier_number" => "Numéro de dossier",
+            "date_depot" => "Date de dépot",
+            "date_cmd_materiel" => "Date de commande de matériel",
+            "date_install" => "Date d'installation",
+            "date_expertise" => "Date d'éxpertise",
+            "date_footage" => "Date de métrage",
+            "metreur" => "Métreur",
+        ];
+
+        return $array;
+    }
+
     public function getAddresses(GlobalStatut $global, ?User $user = null){
         if($user){
             return $this->createQueryBuilder('c')
@@ -67,6 +127,7 @@ class CustomerFilesRepository extends ServiceEntityRepository
     public function getPhones(){
         return $this->createQueryBuilder('c')
         ->select('c.name as title, c.cellphone')
+        ->where('c.cellphone IS NOT NULL')
         ->getQuery()
         ->getResult();
     }

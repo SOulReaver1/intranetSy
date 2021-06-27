@@ -107,7 +107,7 @@
                             <div class="collapse" id="navbar-sms">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{url("sms_index")}}">
+                                        <a class="nav-link" href="{{url("sms_index", {'global': app.session.get('global')})}}">
                                             Voir l'historique
                                         </a>
                                     </li>

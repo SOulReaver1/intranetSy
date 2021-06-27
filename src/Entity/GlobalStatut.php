@@ -61,6 +61,11 @@ class GlobalStatut
      */
     private $users;
 
+    /**
+     * @ORM\OneToMany(targetEntity=SmsAuto::class, mappedBy="global_statut")
+     */
+    private $smsAutos;
+
     public function __construct()
     {
         $this->customerFiles = new ArrayCollection();
@@ -68,6 +73,7 @@ class GlobalStatut
         $this->ticketStatuts = new ArrayCollection();
         $this->clientStatutDocuments = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->smsAutos = new ArrayCollection();
     }
 
     public function __toString()
@@ -273,6 +279,36 @@ class GlobalStatut
     {
         if ($this->users->removeElement($user)) {
             $user->removeGlobalStatut($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SmsAuto[]
+     */
+    public function getSmsAutos(): Collection
+    {
+        return $this->smsAutos;
+    }
+
+    public function addSmsAuto(SmsAuto $smsAuto): self
+    {
+        if (!$this->smsAutos->contains($smsAuto)) {
+            $this->smsAutos[] = $smsAuto;
+            $smsAuto->setGlobalStatut($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSmsAuto(SmsAuto $smsAuto): self
+    {
+        if ($this->smsAutos->removeElement($smsAuto)) {
+            // set the owning side to null (unless already changed)
+            if ($smsAuto->getGlobalStatut() === $this) {
+                $smsAuto->setGlobalStatut(null);
+            }
         }
 
         return $this;

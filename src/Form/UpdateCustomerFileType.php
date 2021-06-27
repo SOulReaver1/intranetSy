@@ -248,7 +248,7 @@ class UpdateCustomerFileType extends AbstractType
             'row_attr' => ['class' => 'col-md-6'],
             'attr' => ['class' => 'autosize']
         ])
-        ->add('client_statut_id', EntityType::class, [
+        ->add('client_statut', EntityType::class, [
             'required' => true,
             'class' => ClientStatut::class,
             'label' => 'Statut du client : ',

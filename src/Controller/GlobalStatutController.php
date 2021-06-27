@@ -13,7 +13,6 @@ use Omines\DataTablesBundle\DataTableFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service\FindByRoles;
 use Doctrine\ORM\QueryBuilder;
@@ -26,10 +25,12 @@ class GlobalStatutController extends AbstractController
 {
 
     private $findByRoles;
+    private $session;
 
     public function __construct(SessionInterface $session, FindByRoles $findByRoles)
     {
         $this->findByRoles = $findByRoles;
+        $this->session = $session;
     }
 
     /**
@@ -147,11 +148,11 @@ class GlobalStatutController extends AbstractController
         return $this->redirectToRoute('global_statut_index');
     }
 
-    public function displayStatut(Session $session, GlobalStatutRepository $globalStatutRepository){
+    public function displayStatut(GlobalStatutRepository $globalStatutRepository){
         $name = null;
 
-        if($session->get('global')){
-            $name = $globalStatutRepository->find($session->get('global'))->getName();
+        if($this->session->get('global')){
+            $name = $globalStatutRepository->find($this->session->get('global'))->getName();
         }
 
         return $this->render('global_statut/display.html.twig', [

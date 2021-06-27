@@ -22,7 +22,7 @@ class SmsAuto
     private $id;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="text", nullable=false)
      */
     private $content;
 
@@ -37,14 +37,19 @@ class SmsAuto
     private $updated_at;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="json", nullable=false)
      */
-    private $step;
+    private $fields;
 
     /**
-     * @ORM\OneToMany(targetEntity=Sms::class, mappedBy="step")
+     * @ORM\OneToMany(targetEntity=Sms::class, mappedBy="sms_auto")
      */
     private $sms;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=GlobalStatut::class, inversedBy="smsAutos")
+     */
+    private $global_statut;
 
       /**
      * @ORM\PrePersist
@@ -71,12 +76,12 @@ class SmsAuto
         return $this->id;
     }
 
-    public function getContent(): ?string
+    public function getContent(): string
     {
         return $this->content;
     }
 
-    public function setContent(?string $content): self
+    public function setContent(string $content): self
     {
         $this->content = $content;
 
@@ -107,14 +112,23 @@ class SmsAuto
         return $this;
     }
 
-    public function getStep(): ?int
+    public function removeSms(Sms $sms): self
     {
-        return $this->step;
+        if ($this->sms->contains($sms)) {
+            $this->sms->removeElement($sms);
+        }
+
+        return $this;
     }
 
-    public function setStep(int $step): self
+    public function getFields(): array
     {
-        $this->step = $step;
+        return $this->fields;
+    }
+
+    public function setFields(array $fields): self
+    {
+        $this->fields = $fields;
 
         return $this;
     }
@@ -131,22 +145,22 @@ class SmsAuto
     {
         if (!$this->sms->contains($sms)) {
             $this->sms[] = $sms;
-            $sms->setStep($this);
+            $sms->setSmsAuto($this);
         }
 
         return $this;
     }
 
-    public function removeSms(Sms $sms): self
+    public function getGlobalStatut(): ?GlobalStatut
     {
-        if ($this->sms->contains($sms)) {
-            $this->sms->removeElement($sms);
-            // set the owning side to null (unless already changed)
-            if ($sms->getStep() === $this) {
-                $sms->setStep(null);
-            }
-        }
+        return $this->global_statut;
+    }
+
+    public function setGlobalStatut(?GlobalStatut $global_statut): self
+    {
+        $this->global_statut = $global_statut;
 
         return $this;
     }
+
 }

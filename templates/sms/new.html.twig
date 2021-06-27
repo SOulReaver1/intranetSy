@@ -3,7 +3,7 @@
 {% set title = "Envoyer un SMS" %}
 {% set require = true %}
 {% block header %}
-    <a href="{{ path('sms_index') }}" class="btn btn-primary">Retour</a>
+    <a href="{{ path('sms_index', {'global': app.session.get('global')}) }}" class="btn btn-primary">Retour</a>
 {% endblock %}
 {% block body %}
     {{ include('sms/_form.html.twig') }}
