@@ -3,9 +3,41 @@
 {% set title = "Ajouter un sms automatique" %}
 {% set require = true %}
 {% block header %}
-    <a href="{{ path('sms_auto_index') }}" class="btn btn-primary">Retour</a>
+    <a href="{{ path('sms_auto_index', {'global': app.session.get('global')}) }}" class="btn btn-primary">Retour</a>
 {% endblock %}
 {% block body %}
-
     {{ include('sms_auto/_form.html.twig') }}
+{% endblock %}
+{% block javascripts %}
+    <script>
+        const legendFieldList = document.getElementById('legendFieldList'); 
+        {# const programDate = document.getElementById('programDate'); #}
+        $('#sms_auto_fields').dropdown({
+            onAdd: (addedValue, addedText, $addedChoice) => {
+                const li = document.createElement('li');
+                li.id = addedValue;
+                li.innerHTML = `{${addedValue}} : ${addedText}`;
+                return legendFieldList.append(li);
+            },
+            onRemove : (removedValue, removedText, $removedChoice) => {
+                const li = document.getElementById(removedValue);
+                return li.remove();
+            }
+        });
+        document.getElementById('sms_auto_content').addEventListener('change', evt =>  {
+            const lis = document.querySelectorAll('#legendFieldList>li')
+            const value = evt.target.value;
+            lis.forEach(li => {
+                if(value.match(`{${li.id}}`)){
+                    if(!li.classList.contains('text-success')){
+                        li.classList.add('text-success');
+                        li.classList.remove('text-warning');
+                    }
+                }else {
+                    li.classList.add('text-warning');
+                    li.classList.remove('text-success');
+                }
+            });
+        });
+    </script>
 {% endblock %}

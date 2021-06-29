@@ -21,7 +21,7 @@
             </tr>
             <tr>
                 <th>Client :</th>
-                <td><a href="{{path('customer_files_show', {'id': customer_id})}}"> {{ file.customerFiles }}</a></td>
+                <td><a href="{{path('customer_files_show', {'global': app.session.get('global'), 'id': customer_id})}}"> {{ file.customerFiles }}</a></td>
             </tr>
             <tr>
                 <th>Nom du document :</th>

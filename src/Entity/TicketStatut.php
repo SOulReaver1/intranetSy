@@ -29,9 +29,20 @@ class TicketStatut
      */
     private $tickets;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=User::class, inversedBy="ticketStatuts")
+     */
+    private $users;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=GlobalStatut::class, inversedBy="ticketStatuts")
+     */
+    private $global_statut;
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function __toString()
@@ -83,6 +94,42 @@ class TicketStatut
                 $ticket->setStatut(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        $this->users->removeElement($user);
+
+        return $this;
+    }
+
+    public function getGlobalStatut(): ?GlobalStatut
+    {
+        return $this->global_statut;
+    }
+
+    public function setGlobalStatut(?GlobalStatut $global_statut): self
+    {
+        $this->global_statut = $global_statut;
 
         return $this;
     }

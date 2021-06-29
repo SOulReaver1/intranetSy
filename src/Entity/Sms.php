@@ -40,14 +40,15 @@ class Sms
     private $phone_number;
 
     /**
-     * @ORM\ManyToOne(targetEntity=SmsAuto::class, inversedBy="sms")
-     */
-    private $step;
-
-    /**
      * @ORM\Column(type="datetime")
      */
     private $send_at;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=SmsAuto::class, inversedBy="sms")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     */
+    private $sms_auto;
 
     /**
      * @ORM\PrePersist
@@ -117,18 +118,6 @@ class Sms
         return $this;
     }
 
-    public function getStep(): ?SmsAuto
-    {
-        return $this->step;
-    }
-
-    public function setStep(?SmsAuto $step): self
-    {
-        $this->step = $step;
-
-        return $this;
-    }
-
     public function getSendAt(): ?\DateTimeInterface
     {
         return $this->send_at;
@@ -137,6 +126,18 @@ class Sms
     public function setSendAt(\DateTimeInterface $send_at): self
     {
         $this->send_at = $send_at;
+
+        return $this;
+    }
+
+    public function getSmsAuto(): ?SmsAuto
+    {
+        return $this->sms_auto;
+    }
+
+    public function setSmsAuto(?SmsAuto $sms_auto): self
+    {
+        $this->sms_auto = $sms_auto;
 
         return $this;
     }

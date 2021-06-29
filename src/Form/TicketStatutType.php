@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\TicketStatut;
+use App\Entity\User;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -16,6 +18,12 @@ class TicketStatutType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Nom : <span class="text-danger">*</span>',
                 'label_html' => true
+            ])
+            ->add('users', EntityType::class, [
+                'label' => 'Utilisateurs :',
+                'class' => User::class,
+                'multiple' => true,
+                'attr' => ['class' => 'ui fluid dropdown'],
             ])
         ;
     }

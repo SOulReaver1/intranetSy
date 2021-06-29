@@ -130,7 +130,7 @@ class FilesController extends AbstractController
         
         return $this->render('files/new.html.twig', [
             'statuts' => $clientStatutDocumentRepository->findStatut($customer),
-            'client_statut' => $customer->getClientStatutId()->getName(),
+            'client_statut' => $customer->getClientStatut()->getName(),
             'customer_id' => $customer->getId(),
         ]);
     }

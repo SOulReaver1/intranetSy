@@ -1,7 +1,13 @@
 <nav class="navbar navbar-top navbar-expand-md navbar-dark" id="navbar-main">
     <div class="container-fluid">
         <!-- Brand -->
-        <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="{{url('default')}}">Voir les fiches clients</a>
+        <div>
+            {% if app.session.get('global') %}
+                <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="{{url('customer_files_index', {'global': app.session.get('global')})}}">Voir les fiches clients</a>
+            {% else %}
+                <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="{{url('default')}}">Voir les statuts globaux</a>
+            {% endif %}
+        </div>
         <ul class="navbar-nav align-items-center d-none d-md-flex">
             <li class="nav-item"> 
                 <button class="btn btn-secondary nav-link position-relative" data-toggle="modal" data-target="#notificationModal">

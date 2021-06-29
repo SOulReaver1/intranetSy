@@ -2,7 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\GlobalStatut;
 use App\Entity\User;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -23,6 +25,15 @@ class UserEditType extends AbstractType
             'required' => true,
             'label' => 'Role(s) : <span class="text-danger">*</span>',
             'label_html' => true,
+        ])
+        ->add('global_statut', EntityType::class, [
+            'class' => GlobalStatut::class,
+            'label' => 'Restreindre par statut global :',
+            'required' => false,
+            'multiple' => true,
+            'attr' => [
+                'class' => 'ui fluid dropdown multiple'
+            ],
         ])
         ;
     }

@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% set title = "Modifier le statut global" %}
+{% block header %}
+    <div class="row justify-content-end">
+        <a href="{{ path('default') }}" class="btn btn-primary">Retour</a>
+        {{ include('global_statut/_delete_form.html.twig') }}
+    </div>
+{% endblock %}
+{% block body %}
+    {{ include('global_statut/_form.html.twig', {'button_label': 'Modifier'}) }}
+{% endblock %}

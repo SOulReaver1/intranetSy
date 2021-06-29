@@ -1,4 +1,4 @@
-<nav class="navbar navbar-vertical fixed-left navbar-expand-md navbar-light bg-white" id="sidenav-main">
+<nav class="navbar navbar-vertical fixed-left navbar-expand-md navbar-light bg-white" id="sidenav-main" style="z-index: 999999">
     <div class="container-fluid">
         <!-- Toggler -->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#sidenav-collapse-main" aria-controls="sidenav-main" aria-expanded="false" aria-label="Toggle navigation">
@@ -97,27 +97,29 @@
                             Gérer les utilisateurs
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#navbar-sms" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-sms">
-                            <i class="fas fa-sms text-primary"></i>
-                            <span class="nav-link-text">Gérer les sms</span>
-                        </a>
+                    {% if app.session.get('global') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#navbar-sms" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-sms">
+                                <i class="fas fa-sms text-primary"></i>
+                                <span class="nav-link-text">Gérer les sms</span>
+                            </a>
 
-                        <div class="collapse" id="navbar-sms">
-                            <ul class="nav nav-sm flex-column">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{url("sms_index")}}">
-                                        Voir l'historique
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{url("sms_auto_index")}}">
-                                        Gérer les sms automatiques
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
+                            <div class="collapse" id="navbar-sms">
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{url("sms_index", {'global': app.session.get('global')})}}">
+                                            Voir l'historique
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{url('sms_auto_index', {'global': app.session.get('global') })}}">
+                                            Gérer les sms automatiques
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    {% endif %}
                 {% endif %}
                 {% if is_granted('ROLE_ADMIN') %}
                     <li class="nav-item">
@@ -147,76 +149,85 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                            <a class="nav-link" href="{{url("customer_source_index")}}">
-                                <i class="fas fa-user-tag text-warning"></i>
-                                Gérer les sources
-                            </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{url("customer_files_statut_index")}}">
-                            <i class="fas fa-folder-open"></i>
-                            Gérer les statuts dossier
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="{{url("client_statut_index")}}">
                             <i class="fas fa-house-user text-success"></i>
                             Gérer les statuts client
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{url("client_statut_document_index")}}">
-                            <i class="far fa-file-image text-warning"></i>
-                            Gérer les documents
+                        <a class="nav-link" href="{{url("customer_source_index")}}">
+                            <i class="fas fa-user-tag text-warning"></i>
+                            Gérer les sources
                         </a>
                     </li>
+                    {% if app.session.get('global')  %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{url("client_statut_document_index", {'global': app.session.get('global')})}}">
+                                <i class="far fa-file-image text-warning"></i>
+                                Gérer les documents
+                            </a>
+                        </li> 
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{url("customer_files_statut_index", {'global': app.session.get('global') })}}">
+                                <i class="fas fa-folder-open"></i>
+                                Gérer les statuts dossier
+                            </a>
+                        </li>
+                    {% endif %}
                 {% endif %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{{url("google_maps")}}">
-                        <i class="fas fa-map-marked-alt text-info"></i>
-                        Voir la carte
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#navbar-ticket" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-fais">
-                        <i class="fas fa-ticket-alt"></i>
-                        <span class="nav-link-text">Les tickets</span>
-                    </a>
-
-                    <div class="collapse" id="navbar-ticket">
-                        <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{url("ticket_index")}}">
-                                    Voir les tickets
-                                </a>
-                            </li>
-                            {% if is_granted('ROLE_USER') %}
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{url("ticket_new")}}">
-                                        Créer un ticket
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{url("ticket_statut_index")}}">
-                                        Gérer les statuts
-                                    </a>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </div>
-                </li>
-                {% if is_granted('ROLE_ALLOW_CREATE') %}
+                {% if app.session.get('global')  %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{url('customer_files_new')}}">
-                            <i class="fas fa-plus text-primary"></i>
-                            Créer une fiche client
+                        <a class="nav-link" href="{{url("google_maps", {'global': app.session.get('global') })}}">
+                            <i class="fas fa-map-marked-alt text-info"></i>
+                            Voir la carte
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#navbar-ticket" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-fais">
+                            <i class="fas fa-ticket-alt"></i>
+                            <span class="nav-link-text">Les tickets</span>
+                        </a>
+                        <div class="collapse" id="navbar-ticket">
+                            <ul class="nav nav-sm flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{url("ticket_index", {'global': app.session.get('global') })}}">
+                                        Voir les tickets
+                                    </a>
+                                </li>
+                                {% if is_granted('ROLE_USER') %}
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{url("ticket_new", {'global': app.session.get('global') })}}">
+                                            Créer un ticket
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{url("ticket_statut_index", {'global': app.session.get('global') })}}">
+                                            Gérer les statuts
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </li>
+                    {% if is_granted('ROLE_ALLOW_CREATE') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{url('customer_files_new', {'global': app.session.get('global') })}}">
+                                <i class="fas fa-plus text-primary"></i>
+                                Créer une fiche client
+                            </a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{url('customer_files_index', {'global': app.session.get('global') })}}">
+                            <i class="ni ni-archive-2 text-info"></i>
+                            Voir les fiches clients
                         </a>
                     </li>
                 {% endif %}
-                <li class="nav-item active">
+                 <li class="nav-item active">
                     <a class="nav-link" href="{{url('default')}}">
                         <i class="ni ni-archive-2 text-info"></i>
-                        Voir les fiches clients
+                        Voir les statuts globaux
                     </a>
                 </li>
                 <li class="nav-item active">

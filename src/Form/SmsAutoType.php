@@ -4,24 +4,37 @@ namespace App\Form;
 
 use App\Entity\SmsAuto;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use App\Repository\CustomerFilesRepository;
+use Symfony\Component\Form\Extension\Core\Type\DateIntervalType;
 
 class SmsAutoType extends AbstractType
 {
+    private $stepFields;
+
+    public function __construct(CustomerFilesRepository $customerFilesRepository)
+    {
+        $this->stepFields = $customerFilesRepository->getStepFields();
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('step', IntegerType::class, [
-                'label' => 'Etape : <span class="text-danger">*</span>',
+            ->add('content', TextareaType::class, [
+                'label' => 'Message : <span class="text-danger">*</span>',
                 'label_html' => true,
                 'required' => true
             ])
-            ->add('content', TextareaType::class, [
-                'label' => 'Message :',
-                'required' => false
+            ->add('fields', ChoiceType::class, [
+                'label' => 'Champs à remplir : <span class="text-danger">*</span>',
+                'label_html' => true,
+                'choices' => array_flip($this->stepFields),
+                'multiple' => true,
+                'required' => true,
+                'attr' => ['class' => 'ui fluid dropdown search'],
             ])
         ;
     }
@@ -29,7 +42,7 @@ class SmsAutoType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => SmsAuto::class,
+            'data_class' => SmsAuto::class
         ]);
     }
 }

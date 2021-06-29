@@ -1,4 +1,4 @@
-{{ form_start(form) }}
+{{ form_start(form, {'attr': {'id': 'ticket_message_form', 'data-api': node_api, 'data-token': app.request.cookies.get('PHPSESSID'), 'data-_hjid': app.request.cookies.get('_hjid')}}) }}
     {{ form_widget(form) }}
     <button class="btn btn-success">{{ button_label|default('Envoyer') }}</button>
 {{ form_end(form) }}

@@ -90,6 +90,16 @@ class User implements UserInterface
      */
     private $customerFileMetreur;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=TicketStatut::class, mappedBy="users")
+     */
+    private $ticketStatuts;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=GlobalStatut::class, inversedBy="users")
+     */
+    private $global_statut;
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
@@ -100,6 +110,8 @@ class User implements UserInterface
         $this->ticket_inside = new ArrayCollection();
         $this->customerFileCreated = new ArrayCollection();
         $this->customerFileMetreur = new ArrayCollection();
+        $this->ticketStatuts = new ArrayCollection();
+        $this->global_statut = new ArrayCollection();
     }
 
     public function __toString()
@@ -440,6 +452,57 @@ class User implements UserInterface
                 $customerFileMetreur->setMetreur(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TicketStatut[]
+     */
+    public function getTicketStatuts(): Collection
+    {
+        return $this->ticketStatuts;
+    }
+
+    public function addTicketStatut(TicketStatut $ticketStatut): self
+    {
+        if (!$this->ticketStatuts->contains($ticketStatut)) {
+            $this->ticketStatuts[] = $ticketStatut;
+            $ticketStatut->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTicketStatut(TicketStatut $ticketStatut): self
+    {
+        if ($this->ticketStatuts->removeElement($ticketStatut)) {
+            $ticketStatut->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|GlobalStatut[]
+     */
+    public function getGlobalStatut(): Collection
+    {
+        return $this->global_statut;
+    }
+
+    public function addGlobalStatut(GlobalStatut $globalStatut): self
+    {
+        if (!$this->global_statut->contains($globalStatut)) {
+            $this->global_statut[] = $globalStatut;
+        }
+
+        return $this;
+    }
+
+    public function removeGlobalStatut(GlobalStatut $globalStatut): self
+    {
+        $this->global_statut->removeElement($globalStatut);
 
         return $this;
     }

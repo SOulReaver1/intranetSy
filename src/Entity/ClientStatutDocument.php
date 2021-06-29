@@ -13,7 +13,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Entity(repositoryClass=ClientStatutDocumentRepository::class)
  * @ORM\HasLifecycleCallbacks()
- * @UniqueEntity(fields="name", message="Le nom du document existe déjà !")
+ * @UniqueEntity(fields={"name", "global_statut"}, message="Le nom du document existe déjà !")
  */
 class ClientStatutDocument
 {
@@ -25,7 +25,7 @@ class ClientStatutDocument
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255)
      */
     private $name;
 
@@ -53,6 +53,11 @@ class ClientStatutDocument
      * @ORM\Column(type="boolean")
      */
     private $required = 0;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=GlobalStatut::class, inversedBy="clientStatutDocuments")
+     */
+    private $global_statut;
 
     public function __construct()
     {
@@ -187,6 +192,18 @@ class ClientStatutDocument
     public function setRequired(bool $required): self
     {
         $this->required = $required;
+
+        return $this;
+    }
+
+    public function getGlobalStatut(): ?GlobalStatut
+    {
+        return $this->global_statut;
+    }
+
+    public function setGlobalStatut(?GlobalStatut $global_statut): self
+    {
+        $this->global_statut = $global_statut;
 
         return $this;
     }

@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 {% set title = "Les SMS" %}
 {% block header %}
-    <a href="{{ path('sms_auto_index') }}" class="btn btn-primary">Les SMS automatique</a>
-    <a href="{{ path('sms_new') }}" class="btn btn-primary">Envoyer un SMS</a>
+    <a href="{{ path('sms_auto_index', {'global': app.session.get('global')}) }}" class="btn btn-primary">Les SMS automatique</a>
+    <a href="{{ path('sms_new', {'global': app.session.get('global')}) }}" class="btn btn-primary">Envoyer un SMS</a>
 {% endblock %}

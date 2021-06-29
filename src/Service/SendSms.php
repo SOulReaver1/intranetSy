@@ -7,7 +7,6 @@ use App\Entity\SmsAuto;
 use DateInterval;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ObjectManager;
 use Ovh\Api;
 
 class SendSms {
@@ -71,7 +70,7 @@ class SendSms {
         return $this->sms->delete('/sms/'.$this->services[0].'/jobs/'.$id);
     }
 
-    public function send(string $message, array $phoneNumber, SmsAuto $step, Datetime $metrage = null, int $interval = null){ 
+    public function send(string $message, array $phoneNumber, SmsAuto $smsAuto, Datetime $metrage = null, int $interval = null){ 
         $now = new DateTime('now');
         if($metrage && $interval){
             $dateInterval = new DateInterval("PT$interval"."M");
@@ -94,9 +93,9 @@ class SendSms {
         );
         foreach ($phoneNumber as $value) {
             $sms = new Sms();
+            $sms->setSmsAuto($smsAuto);
             $sms->setContent($message);
             $sms->setPhoneNumber($value);
-            $sms->setStep($step);
             $sms->setSendAt(isset($intervalInMinutes) ? $metrage->sub($dateInterval) : $now);
             $this->em->persist($sms);
             $this->em->flush();

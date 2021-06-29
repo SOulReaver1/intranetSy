@@ -1,19 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ticket{% endblock %}
 {% set title = ticket.title %}
 {% block header %}
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#participantsModal">
         Les participants
     </button>
-    <a href="{{ path('ticket_show', {id: ticket.id}) }}" class="btn btn-primary">Retour</a>
+    <a href="{{ path('ticket_show', {'global': app.session.get('global'), 'id': ticket.id}) }}" class="btn btn-primary">Retour</a>
     <div class="row justify-content-start">
 {% endblock %}
 {% block body %}
     <div class="row px-lg-2 px-2">
         <div class="col pl-md-3 px-lg-auto px-0">
             <div class="chat-message">
-                <ul class="list-unstyled chat" id="listChat" data-username="{{app.user.username}}" data-mercure="{{mercure_url}}">
+                <ul class="list-unstyled chat" style="max-height: 400px; overflow: scroll;" id="listChat" data-user="{{app.user.id}}">
                     {% for message in messages %}
                         <li class="d-flex mb-4 {{message.fromUser == app.user ? 'justify-content-end text-right' : 'justify-content-start text-left'}}">
                             <div class="col-md-6 chat-body white p-3 ml-2 z-depth-1">
@@ -36,4 +35,7 @@
         </div>  
     </div>
     {{ include('ticket/participants.html.twig', {'method': 'read'}) }}
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('ticket_message') }}
 {% endblock %}

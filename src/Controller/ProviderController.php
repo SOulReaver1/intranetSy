@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Provider;
 use App\Form\ProviderType;
+use App\Repository\CustomerFilesRepository;
 use App\Repository\ProviderRepository;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
@@ -11,6 +12,7 @@ use Omines\DataTablesBundle\Column\NumberColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\DataTableFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -51,6 +53,7 @@ class ProviderController extends AbstractController
             'datatable' => $table
         ]);
     }
+
 
     /**
      * @Route("/new", name="provider_new", methods={"GET","POST"})

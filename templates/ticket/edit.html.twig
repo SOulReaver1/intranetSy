@@ -3,7 +3,7 @@
 {% set title = "Modifier le ticket" %}
 {% block header %}
     <div class="row justify-content-end">
-        <a href="{{ path('ticket_index') }}" class="btn btn-primary">Retour</a>
+        <a href="{{ path('ticket_index', {'global': app.session.get('global')})}}" class="btn btn-primary">Retour</a>
 
         {{ include('ticket/_delete_form.html.twig') }}
     </div>

@@ -90,7 +90,7 @@ class CustomerFiles
      * @ORM\ManyToOne(targetEntity=ClientStatut::class, inversedBy="customerFiles")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $client_statut_id;
+    private $client_statut;
 
     /**
      * @ORM\Column(type="boolean", nullable=true, options={"default" : 0})
@@ -128,7 +128,7 @@ class CustomerFiles
      * @ORM\OneToMany(targetEntity=Files::class, mappedBy="customerFiles")
      * @ORM\JoinColumn(nullable=true)
      */
-    private $files_id;
+    private $files;
 
     /**
      * @ORM\ManyToOne(targetEntity=CustomerSource::class, inversedBy="customerFiles")
@@ -261,6 +261,16 @@ class CustomerFiles
     private $message;
 
     /**
+     * @ORM\ManyToOne(targetEntity=GlobalStatut::class, inversedBy="customerFiles")
+     */
+    private $global_statut;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Sms::class, mappedBy="customer_file")
+     */
+    private $sms;
+
+    /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
@@ -277,7 +287,7 @@ class CustomerFiles
 
     public function __construct()
     {
-        $this->files_id = new ArrayCollection();
+        $this->files = new ArrayCollection();
         $this->tickets = new ArrayCollection();
     }
 
@@ -423,14 +433,14 @@ class CustomerFiles
         return $this;
     }
 
-    public function getClientStatutId(): ?ClientStatut
+    public function getClientStatut(): ?ClientStatut
     {
-        return $this->client_statut_id;
+        return $this->client_statut;
     }
 
-    public function setClientStatutId(?ClientStatut $client_statut_id): self
+    public function setClientStatut(?ClientStatut $client_statut): self
     {
-        $this->client_statut_id = $client_statut_id;
+        $this->client_statut = $client_statut;
 
         return $this;
     }
@@ -512,13 +522,13 @@ class CustomerFiles
      */
     public function getFilesId(): Collection
     {
-        return $this->files_id;
+        return $this->files;
     }
 
     public function addFilesId(Files $filesId): self
     {
-        if (!$this->files_id->contains($filesId)) {
-            $this->files_id[] = $filesId;
+        if (!$this->files->contains($filesId)) {
+            $this->files[] = $filesId;
             $filesId->setCustomerFiles($this);
         }
 
@@ -527,8 +537,8 @@ class CustomerFiles
 
     public function removeFilesId(Files $filesId): self
     {
-        if ($this->files_id->contains($filesId)) {
-            $this->files_id->removeElement($filesId);
+        if ($this->files->contains($filesId)) {
+            $this->files->removeElement($filesId);
             // set the owning side to null (unless already changed)
             if ($filesId->getCustomerFiles() === $this) {
                 $filesId->setCustomerFiles(null);
@@ -856,4 +866,17 @@ class CustomerFiles
 
         return $this;
     }
+
+    public function getGlobalStatut(): ?GlobalStatut
+    {
+        return $this->global_statut;
+    }
+
+    public function setGlobalStatut(?GlobalStatut $global_statut): self
+    {
+        $this->global_statut = $global_statut;
+
+        return $this;
+    }
+
 }

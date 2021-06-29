@@ -2,5 +2,5 @@
 
 {% set title = "Gérer les statuts de ticket" %}
 {% block header %}
-    <a href="{{ path('ticket_statut_new') }}" class="btn btn-primary">Créer un statut</a>
+    <a href="{{ path('ticket_statut_new', {'global': app.session.get('global') }) }}" class="btn btn-primary">Créer un statut</a>
 {% endblock %}

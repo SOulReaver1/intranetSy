@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\GlobalStatut;
 use App\Entity\Sms;
 use App\Entity\SmsAuto;
 use App\Form\SmsType;
@@ -19,32 +20,33 @@ use Omines\DataTablesBundle\DataTableFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/admin/sms")
+ * @Route("/customers/admin/{global}/sms", requirements={"global":"\d+"})
  */
 class SmsController extends AbstractController
 {
 
     private $sms;
+    private $session;
+    private $global;
 
-    public function __construct(SendSms $sendSms)
+    public function __construct(SendSms $sendSms, SessionInterface $session)
     {
+        $this->session = $session;
         $this->sms = $sendSms;
     }
 
     /**
      * @Route("/", name="sms_index", methods={"GET", "POST"})
      */
-    public function index(Request $request, DataTableFactory $dataTableFactory): Response
+    public function index(Request $request, GlobalStatut $global,DataTableFactory $dataTableFactory): Response
     {
+        $this->global = $global;
         $table = $dataTableFactory->create()
         ->add('id', NumberColumn::class, ['label' => '#'])
-        ->add('step', TextColumn::class, [
-            'label' => 'Etape',
-            'field' => 'sms_auto.step'
-        ])
         ->add('phone_number', TextColumn::class, ['label' => 'Numéro de téléphone'])
         ->add('content', TextColumn::class, ['label' => 'Message'])
         ->add('send', TextColumn::class, [
@@ -65,7 +67,7 @@ class SmsController extends AbstractController
                 return $context->getId();
             }, 
             'render' => function($value, $context){
-                $show = sprintf('<a href="%s" class="btn btn-primary">Regarder</a>', $this->generateUrl('sms_show', ['id' => $value]));
+                $show = sprintf('<a href="%s" class="btn btn-primary">Regarder</a>', $this->generateUrl('sms_show', ['id' => $value, 'global' => $this->session->get('global')]));
                 return $show;
             }, 
             'label' => 'Actions'
@@ -76,8 +78,10 @@ class SmsController extends AbstractController
             'query' => function(QueryBuilder $builder){
                 return $builder
                 ->select('s, sms_auto')
+                ->where('sms_auto.global_statut = :g')
+                ->setParameter('g', $this->global)
                 ->from(Sms::class, 's')
-                ->leftJoin('s.step', 'sms_auto');
+                ->leftJoin('s.sms_auto', 'sms_auto');
             }
         ])
         ->handleRequest($request);

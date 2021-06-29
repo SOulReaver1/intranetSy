@@ -2,5 +2,5 @@
 
 {% set title = "Gérer les documents" %}
 {% block header %}
-    <a href="{{ path('client_statut_document_new') }}" class="btn btn-primary">Ajouter un document</a>
+    <a href="{{ path('client_statut_document_new', {'global': app.session.get('global')}) }}" class="btn btn-primary">Ajouter un document</a>
 {% endblock %}

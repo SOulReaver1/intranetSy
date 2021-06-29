@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% set title = "Nouveau statut global" %}
+{% block header %}
+    <a href="{{ path('default') }}" class="btn btn-primary">Retour</a>
+{% endblock %}
+{% block body %}
+    {{ include('global_statut/_form.html.twig') }}
+{% endblock %}
