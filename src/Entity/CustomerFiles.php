@@ -183,6 +183,7 @@ class CustomerFiles
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="customerFiles")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private $installer;
 
@@ -244,11 +245,13 @@ class CustomerFiles
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="customerFileCreated")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private $created_by;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="customerFileMetreur")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private $metreur;
 
