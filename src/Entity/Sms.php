@@ -46,6 +46,7 @@ class Sms
 
     /**
      * @ORM\ManyToOne(targetEntity=SmsAuto::class, inversedBy="sms")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private $sms_auto;
 

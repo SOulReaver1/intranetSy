@@ -181,54 +181,6 @@ class CustomerFilesController extends AbstractController
         ]);
     }
 
-    // public function sendSmsToCustomerFile(CustomerFiles $customerFile, bool $new){
-    //     if($customerFile->getCellphone() && $customerFile->getMessage()){
-    //         if($new) $this->sendStep1($customerFile);
-    //         if($customerFile->getDateFootage() && new DateTime('now') < $customerFile->getDateFootage() && $customerFile->getMessageSend() === false){
-    //             $this->sendLastSteps($customerFile);
-    //         }
-    //     }
-    // }
-
-    // private function sendStep1(CustomerFiles $customerFile){
-    //     $step1 = $this->smsAutoRepository->findOneBy(['step' => 1]);
-    //     $pattern = ['/{documents}/', '/{name}/'];
-    //     $documents = [];
-    //     foreach($this->clientStatutDocumentRepository->findDocumentsByRequired($customerFile->getClientStatutId(), true) as $value){
-    //         $documents[] = $value['name'];
-    //     }
-    //     $remplacement = [implode(', ', $documents), $customerFile->getName()];
-    //     $step1Content = preg_replace($pattern, $remplacement, $step1->getContent());
-    //     $this->sendSms->send($step1Content, [$customerFile->getCellphone()], $step1);
-    // }
-
-    // private function sendLastSteps(CustomerFiles $customerFile){
-    //     // Get informations
-    //     $pattern = ['/{documents}/', '/{name}/', '/{dateMetrage}/'];
-    //     $documents = [];
-    //     foreach($this->clientStatutDocumentRepository->findDocumentsByRequired($customerFile->getClientStatutId(), true) as $value){
-    //         $documents[] = $value['name'];
-    //     }
-    //     $dateToString = $customerFile->getDateFootage()->format('d/m/Y H:i:s');
-    //     $remplacement = [implode(', ', $documents), $customerFile->getName(), $dateToString];
-    //     // -------------------------------------------
-    //     // Send step 2
-    //     $step2 = $this->smsAutoRepository->findOneBy(['step' => 2]);
-    //     $step2Content = preg_replace($pattern, $remplacement, $step2->getContent());
-    //     $this->sendSms->send($step2Content, [$customerFile->getCellphone()], $step2);
-    //     // ------------------------
-    //     // Program step 3, one day before footage
-    //     $step3 = $this->smsAutoRepository->findOneBy(['step' => 3]);
-    //     $step3Content = preg_replace($pattern, $remplacement, $step3->getContent());
-    //     $this->sendSms->send($step3Content, [$customerFile->getCellphone()], $step3, $customerFile->getDateFootage(), 1440);
-    //     // -------------------
-    //     // Program step 4, one hour before footage
-    //     $step4 = $this->smsAutoRepository->findOneBy(['step' => 4]);
-    //     $step4Content = preg_replace($pattern, $remplacement, $step4->getContent());
-    //     $this->sendSms->send($step4Content, [$customerFile->getCellphone()], $step4,  $customerFile->getDateFootage(), 60);
-    //     $customerFile->setMessageSend(true);
-    // }
-
     /**
      * @IsGranted("ROLE_ALLOW_CREATE")
      * @Route("/new", name="customer_files_new", methods={"GET","POST"})

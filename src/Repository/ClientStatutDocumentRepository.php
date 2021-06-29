@@ -23,8 +23,10 @@ class ClientStatutDocumentRepository extends ServiceEntityRepository
     public function findStatut($customer){
         return $this->createQueryBuilder('u')
         ->leftJoin('u.client_statut', 'client') 
-        ->where('client.id = :id')
-        ->setParameter('id', $customer->getClientStatutId())
+        ->andWhere('client.id = :id')
+        ->andWhere('u.global_statut = :g')
+        ->setParameter('id', $customer->getClientStatut())
+        ->setParameter('g', $customer->getGlobalStatut())
         ->getQuery()->getResult();
     }
 
