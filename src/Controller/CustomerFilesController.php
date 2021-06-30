@@ -93,7 +93,9 @@ class CustomerFilesController extends AbstractController
         $table = $dataTableFactory->create()
             ->add('id', TextColumn::class, ['label' => '#'])
             ->add('global_statut', TextColumn::class, [
-                'field' => 'c.global_statut.name',
+                'data' => function($context) {
+                    return $context->getGlobalStatut();
+                }, 
                 'label' => 'Statut global'
             ])
             ->add('customer_statut', TextColumn::class, [
@@ -152,20 +154,20 @@ class CustomerFilesController extends AbstractController
                     }
                     if($this->session->get('statut')){
                         return $builder
-                        ->select('e, customer_statut')
-                        ->andWhere('e.global_statut = :g')
+                        ->select('c, customer_statut')
+                        ->andWhere('c.global_statut = :g')
                         ->andWhere('customer_statut.id = :statut')
                         ->setParameter("g", $this->globalStatut)
                         ->setParameter("statut", $this->session->get('statut'))
-                        ->from(CustomerFiles::class, 'e')
-                        ->leftJoin('e.customer_statut', 'customer_statut');
+                        ->from(CustomerFiles::class, 'c')
+                        ->leftJoin('c.customer_statut', 'customer_statut');
                     }
                     return $builder
-                        ->select('e, customer_statut')
-                        ->where('e.global_statut = :g')
+                        ->select('c, customer_statut')
+                        ->where('c.global_statut = :g')
                         ->setParameter("g", $this->globalStatut)
-                        ->from(CustomerFiles::class, 'e')
-                        ->leftJoin('e.customer_statut', 'customer_statut')
+                        ->from(CustomerFiles::class, 'c')
+                        ->leftJoin('c.customer_statut', 'customer_statut')
                     ;
                 },
             ])
