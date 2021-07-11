@@ -9,14 +9,16 @@
             {% endif %}
         </div>
         <ul class="navbar-nav align-items-center d-none d-md-flex">
-            <li class="nav-item"> 
-                <button class="btn btn-secondary nav-link position-relative" data-toggle="modal" data-target="#notificationModal">
-                {% if app.user.getNotifications|length > 0 %}
-                 <span class="position-absolute d-flex justify-content-center align-items-center text-center rounded-circle bg-danger text-white" style="width: 25px; height:25px;right:-10px; top:-10px">{{app.user.getNotifications|length}}</span>
-                {% endif %}
-                    <span class="nav-link-icon d-block text-primary"><i class="ni ni-bell-55"></i></span>
-                </button>
-            </li>
+            {% if app.session.get('global') %}
+                <li class="nav-item"> 
+                    <button class="btn btn-secondary nav-link position-relative" data-toggle="modal" data-target="#notificationModal">
+                    {% if app.user.getNotifications|length > 0 %}
+                    <span class="position-absolute d-flex justify-content-center align-items-center text-center rounded-circle bg-danger text-white" style="width: 25px; height:25px;right:-10px; top:-10px">{{app.user.getNotifications|length}}</span>
+                    {% endif %}
+                        <span class="nav-link-icon d-block text-primary"><i class="ni ni-bell-55"></i></span>
+                    </button>
+                </li>
+            {% endif %}
             <li class="nav-item dropdown">
                 <a class="nav-link pr-0" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <div class="media align-items-center">
