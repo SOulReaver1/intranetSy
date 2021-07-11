@@ -147,7 +147,7 @@ class TicketController extends AbstractController
             $entityManager->persist($ticket);
             $entityManager->flush();
             // Send notification
-            $notificationService->sendNotification($ticket->getUsers()->toArray(), "Un nouveau ticket à été ouvert !", "/ticket/".$ticket->getId());
+            $notificationService->sendNotification($ticket->getUsers()->toArray(), "Un nouveau ticket à été ouvert !", "/customers/".$ticket->getStatut()->getGlobalStatut()->getId()."/tickets/".$ticket->getId());
             // Send mail
             $mailer->sendMail($ticket->getUsers()->toArray(), 'Nouveau ticket Lergon\'Home', 'ticket/_email.html.twig', ['ticket' => $ticket]);
             $this->addFlash('success', 'Le ticket à bien été créer !');  

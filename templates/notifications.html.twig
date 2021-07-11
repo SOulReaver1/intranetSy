@@ -1,4 +1,4 @@
-<div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="notificationModalTitle" aria-hidden="true">
+<div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="notificationModalTitle" aria-hidden="true" style="z-index: 999999">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
         <div class="modal-header">
@@ -10,7 +10,12 @@
         <div class="modal-body">
             <div class="list-group">
             {% for notif in app.user.getNotifications|reverse %}
-                <div class="list-group-item list-group-item-action flex-column align-items-start mb-2" onClick="myFunction({{notif.id}}, '{{notif.url}}')" style="cursor:pointer;">
+                {% if '/customers' in notif.url  %}
+                    {% set url = notif.url %}
+                {% else %}
+                    {% set url = "/customers/" ~ app.session.get('global') ~ notif.url|replace({'ticket': 'tickets'}) %}
+                {% endif %}
+                <div class="list-group-item list-group-item-action flex-column align-items-start mb-2" onClick="myFunction({{notif.id}}, '{{url}}')" style="cursor:pointer;">
                         <div class="d-flex w-100 justify-content-between">
                             <h5 class="mb-1">{{notif.title}}</h5>
                             <small>{{notif.createdAt ? notif.createdAt|date('d-m-Y H:i:s') : ''}}</small>
@@ -31,6 +36,7 @@
 {% block javascripts %}
    <script>
         const myFunction = (notif, url) => {
+            console.log('url');
             fetch(`/notification/${notif}`, {method: 'DELETE'}).then(response => response.json()).then(data => window.location.replace(url))
         }
     </script> 
