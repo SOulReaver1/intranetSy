@@ -190,6 +190,11 @@
                         <div class="collapse" id="navbar-ticket">
                             <ul class="nav nav-sm flex-column">
                                 <li class="nav-item">
+                                    <a class="nav-link" href="{{url("ticket_all", {'global': app.session.get('global') })}}">
+                                        Voir tous les tickets
+                                    </a>
+                                </li>
+                                <li class="nav-item">
                                     <a class="nav-link" href="{{url("ticket_index", {'global': app.session.get('global') })}}">
                                         Voir les tickets
                                     </a>

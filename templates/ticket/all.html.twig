@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% set title = "Tous les tickets" %}
+
+{% block header %}
+    {% if is_granted('ROLE_USER') %}
+        <a href="{{ path('ticket_new', {'global': app.session.get('global')}) }}" class="btn btn-primary">Créer un ticket</a>
+    {% endif %}
+{% endblock %}

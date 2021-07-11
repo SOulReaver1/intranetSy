@@ -41,6 +41,80 @@ class TicketController extends AbstractController
         $this->findByRoles = $findByRoles;
         $this->session = $session;
     }
+
+    /**
+     * @Route("/all", name="ticket_all", methods={"GET", "POST"})
+     */
+    public function all(Request $request, DataTableFactory $dataTableFactory): Response
+    {
+        $table = $dataTableFactory->create()
+        ->add('id', NumberColumn::class, ['label' => '#'])
+        ->add('customerFile', TextColumn::class, [
+            'label' => 'Fiche client', 
+            'field' => 'customerFile.name',
+            'render' => function($data, $context){
+                return $data ? sprintf("<a href='%s'>$data</a>", 
+                $this->generateUrl('customer_files_show', 
+                [
+                    'id' => $context->getCustomerFile()->getId(),
+                    'global' => $this->session->get('global')
+                ])) : 'Aucune fiche';
+            }
+        ])
+        ->add('title', TextColumn::class, ['label' => 'Titre'])
+        ->add('description', TextColumn::class, ['label' => 'Description'])
+        ->add('created_at', DateTimeColumn::class, ['label' => 'Créer le', 'format' => 'd-m-Y H:i:s'])
+        ->add('updated_at', DateTimeColumn::class, ['label' => 'Modifier le', 'format' => 'd-m-Y H:i:s'])
+        ->add('actions', TextColumn::class, [
+            'data' => function($context) {
+                return $context->getId();
+            }, 
+            'render' => function($value, $context){
+                $show = sprintf('<a href="%s" class="btn btn-primary">Regarder</a>', $this->generateUrl('ticket_show', 
+                    [
+                        'global' => $this->session->get('global'),
+                        'id' => $value
+                    ]
+                ));
+                $edit = sprintf('<a href="%s" class="btn btn-primary">Modifier</a>', $this->generateUrl('ticket_show', 
+                    [
+                        'global' => $this->session->get('global'),
+                        'id' => $value
+                    ]
+                ));
+                return $show.$edit;
+            }, 
+            'label' => 'Actions'
+        ])
+        ->addOrderBy('id', DataTable::SORT_ASCENDING)
+        ->createAdapter(ORMAdapter::class, [
+            'entity' => Ticket::class,
+            'query' => function (QueryBuilder $builder) {
+                if($this->findByRoles->findByRole('ROLE_ADMIN', $this->getUser())){
+                    return $builder
+                    ->select('t, customerFile')
+                    ->from(Ticket::class, 't')
+                    ->leftJoin('t.customer_file', 'customerFile');
+                }else{
+                    return $builder
+                    ->select('t, customerFile')
+                    ->from(Ticket::class, 't')
+                    ->leftJoin('t.users', 'users')
+                    ->leftJoin('t.customer_file', 'customerFile')
+                    ->andWhere('users = :val')
+                    ->setParameter('val', $this->getUser());
+                }
+            }
+        ])->handleRequest($request);
+
+        if ($table->isCallback()) {
+            return $table->getResponse();
+        }
+        
+        return $this->render('ticket/all.html.twig', [
+            'datatable' => $table,
+        ]);
+    }
     
     /**
      * @Route("/", name="ticket_index", methods={"GET", "POST"})
