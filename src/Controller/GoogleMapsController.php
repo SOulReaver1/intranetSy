@@ -30,7 +30,27 @@ class GoogleMapsController extends AbstractController
     
         return $this->render('google_maps/index.html.twig', [
             'statuts' => $statut->googleMaps($global),
-            'nullCount' => $repository->countNullFileStatut($global)['count']
+            'nullCount' => $repository->countNullFileStatut($global)['count'],
+            'all' => false
+        ]);
+    }
+
+     /**
+     * @Route("/all", name="google_maps_all")
+     */
+    public function all(Request $request, GlobalStatut $global, CustomerFilesStatutRepository $statut, CustomerFilesRepository $repository)
+    {
+        if(in_array('ROLE_INSTALLATEUR', $this->getUser()->getRoles())){
+            return $this->render('google_maps/index.html.twig', [
+                'statuts' => $statut->googleMapsWG(),
+                'nullCount' => $repository->countNullFileStatutWG()['count']
+            ]);
+        }
+    
+        return $this->render('google_maps/index.html.twig', [
+            'statuts' => $statut->googleMapsWG(),
+            'nullCount' => $repository->countNullFileStatutWG()['count'],
+            'all' => true
         ]);
     }
     /**
@@ -63,9 +83,21 @@ class GoogleMapsController extends AbstractController
     public function getAddresses(GlobalStatut $global, CustomerFilesRepository $repository): object {
 
         if(in_array('ROLE_INSTALLATEUR', $this->getUser()->getRoles())){
-            return new JsonResponse($repository->getAddresses($this->getUser()));
+            return new JsonResponse($repository->getAddresses($global, $this->getUser()));
         }
         
         return new JsonResponse($repository->getAddresses($global));
+    }
+
+    /**
+     * @Route("/all/addresses", name="google_maps_addresses_all", methods={"POST"})
+    */
+    public function getAddressesWG(GlobalStatut $global, CustomerFilesRepository $repository): object {
+
+        if(in_array('ROLE_INSTALLATEUR', $this->getUser()->getRoles())){
+            return new JsonResponse($repository->getAddressesWG($this->getUser()));
+        }
+        
+        return new JsonResponse($repository->getAddressesWG());
     }
 }

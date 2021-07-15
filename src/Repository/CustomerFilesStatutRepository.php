@@ -63,6 +63,16 @@ class CustomerFilesStatutRepository extends ServiceEntityRepository
         ->getResult();
     }
 
+    public function googleMapsWG(){
+        return $this->createQueryBuilder('c')
+        ->select('count(fiche.id) as count, c.color, c.name, c.id')
+        ->andWhere('fiche.address IS NOT NULL')
+        ->leftJoin('c.customerFiles', 'fiche')
+        ->groupBy('c.id')
+        ->getQuery()
+        ->getResult();
+    }
+
 
     // /**
     //  * @return CustomerFilesStatut[] Returns an array of CustomerFilesStatut objects

@@ -124,6 +124,30 @@ class CustomerFilesRepository extends ServiceEntityRepository
         ->getResult();
     }
 
+    public function getAddressesWG(?User $user = null){
+        if($user){
+            return $this->createQueryBuilder('c')
+            ->leftJoin('c.customer_statut', 'statut')
+            ->select('c.id, c.name as title, c.address, c.route_number, c.zip_code, c.city, c.cellphone, c.home_phone, c.commentary, c.address_complement, c.lat, c.lng, statut.color, statut.id as statutId')
+            ->leftJoin('c.installer', 'user')
+            ->andWhere('user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('c.ordred')
+            ->andWhere('c.lat is not null')
+            ->andWhere('c.lng is not null')
+            ->getQuery()
+            ->getResult();
+        }
+
+        return $this->createQueryBuilder('c')
+        ->leftJoin('c.customer_statut', 'statut')
+        ->select('c.id, c.name as title, c.address, c.route_number, c.zip_code, c.city, c.address_complement, c.cellphone, c.home_phone, c.commentary, c.lat, c.lng, statut.color, statut.id as statutId')
+        ->andWhere('c.lat is not null')
+        ->andWhere('c.lng is not null')
+        ->getQuery()
+        ->getResult();
+    }
+
     public function getPhones(){
         return $this->createQueryBuilder('c')
         ->select('c.name as title, c.cellphone')
@@ -157,6 +181,15 @@ class CustomerFilesRepository extends ServiceEntityRepository
         ->andWhere('statut.id IS NULL')
         ->andWhere('c.global_statut = :g')
         ->setParameter('g', $global)
+        ->select('count(c.id) as count')
+        ->getQuery()->getResult()[0];
+    }
+
+    public function countNullFileStatutWG(){
+        return $this->createQueryBuilder('c')
+        ->leftJoin('c.customer_statut', 'statut')
+        ->andWhere('c.address IS NOT NULL')
+        ->andWhere('statut.id IS NULL')
         ->select('count(c.id) as count')
         ->getQuery()->getResult()[0];
     }

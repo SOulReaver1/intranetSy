@@ -67,7 +67,7 @@
                 {% if is_granted('ROLE_DEVELOPER') %}
                     <li class="nav-item">
                         <a class="nav-link" href="#navbar-developer" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-fais">
-                            <i class="fas fa-code text-info"></i>
+                            <i class="fas fa-code text-warning"></i>
                             <span class="nav-link-text">Espace developpeur</span>
                         </a>
 
@@ -95,14 +95,14 @@
                 {% if is_granted('ROLE_SUPERADMIN') %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{url("user_index")}}">
-                            <i class="fas fa-user text-success"></i>
+                            <i class="fas fa-user text-info"></i>
                             Gérer les utilisateurs
                         </a>
                     </li>
                     {% if app.session.get('global') %}
                         <li class="nav-item">
                             <a class="nav-link" href="#navbar-sms" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-sms">
-                                <i class="fas fa-sms text-danger"></i>
+                                <i class="fas fa-sms text-success"></i>
                                 <span class="nav-link-text">Gérer les sms</span>
                             </a>
 
@@ -126,7 +126,7 @@
                 {% if is_granted('ROLE_ADMIN') %}
                     <li class="nav-item">
                         <a class="nav-link" href="#navbar-provider" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-provider">
-                            <i class="fas fa-shower"></i>
+                            <i class="fas fa-shower text-danger"></i>
                             <span class="nav-link-text">Gérer les produits</span>
                         </a>
 
@@ -152,26 +152,26 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{url("client_statut_index")}}">
-                            <i class="fas fa-house-user text-primary"></i>
+                            <i class="fas fa-house-user"></i>
                             Gérer les statuts client
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{url("customer_source_index")}}">
-                            <i class="fas fa-user-tag text-warning"></i>
+                            <i class="fas fa-user-tag text-primary"></i>
                             Gérer les sources
                         </a>
                     </li>
                     {% if app.session.get('global')  %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{url("client_statut_document_index", {'global': app.session.get('global')})}}">
-                                <i class="far fa-file-image text-info"></i>
+                                <i class="far fa-file-image text-warning"></i>
                                 Gérer les documents
                             </a>
                         </li> 
                         <li class="nav-item">
                             <a class="nav-link" href="{{url("customer_files_statut_index", {'global': app.session.get('global') })}}">
-                                <i class="fas fa-folder-open text-success"></i>
+                                <i class="fas fa-folder-open text-info"></i>
                                 Gérer les statuts dossier
                             </a>
                         </li>
@@ -180,8 +180,14 @@
                 {% if app.session.get('global')  %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{url("google_maps", {'global': app.session.get('global') })}}">
-                            <i class="fas fa-map-marked-alt text-danger"></i>
+                            <i class="fas fa-map-marked-alt text-success"></i>
                             Voir la carte
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url("google_maps_all", {'global': app.session.get('global') })}}">
+                            <i class="fas fa-map-marked-alt text-danger"></i>
+                            Voir la carte global
                         </a>
                     </li>
                     <li class="nav-item">

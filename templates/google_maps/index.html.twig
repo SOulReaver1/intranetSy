@@ -13,7 +13,7 @@
 {% endblock %}
 {% block body %}
     <div class="container-fluid">
-        <div id="map" style="height: 100vh"></div>
+        <div id="map" style="height: 100vh" data-all="{{all == false ? "false" : "true" }}"></div>
         <hr class="mt-5">
         <h1>Les filtres :</h1>
         <h3>Filtrer par fiche :</h3>
@@ -124,7 +124,8 @@
                 "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m",
                 maxZoom: 20
             })
-            await fetch('addresses', {
+            const url = document.getElementById("map").dataset.all === "true" ? "all/addresses" : "addresses";
+            await fetch(url, {
                 method: 'POST'
             }).then(response => response.json())
             .then(res => {
