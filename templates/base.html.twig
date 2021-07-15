@@ -31,7 +31,7 @@
                 <div class="main-panel d-flex flex-column" style="min-height:100vh;">
                     {% include 'navbar.html.twig' %}                 
                     {% include "header.html.twig" %}
-                    <div class="container-fluid mt--7" style="z-index: 9999">
+                    <div class="container-fluid mt--7" style="z-index: 2">
                         {{ render(controller('App\\Controller\\AlertController::getLastAlert')) }}  
                         {{ render(controller('App\\Controller\\GlobalStatutController::displayStatut')) }}  
                         <div class="row">
@@ -65,7 +65,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-body">
+                                    <div class="card-body" style="z-index: 4">
                                         {% if datatable is defined %}
                                             <div id="table">Chargement...</div>
                                         {% endif %}

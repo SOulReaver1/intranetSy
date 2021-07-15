@@ -184,6 +184,97 @@ class CustomerFilesController extends AbstractController
     }
 
     /**
+     * @Route("/all", name="customer_files_all", methods={"GET", "POST"})
+     */
+    public function all(Request $request, GlobalStatut $global,DataTableFactory $dataTableFactory, CustomerFilesStatutRepository $customerFilesStatutRepository) {
+        $this->globalStatut = $global;
+
+        $table = $dataTableFactory->create()
+            ->add('id', TextColumn::class, ['label' => '#'])
+            ->add('global_statut', TextColumn::class, [
+                'data' => function($context) {
+                    return $context->getGlobalStatut();
+                }, 
+                'label' => 'Statut global'
+            ])
+            ->add('customer_statut', TextColumn::class, [
+                'field' => 'customer_statut.name', 
+                'label' => 'Statut dossier'
+            ])
+            ->add('name', TextColumn::class, ['label' => 'Nom complet'])
+            ->add('date_expertise', DateTimeColumn::class, ['label' => 'Date d\'expertise', 'globalSearchable' => false])
+            ->add('address', TextColumn::class, ['label' => 'Adresse'])
+            ->add('address_complement', TextColumn::class, ['label' => 'Complément d\'adresse'])
+            ->add('city', TextColumn::class, ['label' => 'Ville'])
+            ->add('zip_code', TextColumn::class, ['label' => 'Code postal'])
+            ->add('cellphone', TextColumn::class, ['label' => 'Téléphone portable'])
+            ->add('home_phone', TextColumn::class, ['label' => 'Téléphone fixe'])
+            ->add('mail_al', TextColumn::class, ['label' => 'Mail AL'])
+            ->add('password_al', TextColumn::class, ['label' => 'Mot de passe AL'])
+            ->add('commentary', TextColumn::class, ['label' => 'Commentaire'])
+            ->add('actions', TextColumn::class, [
+                'data' => function($context) {
+                    return $context->getId();
+                }, 
+                'render' => function($value, $context){
+                    $show = sprintf('<a href="%s" class="btn btn-primary">Regarder</a>', $this->generateUrl('customer_files_show', ['global' => $this->globalStatut->getId(), 'id' => $value]));
+                    $edit = sprintf('<a href="%s" class="btn btn-primary">Modifier</a>', $this->generateUrl('customer_files_edit', ['global' => $this->globalStatut->getId(), 'id' => $value]));
+                    return $show.$edit;
+                }, 
+                'label' => 'Actions'
+            ])
+            ->addOrderBy('id', DataTable::SORT_DESCENDING)
+            ->createAdapter(ORMAdapter::class, [
+                'entity' => CustomerFiles::class,
+                'query' => function (QueryBuilder $builder) {
+                    if(in_array('ROLE_INSTALLATEUR', $this->getUser()->getRoles())){
+                        if($this->session->get('statut')){
+                            return $builder
+                            ->select('c, customer_statut')
+                            ->andWhere('i = :i')
+                            ->andWhere('customer_statut.id = :statut')
+                            ->setParameter("statut", $this->session->get('statut'))
+                            ->setParameter('i', $this->getUser())
+                            ->from(CustomerFiles::class, 'c')
+                            ->leftJoin('c.installer', 'i')
+                            ->leftJoin('c.customer_statut', 'customer_statut');                        
+                        }
+                        return $builder
+                        ->select('c, customer_statut')
+                        ->andWhere('i = :i')
+                        ->setParameter('i', $this->getUser())
+                        ->from(CustomerFiles::class, 'c')
+                        ->leftJoin('c.installer', 'i')
+                        ->leftJoin('c.customer_statut', 'customer_statut');
+                    }
+                    if($this->session->get('statut')){
+                        return $builder
+                        ->select('c, customer_statut')
+                        ->andWhere('customer_statut.id = :statut')
+                        ->setParameter("statut", $this->session->get('statut'))
+                        ->from(CustomerFiles::class, 'c')
+                        ->leftJoin('c.customer_statut', 'customer_statut');
+                    }
+                    return $builder
+                        ->select('c, customer_statut')
+                        ->from(CustomerFiles::class, 'c')
+                        ->leftJoin('c.customer_statut', 'customer_statut')
+                    ;
+                },
+            ])
+            ->handleRequest($request);
+
+        if ($table->isCallback()) {
+            return $table->getResponse();
+        }
+
+        return $this->render('customer_files/index.html.twig', [
+            'statuts' => $customerFilesStatutRepository->findAllByOrderWG(),
+            'datatable' => $table
+        ]);
+    }
+
+    /**
      * @IsGranted("ROLE_ALLOW_CREATE")
      * @Route("/new", name="customer_files_new", methods={"GET","POST"})
      */
@@ -222,30 +313,13 @@ class CustomerFilesController extends AbstractController
         ]);
     }
 
-    /**
-     * @IsGranted("ROLE_USER")
-     * @Route("/{id}/commentary", name="customer_file_change_commentary", methods={"POST"}, requirements={"id":"\d+"})
-    */
-    public function changeCommentary(Request $request, CustomerFiles $customerFile): object {
-        $data = json_decode($request->getContent(), true);
-        $commentary = $data['commentary'] ?? null;
-        if($commentary){
-            $customerFile->setCommentary($commentary);
-            $this->getDoctrine()->getManager()->flush();
-            return new JsonResponse(['status' => 200]);
-
-        }
-        return new JsonResponse(['status' => 404]);
-
-    }
-
 
     /**
      * @Route("/{id}", name="customer_files_show", methods={"GET"}, requirements={"id":"\d+"})
      */
     public function show(Request $request, GlobalStatut $global,CustomerFiles $customerFile): Response
     {
-        if($customerFile->getGlobalStatut() === $global){
+        // if($customerFile->getGlobalStatut() === $global){
             if(!in_array('ROLE_INSTALLATEUR', $this->getUser()->getRoles()) || $customerFile->getInstaller() === $this->getUser()){
                 return $this->render('customer_files/show.html.twig', [
                     'customer_file' => $customerFile,
@@ -255,12 +329,12 @@ class CustomerFilesController extends AbstractController
             return $this->redirectToRoute('customer_files_index', [
                 'global' => $this->session->get('global')
             ]);
-        }
+        // }
 
-        $this->addFlash('error', "La fiche ".$customerFile->getId()." n'a pas le statut global : ".$global->getName());
-        return $this->redirectToRoute('customer_files_index', [
-            'global' => $this->session->get('global')
-        ]);
+        // $this->addFlash('error', "La fiche ".$customerFile->getId()." n'a pas le statut global : ".$global->getName());
+        // return $this->redirectToRoute('customer_files_index', [
+        //     'global' => $this->session->get('global')
+        // ]);
     }
 
     public function getDocuments($docs){
@@ -277,8 +351,8 @@ class CustomerFilesController extends AbstractController
      */
     public function editGlobalStatut(Request $request, GlobalStatut $global, CustomerFiles $customerFile)
     {
-        if($customerFile->getGlobalStatut() === $global)
-        {
+        // if($customerFile->getGlobalStatut() === $global)
+        // {
             $form = $this->createForm(UpdateCustomerGlobalStatutType::class, $customerFile);
             $form->handleRequest($request);
 
@@ -296,12 +370,12 @@ class CustomerFilesController extends AbstractController
                 'customer_file' => $customerFile,
                 'form' => $form->createView()
             ]);
-        }
+        // }
 
-        $this->addFlash('error', "La fiche ".$customerFile->getId()." n'a pas le statut global : ".$global->getName());
-        return $this->redirectToRoute('customer_files_index', [
-            'global' => $this->session->get('global')
-        ]);
+        // $this->addFlash('error', "La fiche ".$customerFile->getId()." n'a pas le statut global : ".$global->getName());
+        // return $this->redirectToRoute('customer_files_index', [
+        //     'global' => $this->session->get('global')
+        // ]);
     }
 
     /**
@@ -310,7 +384,7 @@ class CustomerFilesController extends AbstractController
      */
     public function edit(Request $request, GlobalStatut $global,CustomerFiles $customerFile, ProviderRepository $provider, CustomerFilesRepository $repository): Response
     {
-        if($customerFile->getGlobalStatut() === $global){
+        // if($customerFile->getGlobalStatut() === $global){
             $form = $this->createForm(UpdateCustomerFileType::class, $customerFile, array('global' => $global));
             $form->handleRequest($request);
     
@@ -359,12 +433,12 @@ class CustomerFilesController extends AbstractController
                 'providers' => $provider->findAll(),
                 'params' => $repository->getProviderParams($customerFile->getProduct() ? $customerFile->getProduct()->getProvider() : null)
             ]);
-        }
+        // }
 
-        $this->addFlash('error', "La fiche ".$customerFile->getId()." n'a pas le statut global : ".$global->getName());
-        return $this->redirectToRoute('customer_files_index', [
-            'global' => $this->session->get('global')
-        ]);
+        // $this->addFlash('error', "La fiche ".$customerFile->getId()." n'a pas le statut global : ".$global->getName());
+        // return $this->redirectToRoute('customer_files_index', [
+        //     'global' => $this->session->get('global')
+        // ]);
     }
 
     /**
@@ -373,7 +447,7 @@ class CustomerFilesController extends AbstractController
      */
     public function delete(Request $request, GlobalStatut $global, CustomerFiles $customerFile): Response
     {
-        if($customerFile->getGlobalStatut() === $global){
+        // if($customerFile->getGlobalStatut() === $global){
             if ($this->isCsrfTokenValid('delete'.$customerFile->getId(), $request->request->get('_token'))) {
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->remove($customerFile);
@@ -383,10 +457,10 @@ class CustomerFilesController extends AbstractController
             return $this->redirectToRoute('customer_files_index', [
                 'global' => $this->session->get('global')
             ]);
-        }
-        $this->addFlash('error', "La fiche ".$customerFile->getId()." n'a pas le statut global : ".$global->getName());
-        return $this->redirectToRoute('customer_files_index', [
-            'global' => $this->session->get('global')
-        ]);
+        // }
+        // $this->addFlash('error', "La fiche ".$customerFile->getId()." n'a pas le statut global : ".$global->getName());
+        // return $this->redirectToRoute('customer_files_index', [
+        //     'global' => $this->session->get('global')
+        // ]);
     }
 }

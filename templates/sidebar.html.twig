@@ -67,7 +67,7 @@
                 {% if is_granted('ROLE_DEVELOPER') %}
                     <li class="nav-item">
                         <a class="nav-link" href="#navbar-developer" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-fais">
-                            <i class="fas fa-code text-danger"></i>
+                            <i class="fas fa-code text-info"></i>
                             <span class="nav-link-text">Espace developpeur</span>
                         </a>
 
@@ -102,7 +102,7 @@
                     {% if app.session.get('global') %}
                         <li class="nav-item">
                             <a class="nav-link" href="#navbar-sms" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-sms">
-                                <i class="fas fa-sms text-primary"></i>
+                                <i class="fas fa-sms text-danger"></i>
                                 <span class="nav-link-text">Gérer les sms</span>
                             </a>
 
@@ -126,7 +126,7 @@
                 {% if is_granted('ROLE_ADMIN') %}
                     <li class="nav-item">
                         <a class="nav-link" href="#navbar-provider" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-provider">
-                            <i class="fas fa-shower text-info"></i>
+                            <i class="fas fa-shower"></i>
                             <span class="nav-link-text">Gérer les produits</span>
                         </a>
 
@@ -152,7 +152,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{url("client_statut_index")}}">
-                            <i class="fas fa-house-user text-success"></i>
+                            <i class="fas fa-house-user text-primary"></i>
                             Gérer les statuts client
                         </a>
                     </li>
@@ -165,13 +165,13 @@
                     {% if app.session.get('global')  %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{url("client_statut_document_index", {'global': app.session.get('global')})}}">
-                                <i class="far fa-file-image text-warning"></i>
+                                <i class="far fa-file-image text-info"></i>
                                 Gérer les documents
                             </a>
                         </li> 
                         <li class="nav-item">
                             <a class="nav-link" href="{{url("customer_files_statut_index", {'global': app.session.get('global') })}}">
-                                <i class="fas fa-folder-open"></i>
+                                <i class="fas fa-folder-open text-success"></i>
                                 Gérer les statuts dossier
                             </a>
                         </li>
@@ -180,7 +180,7 @@
                 {% if app.session.get('global')  %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{url("google_maps", {'global': app.session.get('global') })}}">
-                            <i class="fas fa-map-marked-alt text-info"></i>
+                            <i class="fas fa-map-marked-alt text-danger"></i>
                             Voir la carte
                         </a>
                     </li>
@@ -225,6 +225,12 @@
                         </li>
                     {% endif %}
                     <li class="nav-item active">
+                        <a class="nav-link" href="{{url('customer_files_all', {'global': app.session.get('global') })}}">
+                            <i class="ni ni-archive-2 text-warning"></i>
+                            Voir les fiches clients en global
+                        </a>
+                    </li>
+                    <li class="nav-item active">
                         <a class="nav-link" href="{{url('customer_files_index', {'global': app.session.get('global') })}}">
                             <i class="ni ni-archive-2 text-info"></i>
                             Voir les fiches clients
@@ -233,7 +239,7 @@
                 {% endif %}
                  <li class="nav-item active">
                     <a class="nav-link" href="{{url('default')}}">
-                        <i class="ni ni-archive-2 text-info"></i>
+                        <i class="ni ni-archive-2 text-success"></i>
                         Voir les statuts globaux
                     </a>
                 </li>

@@ -27,6 +27,13 @@ class CustomerFilesStatutRepository extends ServiceEntityRepository
         ->getSingleScalarResult();
     }
 
+    public function findAllByOrderWG(){
+        return $this->createQueryBuilder('c')
+        ->orderBy('c.ordered')
+        ->getQuery()
+        ->getResult();
+    }
+
     public function findAllByOrder(GlobalStatut $global){
         return $this->createQueryBuilder('c')
         ->where('c.global_statut = :g')

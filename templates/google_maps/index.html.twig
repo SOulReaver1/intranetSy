@@ -179,7 +179,7 @@
 
         function changeCommentary(evt, id){
             evt.preventDefault();
-            fetch(`/${id}/commentary`, {
+            fetch(`${id}/commentary`, {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
@@ -256,7 +256,7 @@
                         </form>
                     </div>
                 </div>
-                <a href="/${id}" class="btn btn-primary">Voir la fiche</a>
+                <a href="${id}" class="btn btn-primary">Voir la fiche</a>
             </div>
             `;
 
