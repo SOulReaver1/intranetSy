@@ -323,7 +323,7 @@ class TicketController extends AbstractController
      */
     public function show(Request $request, GlobalStatut $global, Ticket $ticket): Response
     {
-        if($ticket->getCustomerFile()->getGlobalStatut() === $global){
+        // if($ticket->getCustomerFile()->getGlobalStatut() === $global){
             if(in_array($this->getUser(), $ticket->getUsers()->toArray()) || $this->findByRoles->findByRole('ROLE_ADMIN', $this->getUser())){
                 return $this->render('ticket/show.html.twig', [
                     'ticket' => $ticket,
@@ -334,12 +334,12 @@ class TicketController extends AbstractController
             return $this->redirectToRoute('ticket_index', [
                 'global' => $this->session->get('global')
             ]);
-        }
+        // }
 
-        $this->addFlash('error', 'La fiche du ticket '.$ticket->getId().' n\'a pas pour statut global '.$global->getName());
-        return $this->redirectToRoute('ticket_index', [
-            'global' => $this->session->get('global')
-        ]);
+        // $this->addFlash('error', 'La fiche du ticket '.$ticket->getId().' n\'a pas pour statut global '.$global->getName());
+        // return $this->redirectToRoute('ticket_index', [
+        //     'global' => $this->session->get('global')
+        // ]);
         
     }
 
@@ -376,7 +376,7 @@ class TicketController extends AbstractController
     */
     public function edit(Request $request, GlobalStatut $global, Ticket $ticket): Response
     {
-        if($ticket->getCustomerFile()->getGlobalStatut() === $global){
+        // if($ticket->getCustomerFile()->getGlobalStatut() === $global){
             // If I am the creator or an administrator, i can edit the ticket
             if($this->getUser() === $ticket->getCreator() || $this->findByRoles->findByRole('ROLE_ADMIN', $this->getUser())){
                 $form = $this->createForm(TicketType::class, $ticket);
@@ -401,12 +401,12 @@ class TicketController extends AbstractController
                 'id' => $ticket->getId(),
                 'global' => $this->session->get('global')
             ]);
-        }
+        // }
 
-        $this->addFlash('error', 'La fiche du ticket '.$ticket->getId().' n\'a pas pour statut global '.$global->getName());
-        return $this->redirectToRoute('ticket_index', [
-            'global' => $this->session->get('global')
-        ]);
+        // $this->addFlash('error', 'La fiche du ticket '.$ticket->getId().' n\'a pas pour statut global '.$global->getName());
+        // return $this->redirectToRoute('ticket_index', [
+        //     'global' => $this->session->get('global')
+        // ]);
         
     }
 
@@ -416,7 +416,7 @@ class TicketController extends AbstractController
     */
     public function delete(Request $request, GlobalStatut $global, Ticket $ticket): Response
     {   
-        if($ticket->getCustomerFile()->getGlobalStatut() === $global){
+        // if($ticket->getCustomerFile()->getGlobalStatut() === $global){
             if ($this->isCsrfTokenValid('delete'.$ticket->getId(), $request->request->get('_token'))) {
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->remove($ticket);
@@ -426,11 +426,11 @@ class TicketController extends AbstractController
             return $this->redirectToRoute('ticket_index', [
                 'global' => $this->session->get('global')
             ]);
-        }
+        // }
         
-        $this->addFlash('error', 'La fiche du ticket '.$ticket->getId().' n\'a pas pour statut global '.$global->getName());
-        return $this->redirectToRoute('ticket_index', [
-            'global' => $this->session->get('global')
-        ]);
+        // $this->addFlash('error', 'La fiche du ticket '.$ticket->getId().' n\'a pas pour statut global '.$global->getName());
+        // return $this->redirectToRoute('ticket_index', [
+        //     'global' => $this->session->get('global')
+        // ]);
     }
 }
