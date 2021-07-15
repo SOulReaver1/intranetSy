@@ -118,7 +118,7 @@ class TicketController extends AbstractController
     }
 
     /**
-      * @Route("/{id}", name="ticket_index_customer", methods={"GET", "POST"})
+      * @Route("/customer/{id}", name="ticket_index_customer", methods={"GET", "POST"})
     */
     public function indexCustomer(Request $request, GlobalStatut $global, CustomerFiles $customerFile, DataTableFactory $dataTableFactory): Response {
         $this->global = $global;
