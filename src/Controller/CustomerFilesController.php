@@ -6,6 +6,7 @@ use App\Entity\CustomerFiles;
 use App\Entity\GlobalStatut;
 use App\Entity\Provider;
 use App\Form\CustomerFilesType;
+use App\Form\StatusTransferType;
 use App\Form\UpdateCustomerFileType;
 use App\Form\UpdateCustomerGlobalStatutType;
 use App\Form\UpdateCustomerMailType;
@@ -63,9 +64,35 @@ class CustomerFilesController extends AbstractController
     /**
      * @Route("/", name="customer_files_index", methods={"GET", "POST"})
      */
-    public function index(Request $request, GlobalStatut $global, CustomerFilesStatutRepository $customerFilesStatutRepository, DataTableFactory $dataTableFactory)
+    public function index(Request $request, GlobalStatut $global, CustomerFilesStatutRepository $customerFilesStatutRepository,
+    CustomerFilesRepository $customerFilesRepository,DataTableFactory $dataTableFactory)
     {        
         $this->globalStatut = $global;
+        $editStatutForm = $this->createForm(StatusTransferType::class,[
+            "global" => $global
+        ]);
+        $editStatutForm->handleRequest($request);
+        if ($editStatutForm->isSubmitted() && $editStatutForm->isValid()) {
+            $data = $editStatutForm->getData();
+            $customer_files_ids = explode(', ', $data['customer_files']);
+            $statut = $data['customer_files_statut'];
+            $entityManager = $this->getDoctrine()->getManager();
+            if(count($customer_files_ids) === 0) {
+                foreach ($customer_files_ids as $value) {
+                    $customerFile = $customerFilesRepository->find(intval($value));
+                    $customerFile->setCustomerStatut($statut);
+                    $entityManager->persist($customerFile);
+                    $entityManager->flush();    
+                }
+                $this->addFlash('success', count($customer_files_ids).' fiche(s) on(t) bien été(s) modifiée(s) !');
+            }else {
+                $this->addFlash('error', 'Aucune fiche sélectionnée');
+            }
+
+            return $this->redirectToRoute('customer_files_index', [
+                'global' => $this->session->get('global')
+            ]);
+        }
 
         if($request->isMethod('get')){
             $this->session->remove('statut');
@@ -92,6 +119,9 @@ class CustomerFilesController extends AbstractController
 
         $table = $dataTableFactory->create()
             ->add('id', TextColumn::class, ['label' => '#'])
+            ->add("Select", TextColumn::class, ['label' => 'Select', 'render' => function() {
+                return null;
+            }])
             ->add('global_statut', TextColumn::class, [
                 'data' => function($context) {
                     return $context->getGlobalStatut();
@@ -103,7 +133,7 @@ class CustomerFilesController extends AbstractController
                 'label' => 'Statut dossier'
             ])
             ->add('name', TextColumn::class, ['label' => 'Nom complet'])
-            ->add('date_expertise', DateTimeColumn::class, ['label' => 'Date d\'expertise'])
+            ->add('date_expertise', DateTimeColumn::class, ['label' => 'Date d\'expertise', 'searchable' => false])
             ->add('address', TextColumn::class, ['label' => 'Adresse'])
             ->add('address_complement', TextColumn::class, ['label' => 'Complément d\'adresse'])
             ->add('city', TextColumn::class, ['label' => 'Ville'])
@@ -179,7 +209,9 @@ class CustomerFilesController extends AbstractController
 
         return $this->render('customer_files/index.html.twig', [
             'statuts' => $customerFilesStatutRepository->findAllByOrder($global),
-            'datatable' => $table
+            'datatable' => $table,
+            "datatableSelect" => true,
+            "editStatutForm" => $editStatutForm->createView()
         ]);
     }
 

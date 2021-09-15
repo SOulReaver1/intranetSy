@@ -29,8 +29,44 @@
                 {% endfor %}
             </div>
         </div>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changeStatut" id="changeStatutModalButton">
+            Modifier les statuts
+        </button>
+{% endblock %}
+{% block modal %}
+    <!-- Modal -->
+    <div class="modal fade" id="changeStatut" tabindex="-1" role="dialog" aria-labelledby="changeStatutTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changeStatutLongTitle">Modifier les statuts dossiers</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% include "customer_files/editStatutForm.html.twig" %}
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 {% block javascripts %}
-    <script>$('#filter').dropdown()</script>
+    <script>
+        $('#filter').dropdown();
+        $("#changeStatutDropdown").dropdown();
+        const changeStatutModalButton = document.getElementById('changeStatutModalButton');
+        changeStatutModalButton.addEventListener('click', evt => {
+            const selectedColumns = [...document.querySelectorAll('tbody .selected')];
+            const selectedColumnsIds = [];
+            selectedColumns.map((element, k) => {
+                selectedColumnsIds.push(parseInt(element.id));
+            });
+            document.getElementById('status_transfer_customer_files').value = selectedColumnsIds.join(', ');
+        });
+
+    </script>
 {% endblock %}

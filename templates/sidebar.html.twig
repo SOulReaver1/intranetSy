@@ -1,4 +1,4 @@
-<nav class="navbar navbar-vertical fixed-left navbar-expand-md navbar-light bg-white" id="sidenav-main" style="z-index: 999999">
+<nav class="navbar navbar-vertical fixed-left navbar-expand-md navbar-light bg-white" id="sidenav-main">
     <div class="container-fluid">
         <!-- Toggler -->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#sidenav-collapse-main" aria-controls="sidenav-main" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,7 +67,7 @@
                 {% if is_granted('ROLE_DEVELOPER') %}
                     <li class="nav-item">
                         <a class="nav-link" href="#navbar-developer" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-fais">
-                            <i class="fas fa-code text-warning"></i>
+                            <i class="fas fa-code text-primary"></i>
                             <span class="nav-link-text">Espace developpeur</span>
                         </a>
 
@@ -95,14 +95,14 @@
                 {% if is_granted('ROLE_SUPERADMIN') %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{url("user_index")}}">
-                            <i class="fas fa-user text-info"></i>
+                            <i class="fas fa-user text-warning"></i>
                             Gérer les utilisateurs
                         </a>
                     </li>
                     {% if app.session.get('global') %}
                         <li class="nav-item">
                             <a class="nav-link" href="#navbar-sms" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-sms">
-                                <i class="fas fa-sms text-success"></i>
+                                <i class="fas fa-sms text-info"></i>
                                 <span class="nav-link-text">Gérer les sms</span>
                             </a>
 
@@ -126,7 +126,7 @@
                 {% if is_granted('ROLE_ADMIN') %}
                     <li class="nav-item">
                         <a class="nav-link" href="#navbar-provider" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-provider">
-                            <i class="fas fa-shower text-danger"></i>
+                            <i class="fas fa-shower text-success"></i>
                             <span class="nav-link-text">Gérer les produits</span>
                         </a>
 
@@ -158,20 +158,20 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{url("customer_source_index")}}">
-                            <i class="fas fa-user-tag text-primary"></i>
+                            <i class="fas fa-user-tag"></i>
                             Gérer les sources
                         </a>
                     </li>
                     {% if app.session.get('global')  %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{url("client_statut_document_index", {'global': app.session.get('global')})}}">
-                                <i class="far fa-file-image text-warning"></i>
+                                <i class="far fa-file-image text-primary"></i>
                                 Gérer les documents
                             </a>
                         </li> 
                         <li class="nav-item">
                             <a class="nav-link" href="{{url("customer_files_statut_index", {'global': app.session.get('global') })}}">
-                                <i class="fas fa-folder-open text-info"></i>
+                                <i class="fas fa-folder-open text-warning"></i>
                                 Gérer les statuts dossier
                             </a>
                         </li>
@@ -180,19 +180,19 @@
                 {% if app.session.get('global')  %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{url("google_maps", {'global': app.session.get('global') })}}">
-                            <i class="fas fa-map-marked-alt text-success"></i>
+                            <i class="fas fa-map-marked-alt text-info"></i>
                             Voir la carte
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{url("google_maps_all", {'global': app.session.get('global') })}}">
-                            <i class="fas fa-map-marked-alt text-danger"></i>
+                            <i class="fas fa-map-marked-alt text-success"></i>
                             Voir la carte global
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#navbar-ticket" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-fais">
-                            <i class="fas fa-ticket-alt"></i>
+                            <i class="fas fa-ticket-alt text-danger"></i>
                             <span class="nav-link-text">Les tickets</span>
                         </a>
                         <div class="collapse" id="navbar-ticket">
@@ -225,7 +225,7 @@
                     {% if is_granted('ROLE_ALLOW_CREATE') %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{url('customer_files_new', {'global': app.session.get('global') })}}">
-                                <i class="fas fa-plus text-primary"></i>
+                                <i class="fas fa-plus"></i>
                                 Créer une fiche client
                             </a>
                         </li>

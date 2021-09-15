@@ -25,6 +25,7 @@
         {% block stylesheets %}{% endblock %}
     </head>
     <body class="{{bodyClass ?? ''}}">
+        {% block modal %}{% endblock %} 
         {% if app.user %}
             {% include 'sidebar.html.twig' %}
             <div class="main-content">
@@ -67,6 +68,7 @@
                                     </div>
                                     <div class="card-body" style="z-index: 4">
                                         {% if datatable is defined %}
+                                        <!-- Button trigger modal -->
                                             <div id="table">Chargement...</div>
                                         {% endif %}
                                         {% block body %}{% endblock %}
@@ -86,15 +88,33 @@
 
         {{ encore_entry_script_tags('app') }}
         <script src="{{ asset('argon') }}/vendor/jquery/dist/jquery.min.js?ver={{app_version}}"></script>
-            {% if datatable is defined%} 
+            {% if datatable is defined%}
+                <input type="hidden" id="datatableSelect" value="{{datatableSelect is defined ? datatableSelect : null}}"/>
                 <script type="text/javascript" src="{{asset('assets/js/plugins/datatables.min.js?ver=' ~ app_version)}}"></script>
                 <script src="{{ asset('bundles/datatables/js/datatables.js?ver=' ~ app_version)}}"></script>
                 <script>
+                    let select = null;
+                    let columnDefs = [
+                        {width: "5%", targets: -1},
+                        {width: "5%", targets: 0},
+                    ]
+                    if(document.getElementById('datatableSelect').value) {
+                        select = {
+                                style:    'multi',
+                                selector: 'td:nth-child(2)',
+                        };
+                        columnDefs.push({
+                            orderable: false,
+                            className: 'select-checkbox',
+                            targets:   1
+                        })
+                    }
                     $(function() {
                         $('#table').initDataTables({{ datatable_settings(datatable) }}, {
                             responsive: true,
                             searching: true,
                             processing: true,
+                            select: select,
                             dom: 'lBfrtip',
                             buttons: [
                             {
@@ -121,11 +141,13 @@
                                 extend: 'print',
                                 text: 'Imprimer le tableau',
                             }],
-                            columnDefs: [
-                                {width: "5%", targets: -1},
-                                {width: "5%", targets: 0},
-                            ]
-                        });
+                            columnDefs: columnDefs
+                        }).then(function(dt) {
+                            // dt contains the initialized instance of DataTables
+                            dt.on('click', 'tr', function(t) {
+                                console.log(t);
+                            })
+                        });;
                     });
                 </script>
         {% endif %}
