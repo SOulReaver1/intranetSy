@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% set title = "Mon profile" %}
+{% block header %}
+    <a href="{{ path('default') }}" class="btn btn-primary">Retour</a>
+{% endblock %}
+{% block body %}
+    {{ include('user/_form.html.twig', {'button_label': 'Modifier'}) }}
+{% endblock %}
+{% block javascripts %}
+    <script>$('#user_edit_global_statut').dropdown();</script>
+{% endblock %}

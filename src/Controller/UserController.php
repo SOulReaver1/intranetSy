@@ -12,14 +12,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-/**
- * @Route("/admin/user")
- */
 class UserController extends AbstractController
 {
     /**
-     * @Route("/", name="user_index", methods={"GET", "POST"})
+     * @Route("/admin/user", name="user_index", methods={"GET", "POST"})
      */
     public function index(Request $request, DataTableFactory $dataTableFactory): Response
     {
@@ -59,7 +57,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="user_show", methods={"GET"})
+     * @Route("/admin/user{id}", name="user_show", methods={"GET"})
      */
     public function show(User $user): Response
     {
@@ -69,11 +67,41 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/edit", name="user_edit", methods={"GET","POST"})
+     * @Route("/user/me", name="my_profile", methods={"GET", "POST"})
+    */
+    public function me(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
+    {
+        $me = $this->getUser();
+        $form = $this->createForm(UserEditType::class, $me, ['me' => $me]);
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid()) { 
+            if($form->get('plainPassword')->getData()) {
+                $me->setPassword(
+                    $passwordEncoder->encodePassword(
+                        $me,
+                        $form->get('plainPassword')->getData()
+                    )
+                );
+            }
+            $this->getDoctrine()->getManager()->flush();
+            $this->addFlash('success', 'Votre profile à bien été modifié !');
+            return $this->redirectToRoute('my_profile');
+        }
+
+        return $this->render('user/me.html.twig', [
+            'me' => $me,
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/admin/user/{id}/edit", name="user_edit", methods={"GET","POST"})
      */
     public function edit(Request $request, User $user): Response
     {
-        $form = $this->createForm(UserEditType::class, $user);
+        $me = $this->getUser();
+        $form = $this->createForm(UserEditType::class, $user, ['me' => $me]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -89,7 +117,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="user_delete", methods={"DELETE"})
+     * @Route("/admin/user/{id}", name="user_delete", methods={"DELETE"})
      */
     public function delete(Request $request, User $user): Response
     {
