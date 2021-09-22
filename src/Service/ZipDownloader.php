@@ -27,6 +27,7 @@ class ZipDownloader
             }
             $zip->close();
         }
+
         return $directory;
     }
 

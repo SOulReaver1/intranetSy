@@ -110,11 +110,13 @@ class FilesController extends AbstractController
             $zip = $zipDownloader->upload($customer, $files);
             $response = new BinaryFileResponse($zip);
             $response->headers->set('Content-Type', 'application/zip');
+            $response->headers->set('Content-length', filesize($zip));
             $response->setContentDisposition(
                 ResponseHeaderBag::DISPOSITION_ATTACHMENT,
                 $customer->getName()."-documents.zip"
             );
-            @unlink($zip);
+            // GetSize error
+            // @unlink($zip);
             return $response;
         }
 
