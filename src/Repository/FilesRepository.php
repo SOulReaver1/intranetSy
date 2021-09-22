@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\CustomerFiles;
 use App\Entity\Files;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -17,6 +18,16 @@ class FilesRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Files::class);
+    }
+
+    public function getFiles(CustomerFiles $customerFiles){
+        return $this->createQueryBuilder('f')
+        ->leftJoin('f.customerFiles', 'customerFiles')
+        ->leftJoin('f.document', 'document')
+        ->where('customerFiles = :i')
+        ->setParameter('i', $customerFiles)
+        ->getQuery()
+        ->getResult();
     }
 
     // /**

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\CustomerFiles;
 use App\Entity\Files;
+use App\Form\DownloadFilesType;
 use App\Form\FilesType;
 use App\Repository\ClientStatutDocumentRepository;
 use App\Repository\CustomerFilesRepository;
@@ -14,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service\FileUploader;
+use App\Service\ZipDownloader;
 use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
@@ -22,6 +24,7 @@ use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\DataTableFactory;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
+use ZipArchive;
 
 /**
  * @Route("/files/{id}", requirements={"id":"\d+"})
@@ -86,10 +89,29 @@ class FilesController extends AbstractController
             return $table->getResponse();
         }
 
+        $downloadForm = $this->createForm(DownloadFilesType::class, null, ['action' => $this->generateUrl('files_downloads', ['id' => $customer->getId()])]);
+
         return $this->render('files/index.html.twig', [
             'customer_id' => $customer->getId(),
-            'datatable' => $table
+            'datatable' => $table,
+            'form' => $downloadForm->createView()
         ]);
+    }
+
+    /**
+     * @Route("/downloads", name="files_downloads", methods={"POST"})
+     */
+    public function download(Request $request, CustomerFiles $customer, FilesRepository $filesRepository, ZipDownloader $zipDownloader) {
+        $files = $filesRepository->getFiles($customer);
+        ;
+        $zip = $zipDownloader->upload($customer, $files);
+        $response = new Response(file_get_contents($zip, 'ilan.zip'));
+        $response->headers->set('Content-Type', 'application/zip');
+        $response->headers->set('Content-Disposition', 'attachment;filename="'.$customer->getName().'-documents.zip"');
+        $response->headers->set('Content-length', filesize($zip));
+        @unlink($zip);
+        $response->headers->set('Location', $this->generateUrl('files_index', ['id' => $customer->getId()]));
+        return $response;
     }
 
     /**

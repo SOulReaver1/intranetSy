@@ -3,7 +3,11 @@
 {% set title = "Les fichiers" %}
 {% block header %}
     <div class="row justify-content-end">
+        {% include "files/_download_form.html.twig" %}
+    </div>
+    <div class="row justify-content-end">
         <a href="{{path('customer_files_show', {'global': app.session.get('global'), 'id': customer_id})}}" class="btn btn-primary">Retour</a>
         <a href="{{path('files_new', {'id': customer_id})}}" class="btn btn-primary">Ajouter des fichiers</a>
     </div>
+
 {% endblock %}

@@ -67,6 +67,7 @@
                                         </div>
                                     </div>
                                     <div class="card-body" style="z-index: 4">
+                                        {% block beforeBody %}{% endblock %}
                                         {% if datatable is defined %}
                                         <!-- Button trigger modal -->
                                             <div id="table">Chargement...</div>
