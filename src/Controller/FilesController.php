@@ -23,7 +23,10 @@ use Omines\DataTablesBundle\Column\NumberColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\DataTableFactory;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use ZipArchive;
 
 /**
@@ -104,11 +107,12 @@ class FilesController extends AbstractController
     public function download(Request $request, CustomerFiles $customer, FilesRepository $filesRepository, ZipDownloader $zipDownloader) {
         $files = $filesRepository->getFiles($customer);
         $zip = $zipDownloader->upload($customer, $files);
-        $response = new Response(file_get_contents($zip));
+        $response = new BinaryFileResponse($zip);
         $response->headers->set('Content-Type', 'application/zip');
-        $response->headers->set('Content-Disposition', 'attachment;filename="'.$customer->getName().'-documents.zip"');
-        $response->headers->set('Content-length', filesize($zip));
-        $response->headers->set('Location', $this->generateUrl('files_index', ['id' => $customer->getId()]));
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $customer->getName()."-documents.zip"
+        );
         return $response;
     }
 
