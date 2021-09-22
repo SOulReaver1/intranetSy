@@ -36,8 +36,16 @@ class ZipDownloader
         return $this->targetDirectory;
     }
 
-    public function delete(string $fileName){
-        $path = $this->getTargetDirectory().'/'.$fileName;
-        return unlink($path);
+    public function delete(Files $file){
+        $zip = new ZipArchive;
+        $zip_name = md5($file->getCustomerFiles()->getId()).'.zip';
+        $directory = $this->getTargetDirectory().'/'.$zip_name;
+        if($zip->open($directory) === true) {
+            $zip->deleteName($file->getFile());
+            $zip->close();
+            return true;
+        }
+
+        return false;
     }
 }

@@ -205,9 +205,10 @@ class FilesController extends AbstractController
     /**
      * @Route("/{file}", name="files_delete", methods={"DELETE"})
      */
-    public function delete(Request $request, CustomerFiles $customer, Files $file, FileUploader $fileUploader): Response
+    public function delete(Request $request, CustomerFiles $customer, Files $file, FileUploader $fileUploader, ZipDownloader $zipDownloader): Response
     {
         if ($this->isCsrfTokenValid('delete'.$file->getId(), $request->request->get('_token'))) {
+            $zipDownloader->delete($file);
             $fileUploader->delete($file->getFile());
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($file);
