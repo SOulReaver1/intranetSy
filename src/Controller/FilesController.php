@@ -106,14 +106,22 @@ class FilesController extends AbstractController
      */
     public function download(Request $request, CustomerFiles $customer, FilesRepository $filesRepository, ZipDownloader $zipDownloader) {
         $files = $filesRepository->getFiles($customer);
-        $zip = $zipDownloader->upload($customer, $files);
-        $response = new BinaryFileResponse($zip);
-        $response->headers->set('Content-Type', 'application/zip');
-        $response->setContentDisposition(
-            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            $customer->getName()."-documents.zip"
-        );
-        return $response;
+        if(!empty($files)) {
+            $zip = $zipDownloader->upload($customer, $files);
+            $response = new BinaryFileResponse($zip);
+            $response->headers->set('Content-Type', 'application/zip');
+            $response->setContentDisposition(
+                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                $customer->getName()."-documents.zip"
+            );
+            @unlink($zip);
+            return $response;
+        }
+
+        $this->addFlash('error', "La fiche n'a pas de document !");
+        return $this->redirectToRoute('files_index', [
+            'id' => $customer->getId()
+        ]);
     }
 
     /**
