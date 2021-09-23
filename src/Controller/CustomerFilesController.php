@@ -79,7 +79,7 @@ class CustomerFilesController extends AbstractController
             $customer_files_ids = explode(', ', $data['customer_files']);
             $statut = $data['customer_files_statut'];
             $entityManager = $this->getDoctrine()->getManager();
-            if(count($customer_files_ids) > 0) {
+            if($data['customer_files']) {
                 foreach ($customer_files_ids as $value) {
                     $customerFile = $customerFilesRepository->find(intval($value));
                     // dd($value, $customerFile);
