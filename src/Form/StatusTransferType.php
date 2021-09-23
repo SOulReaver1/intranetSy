@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\CustomerFiles;
 use App\Entity\CustomerFilesStatut;
 use App\Entity\GlobalStatut;
 use App\Repository\CustomerFilesStatutRepository;
@@ -10,6 +11,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class StatusTransferType extends AbstractType
 {
@@ -27,7 +29,8 @@ class StatusTransferType extends AbstractType
                         ->where('c.global_statut = :g')
                         ->setParameter('g', $this->global);
                 },
-                'label' => false
+                'label' => "Choisir le statut : <span class='text-danger'>*</span>",
+                "label_html" => true
             ])
             ->add('customer_files', HiddenType::class);
         ;
@@ -36,7 +39,6 @@ class StatusTransferType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => null,
         ]);
     }
 }

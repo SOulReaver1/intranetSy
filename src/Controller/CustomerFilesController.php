@@ -68,18 +68,20 @@ class CustomerFilesController extends AbstractController
     CustomerFilesRepository $customerFilesRepository,DataTableFactory $dataTableFactory)
     {        
         $this->globalStatut = $global;
-        $editStatutForm = $this->createForm(StatusTransferType::class,[
+        $editStatutForm = $this->createForm(StatusTransferType::class, [
             "global" => $global
         ]);
+
         $editStatutForm->handleRequest($request);
         if ($editStatutForm->isSubmitted() && $editStatutForm->isValid()) {
             $data = $editStatutForm->getData();
             $customer_files_ids = explode(', ', $data['customer_files']);
             $statut = $data['customer_files_statut'];
             $entityManager = $this->getDoctrine()->getManager();
-            if(count($customer_files_ids) === 0) {
+            if(count($customer_files_ids) > 0) {
                 foreach ($customer_files_ids as $value) {
                     $customerFile = $customerFilesRepository->find(intval($value));
+                    // dd($value, $customerFile);
                     $customerFile->setCustomerStatut($statut);
                     $entityManager->persist($customerFile);
                     $entityManager->flush();    
@@ -135,6 +137,7 @@ class CustomerFilesController extends AbstractController
             ->add('name', TextColumn::class, ['label' => 'Nom complet'])
             ->add('date_expertise', DateTimeColumn::class, ['label' => 'Date d\'expertise', 'searchable' => false])
             ->add('address', TextColumn::class, ['label' => 'Adresse'])
+            ->add('state', TextColumn::class, ['label' => 'Département'])
             ->add('address_complement', TextColumn::class, ['label' => 'Complément d\'adresse'])
             ->add('city', TextColumn::class, ['label' => 'Ville'])
             ->add('zip_code', TextColumn::class, ['label' => 'Code postal'])
