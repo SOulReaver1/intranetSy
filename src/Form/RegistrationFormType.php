@@ -2,7 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\GlobalStatut;
 use App\Entity\User;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -34,6 +36,12 @@ class RegistrationFormType extends AbstractType
             ])
             ->add('username', TextType::class, ['label' => 'Nom : <span class="text-danger">*</span>', 'required' => true, "label_html" => true])
             ->add('email', EmailType::class, ['label' => 'Email : <span class="text-danger">*</span>', 'required' => true, "label_html" => true])
+            ->add('global_statut', EntityType::class, [
+                'class' => GlobalStatut::class,
+                'label' => 'Les statuts :',
+                'multiple' => true,
+                'attr' => ['class' => 'ui fluid dropdown'],
+            ])
             ->add('plainPassword', PasswordType::class, [
                 // instead of being set onto the object directly,
                 // this is read and encoded in the controller

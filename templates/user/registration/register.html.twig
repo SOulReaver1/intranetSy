@@ -14,3 +14,6 @@
     {{ include('user/registration/_form.html.twig') }}
 
 {% endblock %}
+{% block javascripts %}
+    <script>$('#registration_form_global_statut').dropdown();</script>
+{% endblock %}

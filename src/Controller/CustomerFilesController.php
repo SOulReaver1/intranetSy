@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\CustomerFiles;
 use App\Entity\GlobalStatut;
 use App\Entity\Provider;
+use App\Entity\User;
 use App\Form\CustomerFilesType;
 use App\Form\StatusTransferType;
 use App\Form\UpdateCustomerFileType;
@@ -289,6 +290,17 @@ class CustomerFilesController extends AbstractController
                         ->setParameter("statut", $this->session->get('statut'))
                         ->from(CustomerFiles::class, 'c')
                         ->leftJoin('c.customer_statut', 'customer_statut');
+                    }
+                    if(!$this->findByRoles->findByRole('ROLE_ADMIN', $this->getUser())){
+                        $user_global_statuts = $this->getUser()->getGlobalStatut();
+                        if(count($user_global_statuts) > 0){
+                            return $builder
+                            ->select('c, customer_statut')
+                            ->where('c.global_statut in(:g)')
+                            ->setParameter('g', $user_global_statuts)
+                            ->from(CustomerFiles::class, 'c')
+                            ->leftJoin('c.customer_statut', 'customer_statut');
+                        }
                     }
                     return $builder
                         ->select('c, customer_statut')

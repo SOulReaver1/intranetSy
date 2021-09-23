@@ -43,6 +43,11 @@ class UserEditType extends AbstractType
                     'required' => true,
                     'label' => 'Role(s) : <span class="text-danger">*</span>',
                     'label_html' => true,
+                ])->add('global_statut', EntityType::class, [
+                    'class' => GlobalStatut::class,
+                    'label' => 'Les statuts :',
+                    'multiple' => true,
+                    'attr' => ['class' => 'ui fluid dropdown'],
                 ]);
             }
         }else {
