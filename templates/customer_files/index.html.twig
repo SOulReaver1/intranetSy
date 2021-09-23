@@ -29,7 +29,7 @@
                 {% endfor %}
             </div>
         </div>
-        {% if editStatutForm is defined %}
+        {% if is_granted('ROLE_ADMIN') and editStatutForm is defined %}
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changeStatut" id="changeStatutModalButton">
                 Modifier les statuts
             </button>
