@@ -38,6 +38,7 @@ class GlobalStatutController extends AbstractController
      */
     public function index(Request $request, GlobalStatutRepository $globalStatutRepository, DataTableFactory $dataTableFactory): Response
     {
+
         $table = $dataTableFactory->create()
         ->add('id', NumberColumn::class, ['label' => '#'])
         ->add('name', TextColumn::class, ['label' => 'Nom'])
