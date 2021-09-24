@@ -222,35 +222,9 @@ class CustomerFilesController extends AbstractController
     /**
      * @Route("/all", name="customer_files_all", methods={"GET", "POST"})
      */
-    public function all(Request $request, GlobalStatut $global,DataTableFactory $dataTableFactory, CustomerFilesStatutRepository $customerFilesStatutRepository, CustomerFilesRepository $customerFilesRepository) {
+    public function all(Request $request, GlobalStatut $global,DataTableFactory $dataTableFactory, CustomerFilesStatutRepository $customerFilesStatutRepository) {
         $this->globalStatut = $global;
-        $editStatutForm = $this->createForm(StatusTransferType::class, [
-            "global" => $global
-        ]);
 
-        $editStatutForm->handleRequest($request);
-        if ($editStatutForm->isSubmitted() && $editStatutForm->isValid()) {
-            $data = $editStatutForm->getData();
-            $customer_files_ids = explode(', ', $data['customer_files']);
-            $statut = $data['customer_files_statut'];
-            $entityManager = $this->getDoctrine()->getManager();
-            if($data['customer_files']) {
-                foreach ($customer_files_ids as $value) {
-                    $customerFile = $customerFilesRepository->find(intval($value));
-                    // dd($value, $customerFile);
-                    $customerFile->setCustomerStatut($statut);
-                    $entityManager->persist($customerFile);
-                    $entityManager->flush();    
-                }
-                $this->addFlash('success', count($customer_files_ids).' fiche(s) on(t) bien été(s) modifiée(s) !');
-            }else {
-                $this->addFlash('error', 'Aucune fiche sélectionnée');
-            }
-
-            return $this->redirectToRoute('customer_files_index', [
-                'global' => $this->session->get('global')
-            ]);
-        }
         $table = $dataTableFactory->create()
             ->add('id', TextColumn::class, ['label' => '#'])
             ->add('global_statut', TextColumn::class, [
@@ -341,10 +315,9 @@ class CustomerFilesController extends AbstractController
             return $table->getResponse();
         }
 
-        return $this->render('customer_files/index.html.twig', [
+        return $this->render('customer_files/all.html.twig', [
             'statuts' => $customerFilesStatutRepository->findAllByOrderWG(),
-            'datatable' => $table,
-            'editStatutForm' => $editStatutForm->createView()
+            'datatable' => $table        
         ]);
     }
 
