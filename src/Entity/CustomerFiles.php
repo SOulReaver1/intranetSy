@@ -271,6 +271,11 @@ class CustomerFiles
     private $sms;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $email;
+
+    /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
@@ -875,6 +880,18 @@ class CustomerFiles
     public function setGlobalStatut(?GlobalStatut $global_statut): self
     {
         $this->global_statut = $global_statut;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
 
         return $this;
     }

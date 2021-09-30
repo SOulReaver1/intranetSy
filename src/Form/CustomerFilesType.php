@@ -62,6 +62,11 @@ class CustomerFilesType extends AbstractType
                 'row_attr' => ['class' => 'col'],
 
             ])
+            ->add('email', EmailType::class, [
+                'label' => 'Email :',
+                'required' => false,
+                'row_attr' => ['class' => 'col-md-6'],
+            ])
             ->add('address', TextType::class, 
             [
                 'required' => false,
