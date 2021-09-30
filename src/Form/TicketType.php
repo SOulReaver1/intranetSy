@@ -73,7 +73,7 @@ class TicketType extends AbstractType
                 'multiple' => true,
                 'required' => true,
                 'attr' => ['class' => 'ui fluid search dropdown'],
-                "data" => $this->findByRoles->findByRole('ROLE_ADMIN', null, false),
+                "data" => [],
                 'label' => 'Utilisateurs : <span class="text-danger">*</span>',
                 'label_html' => true,
                 'required' => true
