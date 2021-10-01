@@ -35,6 +35,20 @@
             </button>
         {% endif %}
 {% endblock %}
+{% block beforeBody %}
+    <h3>Filtrer par département(s) :</h3>
+    <div class="row">
+        <div class="col-md-6">
+            <select name="zipcode" multiple="" class="ui search dropdown fluid" id="filterByZipcode">
+                <option value="">Aucun code postal</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <a href="?zipcode=" class="btn btn-success" id="filterZipcodeConfirmation">Filtrer</a>
+        </div>
+    </div>
+    <br/><br/>
+{% endblock %}
 {% block modal %}
     <div class="modal fade" id="changeStatut" tabindex="-1" role="dialog" aria-labelledby="changeStatutLabel" aria-hidden="true" style="z-index:99999;">
         <div class="modal-dialog" role="document">
@@ -57,7 +71,17 @@
     </div>
 {% endblock %}
 {% block javascripts %}
-    <script>$('#filter').dropdown();</script>
+    <script>
+        $('#filter').dropdown();
+        $('#filterByZipcode').dropdown({
+            clearable: true,
+            allowAdditions: true,
+        })
+        const filterZipCodeButton = document.getElementById('filterZipcodeConfirmation');
+        filterZipCodeButton.addEventListener('click', evt => {
+            filterZipCodeButton.href += $('#filterByZipcode').val().join(',')
+        })
+    </script>
     {% if editStatutForm is defined %}
         <script>
             $("#changeStatutDropdown").dropdown();

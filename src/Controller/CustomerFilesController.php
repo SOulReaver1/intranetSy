@@ -51,6 +51,7 @@ class CustomerFilesController extends AbstractController
     private $globalStatut;
     private $findByRoles;
     private $customerFilesRepository;
+    private $zip_code;
 
     public function __construct(FindByRoles $findByRoles,SessionInterface $sessionInterface, SmsAutoRepository $smsAutoRepository, SendSms $sendSms, ClientStatutDocumentRepository $clientStatutDocumentRepository, CustomerFilesRepository $customerFilesRepository)
     {
@@ -61,7 +62,6 @@ class CustomerFilesController extends AbstractController
         $this->findByRoles = $findByRoles;
         $this->customerFilesRepository = $customerFilesRepository;
     }
-
     /**
      * @Route("/", name="customer_files_index", methods={"GET", "POST"})
      */
@@ -91,6 +91,7 @@ class CustomerFilesController extends AbstractController
             }else {
                 $this->addFlash('error', 'Aucune fiche sélectionnée');
             }
+            
 
             return $this->redirectToRoute('customer_files_index', [
                 'global' => $this->session->get('global')
@@ -99,8 +100,12 @@ class CustomerFilesController extends AbstractController
 
         if($request->isMethod('get')){
             $this->session->remove('statut');
+            $this->session->remove('zipcode');
             if($request->query->get('statut')){
                 $this->session->set('statut', $request->query->get('statut'));
+            }
+            if($request->query->get('zipcode')){
+                $this->session->set('zipcode', $request->query->get('zipcode'));
             }
 
             if(!$this->findByRoles->findByRole('ROLE_ADMIN', $this->getUser())){
@@ -185,6 +190,27 @@ class CustomerFilesController extends AbstractController
                         ->from(CustomerFiles::class, 'c')
                         ->leftJoin('c.installer', 'i')
                         ->leftJoin('c.customer_statut', 'customer_statut');
+                    }
+                    if($this->session->get('zipcode') && $this->session->get('statut')){
+                        return $builder
+                        ->select('c, customer_statut')
+                        ->andWhere('c.global_statut = :g')
+                        ->andWhere('c.zip_code IN (:zipcode)')
+                        ->andWhere('customer_statut.id = :statut')
+                        ->setParameter("g", $this->globalStatut)
+                        ->setParameter("zipcode", $this->session->get('zipcode'))
+                        ->setParameter("statut", $this->session->get('statut'))
+                        ->from(CustomerFiles::class, 'c')
+                        ->leftJoin('c.customer_statut', 'customer_statut');
+                    }
+                    if($this->session->get('zipcode')){
+                        return $builder
+                        ->select('c')
+                        ->andWhere('c.global_statut = :g')
+                        ->andWhere('c.zip_code IN (:zipcode)')
+                        ->setParameter("g", $this->globalStatut)
+                        ->setParameter("zipcode", $this->session->get('zipcode'))
+                        ->from(CustomerFiles::class, 'c');
                     }
                     if($this->session->get('statut')){
                         return $builder
