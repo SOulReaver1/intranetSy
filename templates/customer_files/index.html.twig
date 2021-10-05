@@ -36,12 +36,10 @@
         {% endif %}
 {% endblock %}
 {% block beforeBody %}
-    <h3>Filtrer par département(s) :</h3>
+    <h3>Filtrer par département :</h3>
     <div class="row">
         <div class="col-md-6">
-            <select name="zipcode" multiple="" class="ui search dropdown fluid" id="filterByZipcode">
-                <option value="">Aucun code postal</option>
-            </select>
+            <input type="number" name="zipcode" placeholder="Exemple : 75" class="form-control" id="filterByZipcode"/>
         </div>
         <div class="col-md-6">
             <a href="?zipcode=" class="btn btn-success" id="filterZipcodeConfirmation">Filtrer</a>
@@ -73,13 +71,9 @@
 {% block javascripts %}
     <script>
         $('#filter').dropdown();
-        $('#filterByZipcode').dropdown({
-            clearable: true,
-            allowAdditions: true,
-        })
         const filterZipCodeButton = document.getElementById('filterZipcodeConfirmation');
         filterZipCodeButton.addEventListener('click', evt => {
-            filterZipCodeButton.href += $('#filterByZipcode').val().join(',')
+            filterZipCodeButton.href += document.getElementById('filterByZipcode').value
         })
     </script>
     {% if editStatutForm is defined %}

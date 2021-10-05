@@ -195,10 +195,10 @@ class CustomerFilesController extends AbstractController
                         return $builder
                         ->select('c, customer_statut')
                         ->andWhere('c.global_statut = :g')
-                        ->andWhere('c.zip_code IN (:zipcode)')
+                        ->andWhere('c.zip_code LIKE :zipcode')
                         ->andWhere('customer_statut.id = :statut')
                         ->setParameter("g", $this->globalStatut)
-                        ->setParameter("zipcode", $this->session->get('zipcode'))
+                        ->setParameter("zipcode", $this->session->get('zipcode').'%')
                         ->setParameter("statut", $this->session->get('statut'))
                         ->from(CustomerFiles::class, 'c')
                         ->leftJoin('c.customer_statut', 'customer_statut');
@@ -207,9 +207,9 @@ class CustomerFilesController extends AbstractController
                         return $builder
                         ->select('c')
                         ->andWhere('c.global_statut = :g')
-                        ->andWhere('c.zip_code IN (:zipcode)')
+                        ->andWhere('c.zip_code LIKE :zipcode')
                         ->setParameter("g", $this->globalStatut)
-                        ->setParameter("zipcode", $this->session->get('zipcode'))
+                        ->setParameter("zipcode", $this->session->get('zipcode').'%')
                         ->from(CustomerFiles::class, 'c');
                     }
                     if($this->session->get('statut')){
