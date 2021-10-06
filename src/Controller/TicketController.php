@@ -289,9 +289,9 @@ class TicketController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             
             // // Add all admin users
-            // if(!empty($this->findByRoles->findByRole('ROLE_ADMIN', null, false))){
-            //     $ticket->addUser(...$this->findByRoles->findByRole('ROLE_ADMIN', null, false));
-            // }            
+            if(!empty($this->findByRoles->findByRole('ROLE_SAV', null, false))){
+                $ticket->addUser(...$this->findByRoles->findByRole('ROLE_SAV', null, false));
+            }            
             // Add the creator
             $ticket->addUser($this->getUser());
             // Add the installer
