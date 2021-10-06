@@ -71,12 +71,10 @@ class TicketType extends AbstractType
             ->add('users', EntityType::class, [
                 'class' => User::class,
                 'multiple' => true,
-                'required' => true,
+                'required' => false,
                 'attr' => ['class' => 'ui fluid search dropdown'],
-                "data" => [],
-                'label' => 'Utilisateurs : <span class="text-danger">*</span>',
+                'label' => 'Utilisateurs :',
                 'label_html' => true,
-                'required' => true
             ])
         ;
     }
