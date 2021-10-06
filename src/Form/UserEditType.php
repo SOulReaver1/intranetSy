@@ -33,11 +33,29 @@ class UserEditType extends AbstractType
         $this->me = $options['me'];
  
         $builder
-        ->add('username', TextType::class, ['label' => 'Nom : <span class="text-danger">*</span>', 'required' => true, "label_html" => true])
-        ->add('email', EmailType::class, ['label' => 'Email : <span class="text-danger">*</span>', 'required' => true, "label_html" => true]);
+        ->add('username', TextType::class, [
+            'label' => 'Nom : <span class="text-danger">*</span>', 
+            'required' => true, 
+            "label_html" => true
+        ])
+        ->add('email', EmailType::class, [
+            'label' => 'Email : <span class="text-danger">*</span>', 
+            'required' => true, 
+            "label_html" => true
+        ]);
         if ($this->current_user !== $this->me) {
             if($this->findByRoles->findByRole('ROLE_ADMIN', $this->me)){
-                $builder->add('roles', ChoiceType::class, ['choices' => ['Installateur' => 'ROLE_INSTALLATEUR', 'Ecrire des fiches' => 'ROLE_ALLOW_CREATE', 'Utilisateur' => 'ROLE_USER', 'S.A.V' => 'ROLE_SAV', 'Métreur' => 'ROLE_METREUR', 'Administrateur' => 'ROLE_ADMIN', 'Super Admin' => 'ROLE_SUPERADMIN', 'Developpeur' => 'ROLE_DEVELOPER'],
+                $builder->add('roles', ChoiceType::class, [
+                'choices' => [
+                    'Installateur' => 'ROLE_INSTALLATEUR', 
+                    'Ecrire des fiches' => 'ROLE_ALLOW_CREATE', 
+                    'Utilisateur' => 'ROLE_USER', 
+                    'S.A.V' => 'ROLE_SAV', 
+                    'Métreur' => 'ROLE_METREUR', 
+                    'Administrateur' => 'ROLE_ADMIN', 
+                    'Super Admin' => 'ROLE_SUPERADMIN', 
+                    'Developpeur' => 'ROLE_DEVELOPER'
+                ],
                     'expanded' => true,
                     'multiple' => true,
                     'required' => true,
@@ -47,6 +65,7 @@ class UserEditType extends AbstractType
                     'class' => GlobalStatut::class,
                     'label' => 'Les statuts :',
                     'multiple' => true,
+                    'required' => false,
                     'attr' => ['class' => 'ui fluid dropdown'],
                 ]);
             }
