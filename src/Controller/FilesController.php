@@ -136,20 +136,22 @@ class FilesController extends AbstractController
                 $errors = [];
                 $files = $request->files->get('files')['file'];
                 foreach ($files as $documentId => $value) {
-                    $product = new Files(); 
-                    $product->setFile($value);
-                    $file = $product->getFile();
-                    $document = $clientStatutDocumentRepository->find($documentId);
-                    if($file == null){
-                        $errors[] = $document;
-                    }else{
-                        $fileName = $fileUploader->upload($file);
-                        $product->setFile($fileName);
-                        $product->setCustomerFiles($customer);
-                        $product->setDocument($document);
-                        $entityManager = $this->getDoctrine()->getManager();
-                        $entityManager->persist($product);
-                        $entityManager->flush();
+                    foreach ($value as $v) {
+                        $product = new Files(); 
+                        $product->setFile($v);
+                        $file = $product->getFile();
+                        $document = $clientStatutDocumentRepository->find($documentId);
+                        if($file == null){
+                            $errors[] = $document;
+                        }else{
+                            $fileName = $fileUploader->upload($file);
+                            $product->setFile($fileName);
+                            $product->setCustomerFiles($customer);
+                            $product->setDocument($document);
+                            $entityManager = $this->getDoctrine()->getManager();
+                            $entityManager->persist($product);
+                            $entityManager->flush();
+                        }
                     }
                 }
                 if(!empty($errors)){

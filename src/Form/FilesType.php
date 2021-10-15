@@ -29,7 +29,7 @@ class FilesType extends AbstractType
                     return $repository->createQueryBuilder('u')
                     ->leftJoin('u.client_statut', 'client') 
                     ->where('client.id = :id')
-                    ->setParameter('id', $this->customer->getClientStatutId());
+                    ->setParameter('id', $this->customer->getClientStatut());
                 },
                 'label' => 'Type de document : <span class="text-danger">*</span>',
                 'label_html' => true,
@@ -37,12 +37,12 @@ class FilesType extends AbstractType
                 'required' => false
                 )
             )
-            ->add('file', FileType::class, array(
-                'label' => 'Votre document <span class="text-danger">*</span>',
-                'label_html' => true,
-                'multiple' => true,
-                'required' => true,
-                )
+            ->add('file', FileType::class, [
+                    'label' => 'Votre document <span class="text-danger">*</span>',
+                    'label_html' => true,
+                    'multiple' => true,
+                    'required' => true,
+                ]
             )
         ;
     }

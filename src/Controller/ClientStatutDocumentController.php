@@ -44,7 +44,7 @@ class ClientStatutDocumentController extends AbstractController
             },
             'label' => 'Statut(s)'
         ])
-        ->add('created_at', DateTimeColumn::class, ['label' => 'Date de création', 'format' => 'd-m-Y H:i:s'])
+        ->add('created_at', DateTimeColumn::class, ['label' => 'Date de création', 'format' => 'd-m-Y H:i:s', 'searchable' => false])
         ->add('actions', TextColumn::class, [
             'data' => function($context) {
                 return $context->getId();
