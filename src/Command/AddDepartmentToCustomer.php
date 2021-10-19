@@ -49,7 +49,7 @@ class AddDepartmentToCustomer extends Command
                 $name = $value->getName();
                 $response = $this->client->request(
                     'GET',
-                    "https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&result_type=administrative_area_level_2&key=AIzaSyCxZwS9iCtbQWfPHb48f9wB3P4rRTEUWw"
+                    "https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&result_type=administrative_area_level_2&key=$this->google_key"
                 );
                 $result = json_decode($response->getContent());
                 if($result->status === "OK") {
