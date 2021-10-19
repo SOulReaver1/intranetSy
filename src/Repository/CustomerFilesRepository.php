@@ -124,6 +124,15 @@ class CustomerFilesRepository extends ServiceEntityRepository
         ->getResult();
     }
 
+    public function getUniqueDepartment() {
+        return $this->createQueryBuilder('c')
+        ->select('c.department')
+        ->where('c.department IS NOT NULL')
+        ->groupBy('c.department')
+        ->getQuery()
+        ->getResult();
+    }
+
     public function getAddressesWG(?User $user = null){
         if($user){
             return $this->createQueryBuilder('c')

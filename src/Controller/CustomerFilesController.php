@@ -72,6 +72,11 @@ class CustomerFilesController extends AbstractController
         $editStatutForm = $this->createForm(StatusTransferType::class, [
             "global" => $global
         ]);
+        $departmentList = [];
+
+        foreach($customerFilesRepository->getUniqueDepartment() as $value) {
+            $departmentList[] = $value['department'];
+        };
 
         $editStatutForm->handleRequest($request);
         if ($editStatutForm->isSubmitted() && $editStatutForm->isValid()) {
@@ -104,8 +109,8 @@ class CustomerFilesController extends AbstractController
             if($request->query->get('statut')){
                 $this->session->set('statut', $request->query->get('statut'));
             }
-            if($request->query->get('zipcode')){
-                $this->session->set('zipcode', $request->query->get('zipcode'));
+            if($request->query->get('departments')){
+                $this->session->set('departments', $request->query->get('departments'));
             }
 
             if(!$this->findByRoles->findByRole('ROLE_ADMIN', $this->getUser())){
@@ -191,26 +196,27 @@ class CustomerFilesController extends AbstractController
                         ->leftJoin('c.installer', 'i')
                         ->leftJoin('c.customer_statut', 'customer_statut');
                     }
-                    if($this->session->get('zipcode') && $this->session->get('statut')){
+                    if($this->session->get('departments') && $this->session->get('statut')){
                         return $builder
                         ->select('c, customer_statut')
                         ->andWhere('c.global_statut = :g')
-                        ->andWhere('c.zip_code LIKE :zipcode')
+                        ->andWhere('c.department IN(:departments)')
                         ->andWhere('customer_statut.id = :statut')
                         ->setParameter("g", $this->globalStatut)
-                        ->setParameter("zipcode", $this->session->get('zipcode').'%')
+                        ->setParameter("departments", explode(',', $this->session->get('departments')))
                         ->setParameter("statut", $this->session->get('statut'))
                         ->from(CustomerFiles::class, 'c')
                         ->leftJoin('c.customer_statut', 'customer_statut');
                     }
-                    if($this->session->get('zipcode')){
+                    if($this->session->get('departments')){
                         return $builder
-                        ->select('c')
+                        ->select('c, customer_statut')
                         ->andWhere('c.global_statut = :g')
-                        ->andWhere('c.zip_code LIKE :zipcode')
+                        ->andWhere('c.department IN(:departments)')
                         ->setParameter("g", $this->globalStatut)
-                        ->setParameter("zipcode", $this->session->get('zipcode').'%')
-                        ->from(CustomerFiles::class, 'c');
+                        ->setParameter("departments", explode(',', $this->session->get('departments')))
+                        ->from(CustomerFiles::class, 'c')
+                        ->leftJoin('c.customer_statut', 'customer_statut');
                     }
                     if($this->session->get('statut')){
                         return $builder
@@ -241,7 +247,8 @@ class CustomerFilesController extends AbstractController
             'statuts' => $customerFilesStatutRepository->findAllByOrder($global),
             'datatable' => $table,
             "datatableSelect" => true,
-            "editStatutForm" => $editStatutForm->createView()
+            "editStatutForm" => $editStatutForm->createView(),
+            'departmentList' => $departmentList
         ]);
     }
 

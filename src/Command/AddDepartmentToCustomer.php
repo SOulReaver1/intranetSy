@@ -44,29 +44,31 @@ class AddDepartmentToCustomer extends Command
                 '',
             ]);
             foreach ($customersWithNoDepartment as $key => $value) {
-                if($key === 1) {
-                    $longitude = $value->getLng();
-                    $latitude = $value->getLat();
-                    $name = $value->getName();
-                    $response = $this->client->request(
-                        'GET',
-                        "https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&result_type=administrative_area_level_2&key=$this->google_key"
-                    );
-                    if($response->getStatusCode() === 200) {
-                        $result = json_decode($response->getContent());
-                        $result = $result->results[0];
-                        $department = array_filter($result->address_components, function($context) {
-                            return in_array("administrative_area_level_2", $context->types);
-                        }); 
-                        $department = $department[0]->long_name; 
-                        $value->setDepartment($department);
-                        $place_id = $result->place_id;  
-                        $value->setPlaceId($place_id);
-                        // $value->setDepartment($department)
-                        $this->manager->persist($value);
-                        $this->manager->flush();
-                        $output->writeln("$name region added !");
-                    }
+                $longitude = $value->getLng();
+                $latitude = $value->getLat();
+                $name = $value->getName();
+                $response = $this->client->request(
+                    'GET',
+                    "https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&result_type=administrative_area_level_2&key=AIzaSyCxZwS9iCtbQWfPHb48f9wB3P4rRTEUWw"
+                );
+                $result = json_decode($response->getContent());
+                if($result->status === "OK") {
+                    $result = json_decode($response->getContent());
+                    $result = $result->results[0];
+                    $department = array_filter($result->address_components, function($context) {
+                        return in_array("administrative_area_level_2", $context->types);
+                    }); 
+                    $department = $department[0]->long_name; 
+                    $value->setDepartment($department);
+                    $place_id = $result->place_id;  
+                    $value->setPlaceId($place_id);
+                    // $value->setDepartment($department)
+                    $this->manager->persist($value);
+                    $this->manager->flush();
+                    $output->writeln("$name region added !");
+                }else {
+                    $output->writeln(['An error occurred !', '', json_encode($result, JSON_PRETTY_PRINT)]);
+                    return Command::FAILURE;
                 }
             }
 
