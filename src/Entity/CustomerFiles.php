@@ -276,6 +276,16 @@ class CustomerFiles
     private $email;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $department;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $place_id;
+
+    /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
@@ -892,6 +902,30 @@ class CustomerFiles
     public function setEmail(?string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getDepartment(): ?string
+    {
+        return $this->department;
+    }
+
+    public function setDepartment(?string $department): self
+    {
+        $this->department = $department;
+
+        return $this;
+    }
+
+    public function getPlaceId(): ?string
+    {
+        return $this->place_id;
+    }
+
+    public function setPlaceId(?string $place_id): self
+    {
+        $this->place_id = $place_id;
 
         return $this;
     }

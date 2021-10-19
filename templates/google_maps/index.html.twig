@@ -130,7 +130,6 @@
             }).then(response => response.json())
             .then(res => {
                 addresses = res;
-
                 $("#filtre1").search({
                     source: res,
                     clearable: true,

@@ -99,7 +99,7 @@ class CustomerFilesType extends AbstractType
 
             ])
             ->add('state', TextType::class, [
-                'label' => 'Etat :',
+                'label' => 'Region :',
                 'required' => false,
                 'row_attr' => ['class' => 'col-md-6'],
                 'attr' => [
@@ -126,6 +126,14 @@ class CustomerFilesType extends AbstractType
             ])
             ->add('zip_code', IntegerType::class, [
                 'label' => 'Code postal :',
+                'row_attr' => ['class' => 'col-md-6'],
+                'required' => false,
+                'attr' => [
+                    'readonly' => true
+                ]
+            ])
+            ->add('department', TextType::class, [
+                'label' => 'Département :',
                 'row_attr' => ['class' => 'col-md-6'],
                 'required' => false,
                 'attr' => [

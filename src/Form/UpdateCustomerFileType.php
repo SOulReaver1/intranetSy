@@ -133,6 +133,14 @@ class UpdateCustomerFileType extends AbstractType
                 'readonly' => true
             ]
         ])
+        ->add('department', TextType::class, [
+            'label' => 'Département :',
+            'row_attr' => ['class' => 'col-md-6'],
+            'required' => false,
+            'attr' => [
+                'readonly' => true
+            ]
+        ])
         ->add('home_phone', TelType::class, [
             'required' => false,
             'label' => 'Téléphone fixe :',
