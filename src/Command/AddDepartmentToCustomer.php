@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Repository\CustomerFilesRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -36,7 +37,7 @@ class AddDepartmentToCustomer extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $customersWithNoDepartment = $this->customerFilesRepository->findBy(['department' => null]);
+        $customersWithNoDepartment = $this->customerFilesRepository->getNotDepartment();
         if(!empty($customersWithNoDepartment)) {
             $output->writeln([
                 count($customersWithNoDepartment).' customers found !',

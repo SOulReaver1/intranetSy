@@ -36,6 +36,14 @@ class CustomerFilesRepository extends ServiceEntityRepository
         return array_unique($parameters);
     }
 
+    public function getNotDepartment() {
+        return $this->createQueryBuilder('c')
+        ->andWhere('c.lat IS NOT NULL')
+        ->andWhere('c.lng IS NOT NULL')
+        ->andWhere('c.department IS NULL')
+        ->getQuery()
+        ->getResult();
+    }
     public function getAllReplaceFields(): array {
         return array_merge($this->getComplementFields(), $this->getStepFields());
     }
