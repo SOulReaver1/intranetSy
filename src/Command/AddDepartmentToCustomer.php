@@ -68,6 +68,8 @@ class AddDepartmentToCustomer extends Command
                     $this->manager->persist($value);
                     $this->manager->flush();
                     $output->writeln("$name region added !");
+                }else if($result->status === "ZERO_RESULTS"){
+                    continue;
                 }else {
                     $output->writeln(['An error occurred !', '', json_encode($result, JSON_PRETTY_PRINT), '', $url]);
                     return Command::FAILURE;
