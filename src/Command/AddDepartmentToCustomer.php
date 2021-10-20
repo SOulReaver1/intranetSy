@@ -48,9 +48,10 @@ class AddDepartmentToCustomer extends Command
                 $longitude = $value->getLng();
                 $latitude = $value->getLat();
                 $name = $value->getName();
+                $url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&result_type=administrative_area_level_2&key=$this->google_key";
                 $response = $this->client->request(
                     'GET',
-                    "https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&result_type=administrative_area_level_2&key=$this->google_key"
+                    $url
                 );
                 $result = json_decode($response->getContent());
                 if($result->status === "OK") {
@@ -68,7 +69,7 @@ class AddDepartmentToCustomer extends Command
                     $this->manager->flush();
                     $output->writeln("$name region added !");
                 }else {
-                    $output->writeln(['An error occurred !', '', json_encode($result, JSON_PRETTY_PRINT)]);
+                    $output->writeln(['An error occurred !', '', json_encode($result, JSON_PRETTY_PRINT), '', $url]);
                     return Command::FAILURE;
                 }
             }

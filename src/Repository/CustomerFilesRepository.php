@@ -132,10 +132,12 @@ class CustomerFilesRepository extends ServiceEntityRepository
         ->getResult();
     }
 
-    public function getUniqueDepartment() {
+    public function getUniqueDepartment(GlobalStatut $global) {
         return $this->createQueryBuilder('c')
         ->select('c.department')
-        ->where('c.department IS NOT NULL')
+        ->andWhere('c.department IS NOT NULL')
+        ->andWhere('c.global_statut = :g')
+        ->setParameter('g', $global)
         ->groupBy('c.department')
         ->getQuery()
         ->getResult();
