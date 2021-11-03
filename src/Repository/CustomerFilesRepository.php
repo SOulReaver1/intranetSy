@@ -36,6 +36,14 @@ class CustomerFilesRepository extends ServiceEntityRepository
         return array_unique($parameters);
     }
 
+    public function getNotDepartment() {
+        return $this->createQueryBuilder('c')
+        ->andWhere('c.lat IS NOT NULL')
+        ->andWhere('c.lng IS NOT NULL')
+        ->andWhere('c.department IS NULL')
+        ->getQuery()
+        ->getResult();
+    }
     public function getAllReplaceFields(): array {
         return array_merge($this->getComplementFields(), $this->getStepFields());
     }
@@ -124,10 +132,12 @@ class CustomerFilesRepository extends ServiceEntityRepository
         ->getResult();
     }
 
-    public function getUniqueDepartment() {
+    public function getUniqueDepartment(GlobalStatut $global) {
         return $this->createQueryBuilder('c')
         ->select('c.department')
-        ->where('c.department IS NOT NULL')
+        ->andWhere('c.department IS NOT NULL')
+        ->andWhere('c.global_statut = :g')
+        ->setParameter('g', $global)
         ->groupBy('c.department')
         ->getQuery()
         ->getResult();

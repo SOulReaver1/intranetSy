@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Repository\CustomerFilesRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -36,7 +37,7 @@ class AddDepartmentToCustomer extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $customersWithNoDepartment = $this->customerFilesRepository->findBy(['department' => null]);
+        $customersWithNoDepartment = $this->customerFilesRepository->getNotDepartment();
         if(!empty($customersWithNoDepartment)) {
             $output->writeln([
                 count($customersWithNoDepartment).' customers found !',
@@ -47,9 +48,10 @@ class AddDepartmentToCustomer extends Command
                 $longitude = $value->getLng();
                 $latitude = $value->getLat();
                 $name = $value->getName();
+                $url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&result_type=administrative_area_level_2&key=$this->google_key";
                 $response = $this->client->request(
                     'GET',
-                    "https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&result_type=administrative_area_level_2&key=$this->google_key"
+                    $url
                 );
                 $result = json_decode($response->getContent());
                 if($result->status === "OK") {
@@ -66,8 +68,10 @@ class AddDepartmentToCustomer extends Command
                     $this->manager->persist($value);
                     $this->manager->flush();
                     $output->writeln("$name region added !");
+                }else if($result->status === "ZERO_RESULTS"){
+                    continue;
                 }else {
-                    $output->writeln(['An error occurred !', '', json_encode($result, JSON_PRETTY_PRINT)]);
+                    $output->writeln(['An error occurred !', '', json_encode($result, JSON_PRETTY_PRINT), '', $url]);
                     return Command::FAILURE;
                 }
             }

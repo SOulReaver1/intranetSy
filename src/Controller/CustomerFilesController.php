@@ -74,7 +74,7 @@ class CustomerFilesController extends AbstractController
         ]);
         $departmentList = [];
 
-        foreach($customerFilesRepository->getUniqueDepartment() as $value) {
+        foreach($customerFilesRepository->getUniqueDepartment($this->globalStatut) as $value) {
             $departmentList[] = $value['department'];
         };
 
