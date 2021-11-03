@@ -50,6 +50,7 @@
         </div>
         <div class="col-md-6">
             <a href="#" class="btn btn-success" id="filterByDepartmentConfirm">Filtrer</a>
+            <a href="{{path('customer_files_index', queryParams|merge({departments: null, global: app.session.get('global')}))}}" class="btn btn-primary" id="filterByDepartmentConfirm">Aucune région</a>
         </div>
     </div>
     <br/><br/>
