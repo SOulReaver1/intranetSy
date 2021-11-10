@@ -192,9 +192,6 @@
             "config/packages/sensio_framework_extra.yaml"
         ]
     },
-    "symfony/amqp-messenger": {
-        "version": "v5.1.11"
-    },
     "symfony/asset": {
         "version": "v5.1.7"
     },
@@ -248,9 +245,6 @@
     },
     "symfony/doctrine-bridge": {
         "version": "v5.1.7"
-    },
-    "symfony/doctrine-messenger": {
-        "version": "v5.1.11"
     },
     "symfony/dom-crawler": {
         "version": "v5.1.7"
@@ -348,18 +342,18 @@
         }
     },
     "symfony/mercure": {
-        "version": "v0.4.1"
+        "version": "v0.6.0"
     },
-    "symfony/messenger": {
-        "version": "4.3",
+    "symfony/mercure-bundle": {
+        "version": "0.3",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "master",
-            "version": "4.3",
-            "ref": "e9a414b113ceadbf4e52abe37bf8f1b443f06ccb"
+            "version": "0.3",
+            "ref": "e0a854b5439186e04b28fb8887b42c54f24a0d32"
         },
         "files": [
-            "config/packages/messenger.yaml"
+            "config/packages/mercure.yaml"
         ]
     },
     "symfony/mime": {
@@ -448,9 +442,6 @@
     },
     "symfony/property-info": {
         "version": "v5.1.7"
-    },
-    "symfony/redis-messenger": {
-        "version": "v5.1.11"
     },
     "symfony/routing": {
         "version": "5.1",

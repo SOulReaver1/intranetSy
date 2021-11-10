@@ -17,6 +17,8 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Mercure\HubInterface;
+use Symfony\Component\Mercure\Update;
 
 /**
  * @Route("/customers/{global}/ticket/message", requirements={"global":"\d+"})
@@ -76,7 +78,7 @@ class TicketMessageController extends AbstractController
     /**
      * @Route("/{id}", name="ticket_message_add", methods={"POST"}, requirements={"id":"\d+"})
     */
-    public function addMessage(Request $request, GlobalStatut $global, Ticket $ticket, SerializerInterface $serializer){
+    public function addMessage(Request $request, GlobalStatut $global, Ticket $ticket, SerializerInterface $serializer, HubInterface $hub){
         $body = json_decode($request->getContent());
  
         if($ticket->getCustomerFile()->getGlobalStatut() === $global){
@@ -87,16 +89,26 @@ class TicketMessageController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($message);
             $entityManager->flush();
+
+            $data = [
+                'from_user' => [
+                    'username' => $message->getFromUser()->getUsername(),
+                    'id' => $message->getFromUser()->getId()
+                ], 
+                'created_at' => $message->getCreatedAt()->format('d-m-Y H:m:i'), 
+                'message' => $message->getContent()
+            ];
+
+            $update = new Update(
+                'ticket_message',
+                json_encode($data)
+            );
+    
+            $hub->publish($update);
+
             return new Response(json_encode([
                 'status' => 200, 
-                'data' => [
-                    'from_user' => [
-                        'username' => $message->getFromUser()->getUsername(),
-                        'id' => $message->getFromUser()->getId()
-                    ], 
-                    'created_at' => $message->getCreatedAt()->format('d-m-Y H:m:i'), 
-                    'message' => $message->getContent()
-                    ]
+                'data' => $data
                 ]), Response::HTTP_OK, [
                 'Content-Type' => 'application/json'
             ]);
