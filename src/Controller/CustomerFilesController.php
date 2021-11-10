@@ -106,6 +106,7 @@ class CustomerFilesController extends AbstractController
         if($request->isMethod('get')){
             $this->session->remove('statut');
             $this->session->remove('zipcode');
+            $this->session->remove('departments');
             if($request->query->get('statut')){
                 $this->session->set('statut', $request->query->get('statut'));
             }
