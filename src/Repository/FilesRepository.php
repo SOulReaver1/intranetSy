@@ -20,12 +20,26 @@ class FilesRepository extends ServiceEntityRepository
         parent::__construct($registry, Files::class);
     }
 
-    public function getFiles(CustomerFiles $customerFiles){
+    public function getStatut(CustomerFiles $customerFiles) {
+        return $this->createQueryBuilder('f')
+        ->select('document.id, document.name')
+        ->distinct()
+        ->leftJoin('f.document', 'document')
+        ->leftJoin('f.customerFiles', 'customerFiles')
+        ->where('customerFiles = :i')
+        ->setParameter('i', $customerFiles)
+        ->getQuery()
+        ->getResult();
+    }
+
+    public function getFiles(CustomerFiles $customerFiles, $statut){
         return $this->createQueryBuilder('f')
         ->leftJoin('f.customerFiles', 'customerFiles')
         ->leftJoin('f.document', 'document')
-        ->where('customerFiles = :i')
+        ->andWhere('customerFiles = :i')
+        ->andWhere('document.id = :d')
         ->setParameter('i', $customerFiles)
+        ->setParameter('d', $statut)
         ->getQuery()
         ->getResult();
     }

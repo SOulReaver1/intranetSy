@@ -12,7 +12,7 @@ dragger.on('drop', function(from, to, el){
     }
     
     $.ajax({
-        url: '/admin/customer/statut/changeOrder',
+        url: 'changeOrder',
         type: 'POST',
         data: {object: object},
     })

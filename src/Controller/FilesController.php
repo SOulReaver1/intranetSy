@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\CustomerFiles;
+use App\Entity\CustomerFilesStatut;
 use App\Entity\Files;
 use App\Form\DownloadFilesType;
 use App\Form\FilesType;
@@ -17,6 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Service\FileUploader;
 use App\Service\ZipDownloader;
 use Doctrine\ORM\QueryBuilder;
+use Omines\DataTablesBundle\Adapter\ArrayAdapter;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\NumberColumn;
@@ -36,12 +38,51 @@ class FilesController extends AbstractController
 {
 
     private $customer;
+    private $status;
+
     /**
      * @Route("/", name="files_index", methods={"GET", "POST"})
      */
-    public function index(Request $request, CustomerFiles $customer, DataTableFactory $dataTableFactory): Response
+    public function index(Request $request, CustomerFiles $customer, DataTableFactory $dataTableFactory, FilesRepository $filesRepository): Response
     {
         $this->customer = $customer;
+
+        $status = $filesRepository->getStatut($customer);
+        $table = $dataTableFactory->create()
+        ->add('id', NumberColumn::class, ['label' => '#'])
+        ->add('name', TextColumn::class, [
+            'label' => 'Document', 
+        ])
+        ->add('actions', TextColumn::class, [
+            'data' => function($context) {
+                return $context["id"];
+            }, 
+            'render' => function($value){
+                $value = intval($value);
+                $show = sprintf('<a href="%s" class="btn btn-primary">Regarder</a>', $this->generateUrl('file_show_byStatut', ['statut' => intval($value), 'id' => $this->customer->getId()]));
+                return $show;
+            }, 
+            'label' => 'Actions'
+        ])
+        ->createAdapter(ArrayAdapter::class, $status)->handleRequest($request);
+
+        if ($table->isCallback()) {
+            return $table->getResponse();
+        }
+
+        return $this->render('files/index.html.twig', [
+            'customer_id' => $customer->getId(),
+            'datatable' => $table,
+        ]);
+    }
+
+    /**
+    * @Route("/statut/{statut}", requirements={"statut":"\d+"}, name="file_show_byStatut", methods={"GET", "POST"})
+    */
+    public function filesShow(Request $request, CustomerFiles $customer, $statut, DataTableFactory $dataTableFactory): Response
+    {
+        $this->customer = $customer;
+        $this->status = intval($statut);
 
         $table = $dataTableFactory->create()
         ->add('id', NumberColumn::class, ['label' => '#'])
@@ -83,7 +124,9 @@ class FilesController extends AbstractController
                 ->from(Files::class, 'f')
                 ->leftJoin('f.customerFiles', 'customerFiles')
                 ->leftJoin('f.document', 'document')
-                ->where('customerFiles = :i')
+                ->andWhere('customerFiles = :i')
+                ->andWhere('document.id = :d')
+                ->setParameter('d', $this->status)
                 ->setParameter('i', $this->customer);
             }
         ])->handleRequest($request);
@@ -92,20 +135,21 @@ class FilesController extends AbstractController
             return $table->getResponse();
         }
 
-        $downloadForm = $this->createForm(DownloadFilesType::class, null, ['action' => $this->generateUrl('files_downloads', ['id' => $customer->getId()])]);
+        $downloadForm = $this->createForm(DownloadFilesType::class, null, ['action' => $this->generateUrl('files_downloads', ['id' => $customer->getId(), 'statut' => $statut])]);
 
-        return $this->render('files/index.html.twig', [
+        return $this->render('files/fileShow.html.twig', [
             'customer_id' => $customer->getId(),
             'datatable' => $table,
             'form' => $downloadForm->createView()
         ]);
     }
 
+
     /**
-     * @Route("/downloads", name="files_downloads", methods={"POST"})
+     * @Route("/downloads/{statut}", requirements={"statut":"\d+"}, name="files_downloads", methods={"POST"})
      */
-    public function download(Request $request, CustomerFiles $customer, FilesRepository $filesRepository, ZipDownloader $zipDownloader) {
-        $files = $filesRepository->getFiles($customer);
+    public function download(Request $request, CustomerFiles $customer, $statut, FilesRepository $filesRepository, ZipDownloader $zipDownloader) {
+        $files = $filesRepository->getFiles($customer, $statut);
         if(!empty($files)) {
             $zip = $zipDownloader->upload($customer, $files);
             $response = new BinaryFileResponse($zip);
@@ -125,6 +169,8 @@ class FilesController extends AbstractController
             'id' => $customer->getId()
         ]);
     }
+
+    
 
     /**
      * @Route("/new", name="files_new", methods={"GET","POST"})

@@ -14,6 +14,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity(fields={"name"}, message="Ce nom existe déjà !")
  * @UniqueEntity(fields={"color"}, message="Cette couleur existe déjà !")
+ * @UniqueEntity(fields={"ordered", "global_statut"}, message="Le changement d'ordre ne peut être effectuer !")
  */
 class CustomerFilesStatut
 {

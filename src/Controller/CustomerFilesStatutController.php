@@ -39,6 +39,7 @@ class CustomerFilesStatutController extends AbstractController
      */
     public function changeOrder(Request $request, CustomerFilesStatutRepository $customerFilesStatutRepository){
         $object = $request->request->get('object');
+  
         foreach ($object as $key => $value) {
             $customer = $customerFilesStatutRepository->find($key);
             $entityManager = $this->getDoctrine()->getManager();
