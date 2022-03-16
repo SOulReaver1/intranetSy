@@ -50,7 +50,39 @@
         </div>
         <div class="col-md-6">
             <a href="#" class="btn btn-success" id="filterByDepartmentConfirm">Filtrer</a>
-            <a href="{{path('customer_files_index', queryParams|merge({departments: null, global: app.session.get('global')}))}}" class="btn btn-primary" id="filterByDepartmentConfirm">Aucune région</a>
+            <a href="{{path('customer_files_index', queryParams|merge({departments: null, global: app.session.get('global')}))}}" class="btn btn-primary" >Aucune région</a>
+        </div>
+    </div>
+    <h3 class="mt-3">Filtrer par métreur :</h3>
+    <div class="row">
+        <div class="col-md-6">
+            <select class="ui fluid search dropdown" multiple="" id="filterByMetreur">
+              <option value="">Aucune métreur</option>
+              {% for metreur in metreurList %}
+              
+                  <option value="{{metreur['id']}}">{{metreur['email']}}</option>
+              {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-6">
+            <a href="#" class="btn btn-success" id="filterByMetreurConfirm">Filtrer</a>
+            <a href="{{path('customer_files_index', queryParams|merge({metreurs: null, global: app.session.get('global')}))}}" class="btn btn-primary">Aucun métreur</a>
+        </div>
+    </div>
+     <h3 class="mt-3">Filtrer par source :</h3>
+    <div class="row">
+        <div class="col-md-6">
+            <select class="ui fluid search dropdown" multiple="" id="filterByMetreur">
+              <option value="">Aucune source</option>
+              {% for metreur in metreurList %}
+              
+                  <option value="{{metreur['id']}}">{{metreur['email']}}</option>
+              {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-6">
+            <a href="#" class="btn btn-success" id="filterByMetreurConfirm">Filtrer</a>
+            <a href="{{path('customer_files_index', queryParams|merge({sources: null, global: app.session.get('global')}))}}" class="btn btn-primary">Aucune source</a>
         </div>
     </div>
     <br/><br/>
@@ -85,6 +117,14 @@
                 url = url.replace("values", e.join(','));
                 url = url.replace("&amp;", "&");
                 document.getElementById('filterByDepartmentConfirm').href = url;
+            }
+        })
+         $('#filterByMetreur').dropdown({
+            onChange: e => {
+                var url = '{{ path("customer_files_index", queryParams|merge({metreurs: 'values', global: app.session.get("global")}) )}}'; 
+                url = url.replace("values", e.join(','));
+                url = url.replace("&amp;", "&");
+                document.getElementById('filterByMetreurConfirm').href = url;
             }
         })
     </script>

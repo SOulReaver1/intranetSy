@@ -7,7 +7,7 @@ use App\Entity\Sms;
 use App\Entity\SmsAuto;
 use App\Form\SmsType;
 use App\Repository\SmsRepository;
-use App\Service\SendSms;
+// use App\Service\SendSms;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Adapter\ArrayAdapter;
@@ -28,78 +28,96 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class SmsController extends AbstractController
 {
-
     private $sms;
     private $session;
     private $global;
 
-    public function __construct(SendSms $sendSms, SessionInterface $session)
+    public function __construct(SessionInterface $session)
     {
         $this->session = $session;
-        $this->sms = $sendSms;
+        // $this->sms = $sendSms;
     }
 
     /**
      * @Route("/", name="sms_index", methods={"GET", "POST"})
      */
-    public function index(Request $request, GlobalStatut $global,DataTableFactory $dataTableFactory): Response
-    {
+    public function index(
+        Request $request,
+        GlobalStatut $global,
+        DataTableFactory $dataTableFactory
+    ): Response {
         $this->global = $global;
-        $table = $dataTableFactory->create()
-        ->add('id', NumberColumn::class, ['label' => '#'])
-        ->add('phone_number', TextColumn::class, ['label' => 'Numéro de téléphone'])
-        ->add('content', TextColumn::class, ['label' => 'Message'])
-        ->add('send', TextColumn::class, [
-            'label' => 'Envoyer',
-            'data' => function($context){
-                return $context->getSendAt() <= new DateTime('now') ? true : false;
-            },
-            'render' => function($value, $context){
-                $text = $value ? 'Oui' : 'Non';
-                $class = $value ? 'badge-success' : 'badge-danger';
-                return sprintf("<span class='badge $class'>$text</span>");
-            }
-        ])
-        ->add('created_at', DateTimeColumn::class, ['label' => 'Programmer le', 'format' => 'd-m-Y H:i:s'])
-        ->add('send_at', DateTimeColumn::class, ['label' => 'Date d\'envoie', 'format' => 'd-m-Y H:i:s'])
-        ->add('actions', TextColumn::class, [
-            'data' => function($context) {
-                return $context->getId();
-            }, 
-            'render' => function($value, $context){
-                $show = sprintf('<a href="%s" class="btn btn-primary">Regarder</a>', $this->generateUrl('sms_show', ['id' => $value, 'global' => $this->session->get('global')]));
-                return $show;
-            }, 
-            'label' => 'Actions'
-        ])
-        ->addOrderBy('id', DataTable::SORT_DESCENDING)
-        ->createAdapter(ORMAdapter::class, [
-            'entity' => Sms::class,
-            'query' => function(QueryBuilder $builder){
-                return $builder
-                ->select('s, sms_auto')
-                ->where('sms_auto.global_statut = :g')
-                ->setParameter('g', $this->global)
-                ->from(Sms::class, 's')
-                ->leftJoin('s.sms_auto', 'sms_auto');
-            }
-        ])
-        ->handleRequest($request);
+        $table = $dataTableFactory
+            ->create()
+            ->add('id', NumberColumn::class, ['label' => '#'])
+            ->add('phone_number', TextColumn::class, [
+                'label' => 'Numéro de téléphone',
+            ])
+            ->add('content', TextColumn::class, ['label' => 'Message'])
+            ->add('send', TextColumn::class, [
+                'label' => 'Envoyer',
+                'data' => function ($context) {
+                    return $context->getSendAt() <= new DateTime('now')
+                        ? true
+                        : false;
+                },
+                'render' => function ($value, $context) {
+                    $text = $value ? 'Oui' : 'Non';
+                    $class = $value ? 'badge-success' : 'badge-danger';
+                    return sprintf("<span class='badge $class'>$text</span>");
+                },
+            ])
+            ->add('created_at', DateTimeColumn::class, [
+                'label' => 'Programmer le',
+                'format' => 'd-m-Y H:i:s',
+            ])
+            ->add('send_at', DateTimeColumn::class, [
+                'label' => 'Date d\'envoie',
+                'format' => 'd-m-Y H:i:s',
+            ])
+            ->add('actions', TextColumn::class, [
+                'data' => function ($context) {
+                    return $context->getId();
+                },
+                'render' => function ($value, $context) {
+                    $show = sprintf(
+                        '<a href="%s" class="btn btn-primary">Regarder</a>',
+                        $this->generateUrl('sms_show', [
+                            'id' => $value,
+                            'global' => $this->session->get('global'),
+                        ])
+                    );
+                    return $show;
+                },
+                'label' => 'Actions',
+            ])
+            ->addOrderBy('id', DataTable::SORT_DESCENDING)
+            ->createAdapter(ORMAdapter::class, [
+                'entity' => Sms::class,
+                'query' => function (QueryBuilder $builder) {
+                    return $builder
+                        ->select('s, sms_auto')
+                        ->where('sms_auto.global_statut = :g')
+                        ->setParameter('g', $this->global)
+                        ->from(Sms::class, 's')
+                        ->leftJoin('s.sms_auto', 'sms_auto');
+                },
+            ])
+            ->handleRequest($request);
 
         if ($table->isCallback()) {
             return $table->getResponse();
         }
 
         return $this->render('sms/index.html.twig', [
-            'datatable' => $table
+            'datatable' => $table,
         ]);
     }
-
 
     /**
      * @Route("/new", name="sms_new", methods={"GET","POST"})
      */
-    public function new(Request $request, SendSms $sendSms): Response
+    public function new(Request $request): Response
     {
         $sms = new Sms();
         $form = $this->createForm(SmsType::class, $sms);
@@ -107,17 +125,30 @@ class SmsController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $errors = [];
-            preg_match_all('/(?:(?:\+|00)33)\s*[67](?:[\s.-]*\d{2}){4}/', $sms->getPhoneNumber(), $matches, PREG_PATTERN_ORDER);
+            preg_match_all(
+                '/(?:(?:\+|00)33)\s*[67](?:[\s.-]*\d{2}){4}/',
+                $sms->getPhoneNumber(),
+                $matches,
+                PREG_PATTERN_ORDER
+            );
 
             foreach (explode(',', $sms->getPhoneNumber()) as $value) {
-                if(!in_array($value, $matches[0])){
+                if (!in_array($value, $matches[0])) {
                     $errors[] = $value;
                 }
             }
 
-            if(!empty($errors)){
-                $this->addFlash('error', 'Les numéros de téléphone suivant ne sont pas valides : '.implode(', ', $errors));
-                return $this->render('sms/new.html.twig', ['phones' => $sms->getPhoneNumber(), 'message' => $sms->getContent(),             'form' => $form->createView()]);
+            if (!empty($errors)) {
+                $this->addFlash(
+                    'error',
+                    'Les numéros de téléphone suivant ne sont pas valides : ' .
+                        implode(', ', $errors)
+                );
+                return $this->render('sms/new.html.twig', [
+                    'phones' => $sms->getPhoneNumber(),
+                    'message' => $sms->getContent(),
+                    'form' => $form->createView(),
+                ]);
             }
 
             // $sendSms->send($sms->getContent(), $matches[0]);
@@ -137,7 +168,7 @@ class SmsController extends AbstractController
     public function show(Request $request): Response
     {
         $sms = $request->query->get('id');
-       
+
         return $this->render('sms/show.html.twig', [
             'sms' => $this->sms->getOutGoing($sms),
         ]);
@@ -152,7 +183,9 @@ class SmsController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->getDoctrine()
+                ->getManager()
+                ->flush();
 
             return $this->redirectToRoute('sms_index');
         }
@@ -170,7 +203,12 @@ class SmsController extends AbstractController
     {
         $sms = $request->query->get('id');
 
-        if ($this->isCsrfTokenValid('delete'.$sms, $request->request->get('_token'))) {
+        if (
+            $this->isCsrfTokenValid(
+                'delete' . $sms,
+                $request->request->get('_token')
+            )
+        ) {
             $this->sms->deleteOutGoing($sms);
         }
         $this->addFlash('success', "SMS numéro $sms à bien été supprimer !");

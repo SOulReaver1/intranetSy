@@ -23,197 +23,233 @@ class CustomerFilesRepository extends ServiceEntityRepository
         parent::__construct($registry, CustomerFiles::class);
     }
 
-    public function getProviderParams(?Provider $provider) {
+    public function getProviderParams(?Provider $provider)
+    {
         $parameters = [];
-        if($provider !== null){
-            foreach($provider->getProviderProducts() as $value){
-                foreach($value->getParams() as $param){
+        if ($provider !== null) {
+            foreach ($provider->getProviderProducts() as $value) {
+                foreach ($value->getParams() as $param) {
                     $parameters[] = $param;
                 }
             }
         }
-        
+
         return array_unique($parameters);
     }
 
-    public function getNotDepartment() {
+    public function getNotDepartment()
+    {
         return $this->createQueryBuilder('c')
-        ->andWhere('c.lat IS NOT NULL')
-        ->andWhere('c.lng IS NOT NULL')
-        ->andWhere('c.department IS NULL')
-        ->getQuery()
-        ->getResult();
+            ->andWhere('c.lat IS NOT NULL')
+            ->andWhere('c.lng IS NOT NULL')
+            ->andWhere('c.department IS NULL')
+            ->getQuery()
+            ->getResult();
     }
-    public function getAllReplaceFields(): array {
-        return array_merge($this->getComplementFields(), $this->getStepFields());
+    public function getAllReplaceFields(): array
+    {
+        return array_merge(
+            $this->getComplementFields(),
+            $this->getStepFields()
+        );
     }
 
-    public function checkStepIsOk(CustomerFiles $customerFiles, array $fields){
+    public function checkStepIsOk(CustomerFiles $customerFiles, array $fields)
+    {
         $result = $this->createQueryBuilder('c')
             ->andWhere('c = :c')
-            ->setParameter('c', $customerFiles)
-        ;
+            ->setParameter('c', $customerFiles);
         foreach ($fields as $field) {
             $result->addSelect("c.$field")->andWhere("c.$field IS NOT NULL");
         }
 
-        return $result
-        ->getQuery()
-        ->getOneOrNullResult();
+        return $result->getQuery()->getOneOrNullResult();
     }
 
-    public function getComplementFields(): array {
+    public function getComplementFields(): array
+    {
         $array = [
-            "sexe" => "Sexe",
-            "name" => "Nom",
-            "global_statut" => "Statut global",
-            "client_statut" => "Statut client",
-            "documents" => "Documents récquis :"
+            'sexe' => 'Sexe',
+            'name' => 'Nom',
+            'global_statut' => 'Statut global',
+            'client_statut' => 'Statut client',
+            'documents' => 'Documents récquis :',
         ];
 
         return $array;
     }
 
-    public function getStepFields(): array {
+    public function getStepFields(): array
+    {
         $array = [
-            "address" => "Adresse",
-            "home_phone" => "Téléphone fixe",
-            "cellphone" => "Téléphone portable",
-            "referent_name" => "Nom du référent",
-            "referent_phone" => "Téléphone du référent",
-            "referent_statut" => "Statut du référent",
-            "customer_statut" => "Statut du dossier",
-            "client_statut" => 'Statut du client',
-            "mail_al" => "Mail AL",
-            "password_al" => "Mot de passe AL",
-            "address_complement" => "Complément d'adresse",
-            "installer" => "Installateur",
-            "product" => "Produit",
-            "acompte" => "Acompte",
-            "solde" => "Solde",
-            "invoice_number" => "Numéro de facture",
-            "dossier_number" => "Numéro de dossier",
-            "date_depot" => "Date de dépot",
-            "date_cmd_materiel" => "Date de commande de matériel",
-            "date_install" => "Date d'installation",
-            "date_expertise" => "Date d'éxpertise",
-            "date_footage" => "Date de métrage",
-            "metreur" => "Métreur",
+            'address' => 'Adresse',
+            'home_phone' => 'Téléphone fixe',
+            'cellphone' => 'Téléphone portable',
+            'referent_name' => 'Nom du référent',
+            'referent_phone' => 'Téléphone du référent',
+            'referent_statut' => 'Statut du référent',
+            'customer_statut' => 'Statut du dossier',
+            'client_statut' => 'Statut du client',
+            'mail_al' => 'Mail AL',
+            'password_al' => 'Mot de passe AL',
+            'address_complement' => "Complément d'adresse",
+            'installer' => 'Installateur',
+            'product' => 'Produit',
+            'acompte' => 'Acompte',
+            'solde' => 'Solde',
+            'invoice_number' => 'Numéro de facture',
+            'dossier_number' => 'Numéro de dossier',
+            'date_depot' => 'Date de dépot',
+            'date_cmd_materiel' => 'Date de commande de matériel',
+            'date_install' => "Date d'installation",
+            'date_expertise' => "Date d'éxpertise",
+            'date_footage' => 'Date de métrage',
+            'metreur' => 'Métreur',
         ];
 
         return $array;
     }
 
-    public function getAddresses(GlobalStatut $global, ?User $user = null){
-        if($user){
+    public function getAddresses(GlobalStatut $global, ?User $user = null)
+    {
+        if ($user) {
             return $this->createQueryBuilder('c')
+                ->leftJoin('c.customer_statut', 'statut')
+                ->select(
+                    'c.id, c.name as title, c.address, c.route_number, c.zip_code, c.city, c.cellphone, c.home_phone, c.commentary, c.address_complement, c.lat, c.lng, statut.color, statut.id as statutId'
+                )
+                ->leftJoin('c.installer', 'user')
+                ->andWhere('user = :user')
+                ->andWhere('c.global_statut = :g')
+                ->setParameter('g', $global)
+                ->setParameter('user', $user)
+                ->orderBy('c.ordred')
+                ->andWhere('c.lat is not null')
+                ->andWhere('c.lng is not null')
+                ->getQuery()
+                ->getResult();
+        }
+
+        return $this->createQueryBuilder('c')
             ->leftJoin('c.customer_statut', 'statut')
-            ->select('c.id, c.name as title, c.address, c.route_number, c.zip_code, c.city, c.cellphone, c.home_phone, c.commentary, c.address_complement, c.lat, c.lng, statut.color, statut.id as statutId')
-            ->leftJoin('c.installer', 'user')
-            ->andWhere('user = :user')
+            ->select(
+                'c.id, c.name as title, c.address, c.route_number, c.zip_code, c.city, c.address_complement, c.cellphone, c.home_phone, c.commentary, c.lat, c.lng, statut.color, statut.id as statutId'
+            )
+            ->andWhere('c.lat is not null')
+            ->andWhere('c.lng is not null')
             ->andWhere('c.global_statut = :g')
             ->setParameter('g', $global)
-            ->setParameter('user', $user)
-            ->orderBy('c.ordred')
-            ->andWhere('c.lat is not null')
-            ->andWhere('c.lng is not null')
             ->getQuery()
             ->getResult();
-        }
-
-        return $this->createQueryBuilder('c')
-        ->leftJoin('c.customer_statut', 'statut')
-        ->select('c.id, c.name as title, c.address, c.route_number, c.zip_code, c.city, c.address_complement, c.cellphone, c.home_phone, c.commentary, c.lat, c.lng, statut.color, statut.id as statutId')
-        ->andWhere('c.lat is not null')
-        ->andWhere('c.lng is not null')
-        ->andWhere('c.global_statut = :g')
-        ->setParameter('g', $global)
-        ->getQuery()
-        ->getResult();
     }
 
-    public function getUniqueDepartment(GlobalStatut $global) {
+    public function getUniqueDepartment(GlobalStatut $global)
+    {
         return $this->createQueryBuilder('c')
-        ->select('c.department')
-        ->andWhere('c.department IS NOT NULL')
-        ->andWhere('c.global_statut = :g')
-        ->setParameter('g', $global)
-        ->groupBy('c.department')
-        ->getQuery()
-        ->getResult();
+            ->select('c.department')
+            ->andWhere('c.department IS NOT NULL')
+            ->andWhere('c.global_statut = :g')
+            ->setParameter('g', $global)
+            ->groupBy('c.department')
+            ->getQuery()
+            ->getResult();
     }
 
-    public function getAddressesWG(?User $user = null){
-        if($user){
+    public function getUniqueMetreur(GlobalStatut $global)
+    {
+        return $this->createQueryBuilder('c')
+            ->select('user.email, user.id')
+
+            ->andWhere('c.metreur IS NOT NULL')
+            ->andWhere('c.global_statut = :g')
+            ->leftJoin('c.metreur', 'user')
+            ->setParameter('g', $global)
+            ->groupBy('user.id')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getAddressesWG(?User $user = null)
+    {
+        if ($user) {
             return $this->createQueryBuilder('c')
+                ->leftJoin('c.customer_statut', 'statut')
+                ->select(
+                    'c.id, c.name as title, c.address, c.route_number, c.zip_code, c.city, c.cellphone, c.home_phone, c.commentary, c.address_complement, c.lat, c.lng, statut.color, statut.id as statutId'
+                )
+                ->leftJoin('c.installer', 'user')
+                ->andWhere('user = :user')
+                ->setParameter('user', $user)
+                ->orderBy('c.ordred')
+                ->andWhere('c.lat is not null')
+                ->andWhere('c.lng is not null')
+                ->getQuery()
+                ->getResult();
+        }
+
+        return $this->createQueryBuilder('c')
             ->leftJoin('c.customer_statut', 'statut')
-            ->select('c.id, c.name as title, c.address, c.route_number, c.zip_code, c.city, c.cellphone, c.home_phone, c.commentary, c.address_complement, c.lat, c.lng, statut.color, statut.id as statutId')
-            ->leftJoin('c.installer', 'user')
-            ->andWhere('user = :user')
-            ->setParameter('user', $user)
-            ->orderBy('c.ordred')
+            ->select(
+                'c.id, c.name as title, c.address, c.route_number, c.zip_code, c.city, c.address_complement, c.cellphone, c.home_phone, c.commentary, c.lat, c.lng, statut.color, statut.id as statutId'
+            )
             ->andWhere('c.lat is not null')
             ->andWhere('c.lng is not null')
             ->getQuery()
             ->getResult();
-        }
-
-        return $this->createQueryBuilder('c')
-        ->leftJoin('c.customer_statut', 'statut')
-        ->select('c.id, c.name as title, c.address, c.route_number, c.zip_code, c.city, c.address_complement, c.cellphone, c.home_phone, c.commentary, c.lat, c.lng, statut.color, statut.id as statutId')
-        ->andWhere('c.lat is not null')
-        ->andWhere('c.lng is not null')
-        ->getQuery()
-        ->getResult();
     }
 
-    public function getPhones(){
+    public function getPhones()
+    {
         return $this->createQueryBuilder('c')
-        ->select('c.name as title, c.cellphone')
-        ->where('c.cellphone IS NOT NULL')
-        ->getQuery()
-        ->getResult();
+            ->select('c.name as title, c.cellphone')
+            ->where('c.cellphone IS NOT NULL')
+            ->getQuery()
+            ->getResult();
     }
 
-    public function getInstaller($installer){
+    public function getInstaller($installer)
+    {
         return $this->createQueryBuilder('c')
-        ->leftJoin('c.installer', 'user')
-        ->where('user = :user')
-        ->setParameter('user', $installer)
-        ->getQuery()
-        ->getResult();
+            ->leftJoin('c.installer', 'user')
+            ->where('user = :user')
+            ->setParameter('user', $installer)
+            ->getQuery()
+            ->getResult();
     }
 
-    public function findByStatut($id){
+    public function findByStatut($id)
+    {
         return $this->createQueryBuilder('c')
-        ->leftJoin('c.customer_statut', 'statut')
-        ->where('statut.id = :statut')
-        ->setParameter("statut", $id)
-        ->getQuery()
-        ->getResult();
+            ->leftJoin('c.customer_statut', 'statut')
+            ->where('statut.id = :statut')
+            ->setParameter('statut', $id)
+            ->getQuery()
+            ->getResult();
     }
 
-    public function countNullFileStatut(GlobalStatut $global){
+    public function countNullFileStatut(GlobalStatut $global)
+    {
         return $this->createQueryBuilder('c')
-        ->leftJoin('c.customer_statut', 'statut')
-        ->andWhere('c.address IS NOT NULL')
-        ->andWhere('statut.id IS NULL')
-        ->andWhere('c.global_statut = :g')
-        ->setParameter('g', $global)
-        ->select('count(c.id) as count')
-        ->getQuery()->getResult()[0];
+            ->leftJoin('c.customer_statut', 'statut')
+            ->andWhere('c.address IS NOT NULL')
+            ->andWhere('statut.id IS NULL')
+            ->andWhere('c.global_statut = :g')
+            ->setParameter('g', $global)
+            ->select('count(c.id) as count')
+            ->getQuery()
+            ->getResult()[0];
     }
 
-    public function countNullFileStatutWG(){
+    public function countNullFileStatutWG()
+    {
         return $this->createQueryBuilder('c')
-        ->leftJoin('c.customer_statut', 'statut')
-        ->andWhere('c.address IS NOT NULL')
-        ->andWhere('statut.id IS NULL')
-        ->select('count(c.id) as count')
-        ->getQuery()->getResult()[0];
+            ->leftJoin('c.customer_statut', 'statut')
+            ->andWhere('c.address IS NOT NULL')
+            ->andWhere('statut.id IS NULL')
+            ->select('count(c.id) as count')
+            ->getQuery()
+            ->getResult()[0];
     }
-
-    
 
     // /**
     //  * @return CustomerFiles[] Returns an array of CustomerFiles objects
